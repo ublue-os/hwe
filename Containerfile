@@ -3,6 +3,8 @@ ARG FEDORA_MAJOR_VERSION=37
 FROM ghcr.io/ublue-os/base:${FEDORA_MAJOR_VERSION}
 # See https://pagure.io/releng/issue/11047 for final location
 
+ARG NVIDIA_VERSION='525.78.01'
+
 RUN rpm-ostree install kmod gcc kernel-devel vulkan-loader binutils && \
     ostree container commit
 
