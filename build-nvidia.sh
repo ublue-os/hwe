@@ -2,7 +2,11 @@
 
 set -ouex pipefail
 
+readonly BUILD_DIR="/work"
 readonly KERNEL_VERSION="$(rpm -q kernel-devel --queryformat='%{VERSION}-%{RELEASE}.%{ARCH}')"
+
+mkdir -p "${BUILD_DIR}"
+cd "${BUILD_DIR}"
 
 curl https://download.nvidia.com/XFree86/Linux-x86_64/${NVIDIA_VERSION}/NVIDIA-Linux-x86_64-${NVIDIA_VERSION}.run \
     --output nvidia-driver.run
@@ -14,7 +18,7 @@ chmod +x ./nvidia-driver.run
 # build environment. The workaround is to build the kernel modules manually.
 ./nvidia-driver.run --extract-only
 
-make -C /NVIDIA-Linux-x86_64-${NVIDIA_VERSION}/kernel -j8
+make -C NVIDIA-Linux-x86_64-${NVIDIA_VERSION}/kernel -j8
 
 install -D NVIDIA-Linux-x86_64-${NVIDIA_VERSION}/kernel/nvidia{,-{drm,modeset,peermem,uvm}}.ko \
 	--target-directory="/build/usr/lib/modules/${KERNEL_VERSION}/kernel/drivers/video"
