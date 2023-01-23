@@ -4,7 +4,7 @@ set -ouex pipefail
 
 readonly BUILD_DIR="/work"
 readonly INSTALL_DIR="/build"
-readonly KERNEL_VERSION="$(rpm -q kernel-devel --queryformat='%{VERSION}-%{RELEASE}.%{ARCH}')"
+readonly KERNEL_VERSION="$(rpm -q kernel-core --queryformat='%{VERSION}-%{RELEASE}.%{ARCH}')"
 
 mkdir -p "${BUILD_DIR}"
 cd "${BUILD_DIR}"
