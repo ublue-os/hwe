@@ -19,7 +19,7 @@ chmod +x ./nvidia-driver.run
 # build environment. The workaround is to build the kernel modules manually.
 ./nvidia-driver.run --extract-only
 
-make -C "${BUILD_DIR}/NVIDIA-Linux-x86_64-${NVIDIA_VERSION}/kernel" -j8
+make -C "${BUILD_DIR}/NVIDIA-Linux-x86_64-${NVIDIA_VERSION}/kernel" CC=gcc KERNEL_UNAME="${KERNEL_VERSION}" -j8
 
 install -D ${BUILD_DIR}/NVIDIA-Linux-x86_64-${NVIDIA_VERSION}/kernel/nvidia{,-{drm,modeset,peermem,uvm}}.ko \
 	--target-directory="${INSTALL_DIR}/usr/lib/modules/${KERNEL_VERSION}/kernel/drivers/video"
