@@ -10,12 +10,10 @@ RUN rpm-ostree install kmod gcc kernel-devel vulkan-loader binutils libglvnd-dev
 
 RUN ln -fs /usr/bin/ld.bfd /usr/bin/ld
 RUN mkdir -p /var/log
+
 ADD build-nvidia.sh /build-nvidia.sh
 RUN chmod +755 /build-nvidia.sh
 RUN /build-nvidia.sh
-
-RUN find /usr/{bin,lib,lib64,share} /etc/{systemd,vulkan,OpenCL} ! -type d -newerat "$(cat /.builddate)" \
-    -exec install -D {} /build/{} \;
 
 FROM ghcr.io/ublue-os/base:${FEDORA_MAJOR_VERSION}
 
