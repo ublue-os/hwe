@@ -32,4 +32,4 @@ rpm-ostree kargs \
 
    To rollback to a specific date, use a date tag:
 
-    rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/nvidia:20230128
+       rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/nvidia:20230128
