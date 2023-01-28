@@ -12,7 +12,7 @@ Any system running `rpm-ostree` should be able to rebase onto [one of the images
 
 ```
 $ TAG="pr-1"
-$ rpm-ostree rebase ghcr.io/ublue-os/nvidia:${TAG}
+$ rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/nvidia:${TAG}
 ```
 
 2) Set kargs after rebasing
