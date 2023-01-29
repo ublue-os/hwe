@@ -1,6 +1,7 @@
+ARG BASE_IMAGE='quay.io/fedora-ostree-desktops/base'
 ARG FEDORA_MAJOR_VERSION='37'
 
-FROM ghcr.io/ublue-os/base:${FEDORA_MAJOR_VERSION} AS builder
+FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION} AS builder
 # See https://pagure.io/releng/issue/11047 for final location
 
 ARG NVIDIA_VERSION='525.78.01'
@@ -17,7 +18,7 @@ RUN chmod +755 /build-nvidia.sh
 
 RUN /build-nvidia.sh
 
-FROM ghcr.io/ublue-os/base:${FEDORA_MAJOR_VERSION}
+FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION}
 
 COPY --from=builder /build /
 RUN ostree container commit
