@@ -1,24 +1,29 @@
 ARG BASE_IMAGE='quay.io/fedora-ostree-desktops/base'
 ARG FEDORA_MAJOR_VERSION='37'
 
-FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION} AS builder
-# See https://pagure.io/releng/issue/11047 for final location
+FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION} AS nvidia-base
 
-ARG NVIDIA_VERSION='525.78.01'
+RUN rpm-ostree install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
+                       https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm \
+                       fedora-repos-archive
 
-RUN rpm-ostree install kmod gcc vulkan-loader binutils libglvnd-devel \
-    kernel-devel-$(rpm -q kernel-core '--queryformat=%{VERSION}-%{RELEASE}.%{ARCH}') && \
-    ostree container commit
+RUN rpm-ostree install mock xorg-x11-drv-nvidia{,-cuda} binutils \
+                       kernel-devel-$(rpm -qa kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')
 
 RUN ln -fs /usr/bin/ld.bfd /usr/bin/ld
-RUN mkdir -p /var/log
 
-ADD build-nvidia.sh /build-nvidia.sh
-RUN chmod +755 /build-nvidia.sh
+FROM nvidia-base AS builder
 
-RUN /build-nvidia.sh
+RUN akmods --force --kernels "$(rpm -qa kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')"
 
 FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION}
 
-COPY --from=builder /build /
-RUN ostree container commit
+COPY --from=builder /var/cache/akmods/nvidia /tmp/nvidia
+
+RUN KERNEL_VERSION="$(rpm -qa kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')" && \
+    rpm-ostree install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
+                       https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm && \
+    rpm-ostree install xorg-x11-drv-nvidia{,-cuda} kernel-devel-${KERNEL_VERSION} \
+                       /tmp/nvidia/kmod-nvidia-${KERNEL_VERSION}-*.rpm && \
+    rm -rf /tmp/nvidia /var/* && \
+    ostree container commit
