@@ -23,5 +23,6 @@ RUN KERNEL_VERSION="$(rpm -qa kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH
                        https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm && \
     rpm-ostree install xorg-x11-drv-nvidia{,-cuda} kernel-devel-${KERNEL_VERSION} \
                        /tmp/nvidia/kmod-nvidia-${KERNEL_VERSION}-*.rpm && \
+    ln -fs /usr/bin/ld.bfd /usr/bin/ld && \
     rm -rf /tmp/nvidia /var/* && \
     ostree container commit
