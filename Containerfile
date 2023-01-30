@@ -1,4 +1,4 @@
-ARG BASE_IMAGE='quay.io/fedora-ostree-desktops/base'
+ARG BASE_IMAGE='quay.io/fedora-ostree-desktops/silverblue'
 ARG FEDORA_MAJOR_VERSION='37'
 
 FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION} AS builder
