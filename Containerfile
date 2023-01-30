@@ -1,7 +1,7 @@
 ARG BASE_IMAGE='quay.io/fedora-ostree-desktops/base'
 ARG FEDORA_MAJOR_VERSION='37'
 
-FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION} AS nvidia-base
+FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION} AS builder
 
 RUN rpm-ostree install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
                        https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm \
@@ -11,8 +11,6 @@ RUN rpm-ostree install mock xorg-x11-drv-nvidia{,-cuda} binutils \
                        kernel-devel-$(rpm -qa kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')
 
 RUN ln -fs /usr/bin/ld.bfd /usr/bin/ld
-
-FROM nvidia-base AS builder
 
 RUN akmods --force --kernels "$(rpm -qa kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')"
 
