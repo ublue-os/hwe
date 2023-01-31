@@ -7,7 +7,7 @@ RUN rpm-ostree install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-
                        https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm \
                        fedora-repos-archive
 
-RUN rpm-ostree install mock xorg-x11-drv-nvidia{,-cuda} binutils \
+RUN rpm-ostree install akmods mock xorg-x11-drv-nvidia{,-cuda} binutils \
                        kernel-devel-$(rpm -qa kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')
 
 # alternatives cannot create symlinks on its own during a container build
@@ -22,7 +22,7 @@ COPY --from=builder /var/cache/akmods/nvidia /tmp/nvidia
 RUN KERNEL_VERSION="$(rpm -qa kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')" && \
     rpm-ostree install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
                        https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm && \
-    rpm-ostree install xorg-x11-drv-nvidia{,-cuda} kernel-devel-${KERNEL_VERSION} \
+    rpm-ostree install akmods xorg-x11-drv-nvidia{,-cuda} kernel-devel-${KERNEL_VERSION} \
                        /tmp/nvidia/kmod-nvidia-${KERNEL_VERSION}-*.rpm && \
     ln -s /usr/bin/ld.bfd /etc/alternatives/ld && ln -s /etc/alternatives/ld /usr/bin/ld && \
     rm -rf /tmp/nvidia /var/* && \
