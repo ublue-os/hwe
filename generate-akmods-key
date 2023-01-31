@@ -1,0 +1,20 @@
+#!/usr/bin/bash
+
+set -oeux pipefail
+
+readonly CERT_DIR=certs
+
+readonly IMAGE="ghcr.io/ublue-os/nvidia"
+readonly TAG="latest"
+
+mkdir -p "${PWD}/${CERT_DIR}"
+
+# Bootstrap keys with a pre-existing image to avoid touching '/etc' on host
+podman run \
+    --env="LANG=${LANG}" \
+    --volume="${PWD}/${CERT_DIR}:/tmp/${CERT_DIR}:z" \
+    --entrypoint=/bin/sh \
+    "${IMAGE}:${TAG}" -c \
+    "kmodgenca --auto && \
+    install -D /etc/pki/akmods/private/private_key.priv /tmp/${CERT_DIR}/private_key.priv && \
+    install -D /etc/pki/akmods/certs/public_key.der     /tmp/${CERT_DIR}/public_key.der"
