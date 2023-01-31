@@ -30,7 +30,7 @@ rpm-ostree kargs \
 
 3. Enable Secure Boot support
 
-    Secure Boot can be enabled by enrolling the key used for signing the kernel modules:
+    [Secure Boot](https://rpmfusion.org/Howto/Secure%20Boot) support for the nvidia kernel modules can be enabled by enrolling the signing key:
 
 ```
 sudo mokutil --import /etc/pki/akmods/certs/akmods-nvidia.der
