@@ -58,11 +58,9 @@ jobs:
       - name: Write akmod signing key to disk
         run: |
           mkdir certs
-          echo "${{ env.AKMOD_PUBKEY }}" > certs/public_key.der
+          echo "${{ secrets.AKMOD_PUBKEY }}" > certs/public_key.der
           # DEBUG: get character count of key
           wc -c certs/public_key.der
-        env:
-          AKMOD_PUBKEY: ${{ secrets.AKMOD_PUBKEY }}
 
       # Build image using Buildah action
       - name: Build Image
