@@ -57,7 +57,7 @@ jobs:
 
       - name: Retrieve akmods signing key
         run: |
-          mkdir certs
+          mkdir -p certs
           echo "${{ secrets.AKMOD_PRIVKEY }}" > certs/private_key.priv
           # DEBUG: get character count of key
           wc -c certs/private_key.priv
