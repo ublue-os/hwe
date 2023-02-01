@@ -36,6 +36,12 @@ rpm-ostree kargs \
 sudo mokutil --import /etc/pki/akmods/certs/akmods-nvidia.der
 ```
 
+Alternatively, the key can be enrolled from within this repo:
+
+```
+sudo mokutil --import ./certs/public_key.der
+```
+
 ## Rolling back
 
    To rollback to a specific date, use a date tag:
