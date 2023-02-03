@@ -27,12 +27,20 @@ ADD certs/private_key.priv /etc/pki/akmods/private/private_key.priv
 RUN chmod 644 /etc/pki/akmods/{private/private_key.priv,certs/public_key.der}
 RUN akmods --force --kernels "$(rpm -qa kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')" --kmod nvidia
 
+ADD akmods-nvidia-key.spec /tmp/akmods-nvidia-key/akmods-nvidia-key.spec
+
+RUN install -D /etc/pki/akmods/certs/public_key.der /tmp/akmods-nvidia-key/rpmbuild/SOURCES/public_key.der
+
+RUN rpmbuild -ba \
+    --define '_topdir /tmp/akmods-nvidia-key/rpmbuild' \
+    --define '%_tmppath %{_topdir}/tmp' \
+    /tmp/akmods-nvidia-key/akmods-nvidia-key.spec
+
 
 FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION}
 
 COPY --from=builder /var/cache/akmods/nvidia /tmp/nvidia
-# Have different name for *.der in case kmodgenca is needed for creating more keys
-COPY --from=builder /etc/pki/akmods/certs/public_key.der /etc/pki/akmods/certs/akmods-nvidia.der
+COPY --from=builder /tmp/akmods-nvidia-key /tmp/akmods-nvidia-key
 
 RUN KERNEL_VERSION="$(rpm -qa kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')" \
     && \
@@ -44,6 +52,7 @@ RUN KERNEL_VERSION="$(rpm -qa kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH
             xorg-x11-drv-nvidia{,-cuda} \
             kernel-devel-${KERNEL_VERSION} \
             /tmp/nvidia/kmod-nvidia-${KERNEL_VERSION}-*.rpm \
+            /tmp/akmods-nvidia-key/rpmbuild/RPMS/noarch/akmods-nvidia-key-*.rpm \
     && \
         ln -s /usr/bin/ld.bfd /etc/alternatives/ld && \
         ln -s /etc/alternatives/ld /usr/bin/ld \
