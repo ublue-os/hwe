@@ -28,4 +28,4 @@ install -Dm0644 %{SOURCE0} %{buildroot}%{_sysconfdir}/pki/akmods/certs/akmods-nv
 
 %changelog
 * Fri Feb 03 2023 Joshua Stone <joshua.gage.stone@gmail.com> - 0.1
-- Add key for enrolling kernel modules alpha builds
+- Add key for enrolling kernel modules in alpha builds
