@@ -24,8 +24,12 @@ jobs:
       fail-fast: false
       matrix:
         major_version: [37]
+        driver_version: [525]
         include:
           - major_version: 37
+            is_latest: true
+            is_stable: true
+          - driver_version: 525
             is_latest: true
             is_stable: true
     steps: 
@@ -76,6 +80,7 @@ jobs:
             ${{ steps.generate-tags.outputs.sha_short }}
           build-args: |
             FEDORA_MAJOR_VERSION=${{ matrix.major_version }}
+            NVIDIA_MAJOR_VERSION=${{ matrix.driver_version }}
           oci: true
 
       # Workaround bug where capital letters in your GitHub username make it impossible to push to GHCR.
