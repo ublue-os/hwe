@@ -5,7 +5,7 @@ FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION} AS builder
 
 ARG NVIDIA_MAJOR_VERSION="${NVIDIA_MAJOR_VERSION:-525}"
 
-RUN sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-{cisco-openh264,modular,updates-modular,updates-archive}.repo
+RUN sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-{cisco-openh264,modular,updates-modular}.repo
 
 RUN rpm-ostree install \
         https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm \
