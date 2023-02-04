@@ -20,7 +20,7 @@ RUN rpm-ostree install \
         mock \
         xorg-x11-drv-$(cat /tmp/nvidia-package-name.txt)-{,cuda,devel,kmodsrc,power}*:${NVIDIA_MAJOR_VERSION}.*.fc$(rpm -E '%fedora.%_arch')  \
         binutils \
-        kernel-devel-$(rpm -qa kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')
+        kernel-devel-$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')
 
 
 # alternatives cannot create symlinks on its own during a container build
@@ -33,13 +33,14 @@ RUN chmod 644 /etc/pki/akmods/{private/private_key.priv,certs/public_key.der}
 
 # Either successfully build and install the kernel modules, or fail early with debug output
 RUN NVIDIA_PACKAGE_NAME="$(cat /tmp/nvidia-package-name.txt)" \
-    KERNEL_VERSION="$(rpm -qa kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')" \
+    KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')" \
+    NVIDIA_VERSION="$(basename "$(rpm -q "xorg-x11-drv-$(cat /tmp/nvidia-package-name.txt)" --queryformat '%{VERSION}-%{RELEASE}')" ".fc$(rpm -E '%fedora')")" \
     && \
-        akmods --force --kernels "${KERNEL_VERSION}" --kmod "${NVIDIA_PACKAGE_NAME}" \
+        echo $NVIDIA_VERSION && akmods --force --kernels "${KERNEL_VERSION}" --kmod "${NVIDIA_PACKAGE_NAME}" \
     && \
-        [ -f "/usr/lib/modules/${KERNEL_VERSION}/extra/${NVIDIA_PACKAGE_NAME}/nvidia.ko.xz" ] \
+        modinfo /usr/lib/modules/${KERNEL_VERSION}/extra/${NVIDIA_PACKAGE_NAME}/nvidia{,-drm,-modeset,-peermem,-uvm}.ko.xz > /dev/null \
     || \
-        (cat /var/cache/akmods/${NVIDIA_PACKAGE_NAME}/${NVIDIA_MAJOR_VERSION}.*-for-${KERNEL_VERSION}.failed.log && exit 1)
+        (cat /var/cache/akmods/${NVIDIA_PACKAGE_NAME}/${NVIDIA_VERSION}-for-${KERNEL_VERSION}.failed.log && exit 1)
 
 ADD akmods-nvidia-key.spec /tmp/akmods-nvidia-key/akmods-nvidia-key.spec
 
@@ -53,16 +54,16 @@ RUN rpmbuild -ba \
 
 RUN cp /tmp/nvidia-package-name.txt /var/cache/akmods/nvidia-package-name.txt
 RUN echo "${NVIDIA_MAJOR_VERSION}" > /var/cache/akmods/nvidia-major-version.txt
-
+RUN rpm -q "xorg-x11-drv-$(cat /tmp/nvidia-package-name.txt)" \
+    --queryformat '%{EPOCH}:%{VERSION}-%{RELEASE}.%{ARCH}' > /var/cache/akmods/nvidia-full-version.txt
 
 FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION}
 
-COPY --from=builder /var/cache/akmods     /tmp/akmods
+COPY --from=builder /var/cache/akmods      /tmp/akmods
 COPY --from=builder /tmp/akmods-nvidia-key /tmp/akmods-nvidia-key
 
-
-RUN KERNEL_VERSION="$(rpm -qa kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')" \
-    NVIDIA_MAJOR_VERSION="$(cat /tmp/akmods/nvidia-major-version.txt)" \
+RUN KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')" \
+    NVIDIA_FULL_VERSION="$(cat /tmp/akmods/nvidia-full-version.txt)" \
     NVIDIA_PACKAGE_NAME="$(cat /tmp/akmods/nvidia-package-name.txt)" \
     && \
         rpm-ostree install \
@@ -70,9 +71,9 @@ RUN KERNEL_VERSION="$(rpm -qa kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH
             https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm \
     && \
         rpm-ostree install \
-            xorg-x11-drv-${NVIDIA_PACKAGE_NAME}-{,cuda,devel,kmodsrc,power}*:${NVIDIA_MAJOR_VERSION}.*.fc$(rpm -E '%fedora.%_arch') \
+            xorg-x11-drv-${NVIDIA_PACKAGE_NAME}-{,cuda-,devel-,kmodsrc-,power-}${NVIDIA_FULL_VERSION} \
             kernel-devel-${KERNEL_VERSION} \
-            /tmp/akmods/${NVIDIA_PACKAGE_NAME}/kmod-${NVIDIA_PACKAGE_NAME}-${KERNEL_VERSION}-*.rpm \
+            "/tmp/akmods/${NVIDIA_PACKAGE_NAME}/kmod-${NVIDIA_PACKAGE_NAME}-${KERNEL_VERSION}-${NVIDIA_FULL_VERSION#*:}.rpm" \
             /tmp/akmods-nvidia-key/rpmbuild/RPMS/noarch/akmods-nvidia-key-*.rpm \
     && \
         ln -s /usr/bin/ld.bfd /etc/alternatives/ld && \
