@@ -3,6 +3,7 @@ on:
   pull_request:
     branches:
       - main
+      - devel
   schedule:
     - cron: '20 20 * * *'  # 8:20pm everyday
   push:
