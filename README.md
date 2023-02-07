@@ -10,10 +10,14 @@ Note: This project is a work-in-progress. You should at a minimum be familiar wi
 
 1. Rebase onto the image
 
-   Any system running `rpm-ostree` should be able to rebase onto one of the images built in this project:
+   Any system running `rpm-ostree` should be able to rebase onto one of the images built in this project, Silverblue being the main flavor:
 
-       rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/nvidia:latest
-    
+       rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/silverlue:latest
+
+   Kinoite is also offered as an option:
+
+       rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/kinoite:latest
+
    And then reboot.
 
 2. Set kargs after rebasing
