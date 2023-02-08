@@ -12,6 +12,8 @@ Note: This project is a work-in-progress. You should at a minimum be familiar wi
 
    Any system running `rpm-ostree` should be able to rebase onto one of the images built in this project:
 
+   Note: The image previously titled "nvidia" will not be updated anymore. If you wish to retain the same functionality, switch to "silverblue-nvidia".
+
     Silverblue:  
         ```rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/silverblue-nvidia:latest```
 
