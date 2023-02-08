@@ -11,6 +11,8 @@ on:
       - main
     paths-ignore:
       - '**/README.md'
+  workflow_dispatch:
+  
 env:
     IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
 
@@ -76,7 +78,9 @@ jobs:
         with:
           containerfiles: |
             ./Containerfile
-          image: ${{ matrix.image_name }}
+          # Postfix image name with -nvidia to make it a little more descriptive
+          # Syntax: https://docs.github.com/en/actions/learn-github-actions/expressions#format
+          image: ${{ format('{0}-nvidia', matrix.image_name) }}
           tags: |
             ${{ steps.generate-tags.outputs.alias_tags }}
             ${{ steps.generate-tags.outputs.date }}
@@ -132,7 +136,7 @@ jobs:
 
       - name: Sign container image
         run: |
-          cosign sign --key cosign.key ${{ steps.registry_case.outputs.lowercase }}/${{ matrix.image_name }}@${TAGS}
+          cosign sign --key cosign.key ${{ steps.registry_case.outputs.lowercase }}/${{ steps.build_image.outputs.image }}@${TAGS}
         env:
           TAGS: ${{ steps.push.outputs.digest }}
           COSIGN_EXPERIMENTAL: false

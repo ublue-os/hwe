@@ -12,8 +12,14 @@ Note: This project is a work-in-progress. You should at a minimum be familiar wi
 
    Any system running `rpm-ostree` should be able to rebase onto one of the images built in this project:
 
-       rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/nvidia:latest
-    
+   Note: The image previously titled "nvidia" will not be updated anymore. If you wish to retain the same functionality, switch to "silverblue-nvidia".
+
+    Silverblue:  
+        ```rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/silverblue-nvidia:latest```
+
+    Kinoite:  
+        ```rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/kinoite-nvidia:latest```
+
    And then reboot.
 
 2. Set kargs after rebasing
@@ -54,7 +60,7 @@ These images are signed with sisgstore's [cosign](https://docs.sigstore.dev/cosi
 
     cosign verify --key cosign.pub ghcr.io/ublue-os/base
     
-If you're forking this repo you should [read the docs](https://docs.github.com/en/actions/security-guides/encrypted-secrets) on keeping secrets in github. You need to [generate a new keypair](https://docs.sigstore.dev/cosign/overview/) with cosign. The public key can be in your public repo (your users need it to check the signatures), and you can paste the private key in Settings -> Secrets -> Actions.
+If you're forking this repo you should [read the docs](https://docs.github.com/en/actions/security-guides/encrypted-secrets) on keeping secrets in github. You need to [generate a new keypair](https://docs.sigstore.dev/cosign/overview/) with cosign. The public key can be in your public repo (your users need it to check the signatures), and you can paste the private key in Settings -> Secrets -> Actions with the name SIGNING_SECRET.
 
 ## Building locally
 
@@ -65,6 +71,8 @@ If you're forking this repo you should [read the docs](https://docs.github.com/e
 ```
 $ ./generate-akmod-key
 ```
+
+    If you are forking this repo, you also need to add the private key to the repository secrets under the name AKMOD_PRIVKEY.
 
 2. Build container
 
