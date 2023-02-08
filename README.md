@@ -12,8 +12,12 @@ Note: This project is a work-in-progress. You should at a minimum be familiar wi
 
    Any system running `rpm-ostree` should be able to rebase onto one of the images built in this project:
 
-       rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/nvidia:latest
-    
+    Silverblue:  
+        ```rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/silverblue-nvidia:latest```
+
+    Kinoite:  
+        ```rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/kinoite-nvidia:latest```
+
    And then reboot.
 
 2. Set kargs after rebasing
