@@ -2,7 +2,7 @@
 
 IMG_NAME="uBlue Image with Nvidia Drivers"
 SB_IMG="ostree-unverified-registry:ghcr.io/ublue-os/silverblue-nvidia:latest"
-KN_IMG="ostree-unverified-registry:ghcr.io/ublue-os/silverblue-nvidia:latest"
+KN_IMG="ostree-unverified-registry:ghcr.io/ublue-os/kinoite-nvidia:latest"
 
 if [[ $(id -u) == 0 ]]; then
     echo "Do not run this script using sudo. Please run as a normal user."
