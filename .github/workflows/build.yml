@@ -27,7 +27,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image_name: [silverblue, kinoite]
+        image_name: [silverblue, kinoite, vauxite]
         major_version: [37]
         driver_version: [525]
         include:
