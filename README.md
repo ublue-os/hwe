@@ -14,11 +14,20 @@ Note: This project is a work-in-progress. You should at a minimum be familiar wi
 
    Note: The image previously titled "nvidia" will not be updated anymore. If you wish to retain the same functionality, switch to "silverblue-nvidia".
 
-    Silverblue:  
+    Silverblue (GNOME):  
         ```rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/silverblue-nvidia:latest```
 
-    Kinoite:  
+    Kinoite (KDE):  
         ```rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/kinoite-nvidia:latest```
+
+    Vauxite (XFCE, unofficial):  
+        ```rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/vauxite-nvidia:latest```
+
+    Sericea (Sway):  
+        ```rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/sericea-nvidia:latest```
+
+    Base (no DE preinstalled):  
+        ```rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/base-nvidia:latest```
 
    And then reboot.
 
