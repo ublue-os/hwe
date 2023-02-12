@@ -67,7 +67,33 @@ jobs:
       - name: Retrieve akmods signing key
         run: |
           mkdir -p certs
-          echo "${{ secrets.AKMOD_PRIVKEY }}" > certs/private_key.priv
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+              cat <<EOF > certs/key.conf
+[ req ]
+default_bits = 4096
+distinguished_name = req_distinguished_name
+prompt = no
+string_mask = utf8only
+
+[ req_distinguished_name ]
+O = Test Organization
+CN = Test signing key
+emailAddress = test@testemail.com
+EOF
+              openssl req -new \
+                  -nodes \
+                  -utf8 \
+                  -sha256 \
+                  -days 365 \
+                  -batch \
+                  -x509 \
+                  -outform DER \
+                  -config certs/key.conf \
+                  -out certs/public_key.der \
+                  -keyout certs/private_key.priv
+          else
+              echo "${{ secrets.AKMOD_PRIVKEY }}" > certs/private_key.priv
+          fi
           # DEBUG: get character count of key
           wc -c certs/private_key.priv
 
