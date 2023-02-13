@@ -56,7 +56,7 @@ RUN rpmbuild -ba \
 RUN cp /tmp/nvidia-package-name.txt /var/cache/akmods/nvidia-package-name.txt
 RUN echo "${NVIDIA_MAJOR_VERSION}" > /var/cache/akmods/nvidia-major-version.txt
 RUN rpm -q "xorg-x11-drv-$(cat /tmp/nvidia-package-name.txt)" \
-    --queryformat '%{EPOCH}:%{VERSION}.%{ARCH}' > /var/cache/akmods/nvidia-full-version.txt
+    --queryformat '%{EPOCH}:%{VERSION}-%{RELEASE}.%{ARCH}' > /var/cache/akmods/nvidia-full-version.txt
 
 FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION}
 
