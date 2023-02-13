@@ -14,7 +14,7 @@ RUN rpm-ostree install \
 
 # nvidia 520.xxx and newer currently don't have a -$VERSIONxx suffix in their
 # package names
-RUN if [ "${NVIDIA_MAJOR_VERSION}" -ge 520 ]; then echo "nvidia"; else echo "nvidia-${NVIDIA_MAJOR_VERSION}xx"; fi > /tmp/nvidia-package-name.txt
+RUN if [ "${NVIDIA_MAJOR_VERSION}" -ge 520 && "${FEDORA_MAJOR_VERSION}" -ne 38 ]; then echo "nvidia"; else echo "nvidia-${NVIDIA_MAJOR_VERSION}xx"; fi > /tmp/nvidia-package-name.txt
 
 RUN rpm-ostree install \
         akmods \
