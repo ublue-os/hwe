@@ -63,7 +63,7 @@ FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION}
 COPY --from=builder /var/cache/akmods      /tmp/akmods
 COPY --from=builder /tmp/akmods-nvidia-key /tmp/akmods-nvidia-key
 
-RUN KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')" \
+RUN KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}.%{ARCH}')" \
     NVIDIA_FULL_VERSION="$(cat /tmp/akmods/nvidia-full-version.txt)" \
     NVIDIA_PACKAGE_NAME="$(cat /tmp/akmods/nvidia-package-name.txt)" \
     && \
