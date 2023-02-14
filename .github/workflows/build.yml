@@ -29,14 +29,19 @@ jobs:
       matrix:
         image_name: [silverblue, kinoite, vauxite, sericea, base]
         major_version: [37]
-        driver_version: [525]
+        driver_version: [520, 525]
         include:
+        # - major_version: 36
+        #   is_latest_version: false
+        #   is_stable_version: true
           - major_version: 37
-            is_latest: true
-            is_stable: true
+            is_latest_version: true
+            is_stable_version: true
+        # - major_version: 38
+        #   is_latest_version: true
+        #   is_stable_version: false
           - driver_version: 525
-            is_latest: true
-            is_stable: true
+            is_latest_driver: true
         exclude:
           # There is no Fedora 37 version of sericea
           # When F38 is added, sericea will automatically be built too
@@ -55,18 +60,46 @@ jobs:
           alias_tags=()
           # Only perform the follow code when the action is spawned from a Pull Request
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            alias_tags+=("pr-${{ github.event.number }}")
+              alias_tags+=("pr-${{ github.event.number }}")
           else
-            # The following is run when the timer is triggered or a merge/push to main
-            echo "date=$(date +%Y%m%d)" >> $GITHUB_OUTPUT
-            alias_tags+=("${{ matrix.major_version }}")
-            if [[ "${{ matrix.is_latest }}" == "true" ]]; then
-              alias_tags+=("latest")
-            fi
-            if [[ "${{ matrix.is_stable }}" == "true" ]]; then
-              alias_tags+=("stable")
-            fi
+              # The following is run when the timer is triggered or a merge/push to main
+              TIMESTAMP="$(date +%Y%m%d.%H%M)"
+
+              alias_tags+=("${{ matrix.major_version }}-{{ matrix.driver_version }}")
+
+              if [[ "${{ matrix.is_latest_version }}" == "true" ]] && \
+                 [[ "${{ matrix.is_stable_version }}" == "true" ]]; then
+                  BRANCH="stable"
+              elif [[ "${{ matrix.is_latest_version }}" == "true" ]] && \
+                   [[ "${{ matrix.is_stable_version }}" != "true" ]]; then
+                  BRANCH="unstable"
+              else
+                  BRANCH="oldstable"
+              fi
+
+              alias_tags+=("${BRANCH}-{{ matrix.driver_version }}")
+
+              if [[ "${{ matrix.is_latest_driver }}" == "true" ]]; then
+                  alias_tags+=("${{ matrix.major_version }}-current")
+                  alias_tags+=("${BRANCH}-current")
+                  alias_tags+=("${BRANCH}")
+                  alias_tags+=("{{ matrix.major_version }}")
+              fi
+
+              # Append matching timestamp tags to keep a version history
+              for tag in "${alias_tags[@]}"; do
+                  alias_tags+=("${tag}-${TIMESTAMP}")
+                  alias_tags+=("${tag}-${TIMESTAMP%.*}")
+              done
+
+              if [[ "${BRANCH}" == "stable" ]] && \
+                 [[ "${{ matrix.is_latest_driver }}" == "true" ]]; then
+                  alias_tags+=("${TIMESTAMP}")
+                  alias_tags+=("${TIMESTAMP%.*}")
+                  alias_tags+=("latest")
+              fi
           fi
+
           echo "alias_tags=${alias_tags[*]}" >> $GITHUB_OUTPUT
 
       - name: Retrieve akmods signing key
@@ -101,7 +134,6 @@ jobs:
           image: ${{ format('{0}-nvidia', matrix.image_name) }}
           tags: |
             ${{ steps.generate-tags.outputs.alias_tags }}
-            ${{ steps.generate-tags.outputs.date }}
             ${{ steps.generate-tags.outputs.sha_short }}
           build-args: |
             IMAGE_NAME=${{ matrix.image_name }}
