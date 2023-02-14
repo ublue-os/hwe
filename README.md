@@ -4,6 +4,8 @@
 
 The purpose of these images is to provide builds of vanilla Fedora with Nvidia drivers built-in. This approach can lead to greater reliability as failures can be caught at the build level instead of the client machine. This also lets us generate individual sets of images for each series of Nvidia drivers, allowing users to remain current with their OS but on an older, known working driver. Performance regression with a recent driver update? Reboot into a known-working driver after one command. That's the goal!
 
+These images are based on the experimental ostree native container images hosted at [quay.io](https://quay.io/organization/fedora-ostree-desktops) ([repo](https://gitlab.com/fedora/ostree/ci-test)).
+
 Note: This project is a work-in-progress. You should at a minimum be familiar with the [Fedora documentation](https://docs.fedoraproject.org/en-US/fedora-silverblue/) on how to administer an ostree system. This is currently for people who want to help figure this out, so there may be explosions and gnashing of teeth. 
 
 ## Setup
@@ -14,11 +16,27 @@ Note: This project is a work-in-progress. You should at a minimum be familiar wi
 
    Note: The image previously titled "nvidia" will not be updated anymore. If you wish to retain the same functionality, switch to "silverblue-nvidia".
 
-    Silverblue:  
-        ```rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/silverblue-nvidia:latest```
+    Silverblue (GNOME):  
+    ```
+    rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/silverblue-nvidia:latest
+    ```
 
-    Kinoite:  
-        ```rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/kinoite-nvidia:latest```
+    Kinoite (KDE):  
+    ```
+    rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/kinoite-nvidia:latest
+    ```
+
+    Vauxite (XFCE, unofficial):  
+    ```
+    rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/vauxite-nvidia:latest
+    ```
+
+    Base (no DE preinstalled):  
+    ```
+    rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/base-nvidia:latest
+    ```
+
+    Sericea will be made available when there is a functioning Fedora 38 build.
 
    And then reboot.
 
