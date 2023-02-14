@@ -28,7 +28,7 @@ jobs:
       fail-fast: false
       matrix:
         image_name: [silverblue, kinoite, vauxite, sericea, base]
-        major_version: [37, 38]
+        major_version: [37]
         driver_version: [525]
         include:
           - major_version: 37
@@ -39,6 +39,7 @@ jobs:
             is_stable: true
         exclude:
           # There is no Fedora 37 version of sericea
+          # When F38 is added, sericea will automatically be built too
           - image_name: sericea
             major_version: 37
     steps: 
