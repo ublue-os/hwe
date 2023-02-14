@@ -19,7 +19,7 @@ RUN if [ "${NVIDIA_MAJOR_VERSION}" -ge 520 ]; then echo "nvidia"; else echo "nvi
 RUN rpm-ostree install \
         akmods \
         mock \
-        xorg-x11-drv-$(cat /tmp/nvidia-package-name.txt)-{,cuda,devel,kmodsrc,power}*:${NVIDIA_MAJOR_VERSION}.*.$(rpm -E '%_arch')  \
+        xorg-x11-drv-$(cat /tmp/nvidia-package-name.txt)-{,cuda,devel,kmodsrc,power}*:${NVIDIA_MAJOR_VERSION}.*.fc$(rpm -E '%fedora.%_arch')  \
         binutils \
         kernel-devel-$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')
 
@@ -35,7 +35,7 @@ RUN chmod 644 /etc/pki/akmods/{private/private_key.priv,certs/public_key.der}
 # Either successfully build and install the kernel modules, or fail early with debug output
 RUN NVIDIA_PACKAGE_NAME="$(cat /tmp/nvidia-package-name.txt)" \
     KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')" \
-    NVIDIA_VERSION="$(basename "$(rpm -q "xorg-x11-drv-$(cat /tmp/nvidia-package-name.txt)" --queryformat '%{VERSION}-%{RELEASE}')")" \
+    NVIDIA_VERSION="$(basename "$(rpm -q "xorg-x11-drv-$(cat /tmp/nvidia-package-name.txt)" --queryformat '%{VERSION}-%{RELEASE}')" ".fc$(rpm -E '%fedora')")" \
     && \
         echo $NVIDIA_VERSION && akmods --force --kernels "${KERNEL_VERSION}" --kmod "${NVIDIA_PACKAGE_NAME}" \
     && \
@@ -62,9 +62,6 @@ FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION}
 
 COPY --from=builder /var/cache/akmods      /tmp/akmods
 COPY --from=builder /tmp/akmods-nvidia-key /tmp/akmods-nvidia-key
-
-# debug print to see actual names of created files
-RUN ls /tmp/akmods/nvidia/
 
 RUN KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')" \
     NVIDIA_FULL_VERSION="$(cat /tmp/akmods/nvidia-full-version.txt)" \
