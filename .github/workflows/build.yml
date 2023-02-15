@@ -57,48 +57,56 @@ jobs:
         shell: bash
         run: |
           echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-          alias_tags=()
-          # Only perform the follow code when the action is spawned from a Pull Request
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-              alias_tags+=("pr-${{ github.event.number }}")
+
+          container_tags=()
+          # The following is run when the timer is triggered or a merge/push to main
+          TIMESTAMP="$(date +%Y%m%d.%H%M)"
+
+          container_tags+=("${{ matrix.major_version }}-${{ matrix.driver_version }}")
+
+          if [[ "${{ matrix.is_latest_version }}" == "true" ]] && \
+             [[ "${{ matrix.is_stable_version }}" == "true" ]]; then
+              BRANCH="stable"
+          elif [[ "${{ matrix.is_latest_version }}" == "true" ]] && \
+               [[ "${{ matrix.is_stable_version }}" != "true" ]]; then
+              BRANCH="unstable"
           else
-              # The following is run when the timer is triggered or a merge/push to main
-              TIMESTAMP="$(date +%Y%m%d.%H%M)"
-
-              alias_tags+=("${{ matrix.major_version }}-{{ matrix.driver_version }}")
-
-              if [[ "${{ matrix.is_latest_version }}" == "true" ]] && \
-                 [[ "${{ matrix.is_stable_version }}" == "true" ]]; then
-                  BRANCH="stable"
-              elif [[ "${{ matrix.is_latest_version }}" == "true" ]] && \
-                   [[ "${{ matrix.is_stable_version }}" != "true" ]]; then
-                  BRANCH="unstable"
-              else
-                  BRANCH="oldstable"
-              fi
-
-              alias_tags+=("${BRANCH}-{{ matrix.driver_version }}")
-
-              if [[ "${{ matrix.is_latest_driver }}" == "true" ]]; then
-                  alias_tags+=("${{ matrix.major_version }}-current")
-                  alias_tags+=("${BRANCH}-current")
-                  alias_tags+=("${BRANCH}")
-                  alias_tags+=("{{ matrix.major_version }}")
-              fi
-
-              # Append matching timestamp tags to keep a version history
-              for tag in "${alias_tags[@]}"; do
-                  alias_tags+=("${tag}-${TIMESTAMP}")
-                  alias_tags+=("${tag}-${TIMESTAMP%.*}")
-              done
-
-              if [[ "${BRANCH}" == "stable" ]] && \
-                 [[ "${{ matrix.is_latest_driver }}" == "true" ]]; then
-                  alias_tags+=("${TIMESTAMP}")
-                  alias_tags+=("${TIMESTAMP%.*}")
-                  alias_tags+=("latest")
-              fi
+              BRANCH="oldstable"
           fi
+
+          container_tags+=("${BRANCH}-${{ matrix.driver_version }}")
+
+          if [[ "${{ matrix.is_latest_driver }}" == "true" ]]; then
+              container_tags+=("${{ matrix.major_version }}-current")
+              container_tags+=("${BRANCH}-current")
+              container_tags+=("${BRANCH}")
+              container_tags+=("${{ matrix.major_version }}")
+          fi
+
+          # Append matching timestamp tags to keep a version history
+          for TAG in "${container_tags[@]}"; do
+              container_tags+=("${TAG}-${TIMESTAMP}")
+              container_tags+=("${TAG}-${TIMESTAMP%.*}")
+          done
+
+          if [[ "${BRANCH}" == "stable" ]] && \
+             [[ "${{ matrix.is_latest_driver }}" == "true" ]]; then
+              container_tags+=("${TIMESTAMP}")
+              container_tags+=("${TIMESTAMP%.*}")
+              container_tags+=("latest")
+          fi
+
+          echo "Generated the following tags: "
+          for TAG in "${container_tags[@]}"; do
+              echo "${TAG}"
+          done
+
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+              alias_tags=("pr-${{ github.event.number }}")
+          else
+              alias_tags=("${container_tags[@]}")
+          fi
+
 
           echo "alias_tags=${alias_tags[*]}" >> $GITHUB_OUTPUT
 
