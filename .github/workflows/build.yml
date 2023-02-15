@@ -60,7 +60,7 @@ jobs:
 
           container_tags=()
           # The following is run when the timer is triggered or a merge/push to main
-          TIMESTAMP="$(date +%Y%m%d.%H%M)"
+          TIMESTAMP="$(date +%Y%m%d)"
 
           container_tags+=("${{ matrix.major_version }}-${{ matrix.driver_version }}")
 
@@ -74,11 +74,8 @@ jobs:
               BRANCH="oldstable"
           fi
 
-          container_tags+=("${BRANCH}-${{ matrix.driver_version }}")
-
           if [[ "${{ matrix.is_latest_driver }}" == "true" ]]; then
               container_tags+=("${{ matrix.major_version }}-current")
-              container_tags+=("${BRANCH}-current")
               container_tags+=("${BRANCH}")
               container_tags+=("${{ matrix.major_version }}")
           fi
@@ -86,13 +83,11 @@ jobs:
           # Append matching timestamp tags to keep a version history
           for TAG in "${container_tags[@]}"; do
               container_tags+=("${TAG}-${TIMESTAMP}")
-              container_tags+=("${TAG}-${TIMESTAMP%.*}")
           done
 
           if [[ "${BRANCH}" == "stable" ]] && \
              [[ "${{ matrix.is_latest_driver }}" == "true" ]]; then
               container_tags+=("${TIMESTAMP}")
-              container_tags+=("${TIMESTAMP%.*}")
               container_tags+=("latest")
           fi
 
