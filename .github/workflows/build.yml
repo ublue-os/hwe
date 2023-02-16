@@ -14,7 +14,6 @@ on:
   workflow_dispatch:
   
 env:
-    IMAGE_NAME: ${{ format('{0}-nvidia', matrix.image_name) }}
     IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
 
 jobs:
@@ -132,7 +131,7 @@ jobs:
         id: meta
         with:
           images: |
-            ${{ env.IMAGE_NAME }}
+            ${{ format('{0}-nvidia', matrix.image_name) }}
           labels: |
             io.artifacthub.package.readme-url=https://raw.githubusercontent.com/ublue-os/base/main/README.md
             io.artifacthub.package.logo-url=https://avatars.githubusercontent.com/u/1728152?s=200&v=4
