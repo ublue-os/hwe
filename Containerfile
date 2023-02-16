@@ -63,6 +63,12 @@ FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION}
 COPY --from=builder /var/cache/akmods      /tmp/akmods
 COPY --from=builder /tmp/akmods-nvidia-key /tmp/akmods-nvidia-key
 
+ADD https://nvidia.github.io/nvidia-docker/rhel9.0/nvidia-docker.repo /etc/yum.repos.d/nvidia-container-runtime.repo
+ADD https://raw.githubusercontent.com/NVIDIA/dgx-selinux/master/bin/RHEL9/nvidia-container.pp /tmp/nvidia-container.pp
+
+RUN sed -i "s@gpgcheck=0@gpgcheck=1@" /etc/yum.repos.d/nvidia-container-runtime.repo && \
+    sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-{cisco-openh264,modular,updates-modular}.repo
+
 RUN KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')" \
     NVIDIA_FULL_VERSION="$(cat /tmp/akmods/nvidia-full-version.txt)" \
     NVIDIA_PACKAGE_NAME="$(cat /tmp/akmods/nvidia-package-name.txt)" \
@@ -71,15 +77,17 @@ RUN KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}
             https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
             https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm \
     && \
-        sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/{fedora-{cisco-openh264,modular,updates-modular},rpmfusion-free{,-updates}}.repo \
+        sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/rpmfusion-free{,-updates}.repo \
     && \
         rpm-ostree install \
             xorg-x11-drv-${NVIDIA_PACKAGE_NAME}-{,cuda-,devel-,kmodsrc-,power-}${NVIDIA_FULL_VERSION} \
-            kernel-devel-${KERNEL_VERSION} \
+            kernel-devel-${KERNEL_VERSION} nvidia-container-toolkit \
             "/tmp/akmods/${NVIDIA_PACKAGE_NAME}/kmod-${NVIDIA_PACKAGE_NAME}-${KERNEL_VERSION}-${NVIDIA_FULL_VERSION#*:}.rpm" \
             /tmp/akmods-nvidia-key/rpmbuild/RPMS/noarch/akmods-nvidia-key-*.rpm \
     && \
-        sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/rpmfusion-nonfree{,-updates}.repo \
+        semodule --verbose --install /tmp/nvidia-container.pp \
+    && \
+        sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/{nvidia-container-runtime,rpmfusion-nonfree{,-updates}}.repo \
     && \
         ln -s /usr/bin/ld.bfd /etc/alternatives/ld && \
         ln -s /etc/alternatives/ld /usr/bin/ld \
