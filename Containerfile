@@ -94,6 +94,7 @@ RUN KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}
             "/tmp/akmods/${NVIDIA_PACKAGE_NAME}/kmod-${NVIDIA_PACKAGE_NAME}-${KERNEL_VERSION}-${NVIDIA_FULL_VERSION#*:}.rpm" \
             /tmp/ublue-os-nvidia-addons/rpmbuild/RPMS/noarch/ublue-os-nvidia-addons-*.rpm \
     && \
+        mv /etc/nvidia-container-runtime/config.toml{,.orig} && \
         cp /etc/nvidia-container-runtime/config{-rootless,}.toml \
     && \
         semodule --verbose --install /usr/share/selinux/packages/nvidia-container.pp \
