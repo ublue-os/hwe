@@ -142,7 +142,7 @@ jobs:
           labels: |
             org.opencontainers.image.title=${{ format('{0}-nvidia', matrix.image_name) }}
             org.opencontainers.image.description=Vanilla ${{ matrix.image_name }} with Nvidia drivers added
-            io.artifacthub.package.readme-url=https://raw.githubusercontent.com/ublue-os/base/main/README.md
+            io.artifacthub.package.readme-url=https://raw.githubusercontent.com/ublue-os/nvidia/main/README.md
             io.artifacthub.package.logo-url=https://avatars.githubusercontent.com/u/1728152?s=200&v=4
       # Build image using Buildah action
       - name: Build Image
