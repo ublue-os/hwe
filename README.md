@@ -125,6 +125,10 @@ $ podman run \
     docker.io/mirrorgooglecontainers/cuda-vector-add:v0.1
 ```
 
+## Video playback
+
+Additional runtime packages are added for enabling hardware-accelerated video playback. [Some additional configuration may be needed to enable support in flatpak](https://github.com/elFarto/nvidia-vaapi-driver/issues/23).
+
 ## Acknowledgements
 
 Thanks to Alex Diaz for advice, and who got this working first, check out this repo:
