@@ -112,6 +112,19 @@ $ podman build \
     --tag build-test:latest
 ```
 
+## Using Nvidia GPUs in containers
+
+[There is support for enabling Nvidia GPUs in containers](https://www.redhat.com/en/blog/how-use-gpus-containers-bare-metal-rhel-8). This can can be verified by running the following:
+
+```
+$ podman run \
+    --user 1000:1000 \
+    --security-opt=no-new-privileges \
+    --cap-drop=ALL \
+    --security-opt label=type:nvidia_container_t  \
+    docker.io/mirrorgooglecontainers/cuda-vector-add:v0.1
+```
+
 ## Acknowledgements
 
 Thanks to Alex Diaz for advice, and who got this working first, check out this repo:

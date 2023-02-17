@@ -43,14 +43,24 @@ RUN NVIDIA_PACKAGE_NAME="$(cat /tmp/nvidia-package-name.txt)" \
     || \
         (cat /var/cache/akmods/${NVIDIA_PACKAGE_NAME}/${NVIDIA_VERSION}-for-${KERNEL_VERSION}.failed.log && exit 1)
 
-ADD akmods-nvidia-key.spec /tmp/akmods-nvidia-key/akmods-nvidia-key.spec
+ADD ublue-os-nvidia-addons.spec /tmp/ublue-os-nvidia-addons/ublue-os-nvidia-addons.spec
 
-RUN install -D /etc/pki/akmods/certs/public_key.der /tmp/akmods-nvidia-key/rpmbuild/SOURCES/public_key.der
+ADD https://nvidia.github.io/nvidia-docker/rhel9.0/nvidia-docker.repo \
+    /tmp/ublue-os-nvidia-addons/rpmbuild/SOURCES/nvidia-container-runtime.repo
+
+RUN sed -i "s@gpgcheck=0@gpgcheck=1@" /tmp/ublue-os-nvidia-addons/rpmbuild/SOURCES/nvidia-container-runtime.repo
+
+ADD files/etc/nvidia-container-runtime/config-rootless.toml \
+    /tmp/ublue-os-nvidia-addons/rpmbuild/SOURCES/config-rootless.toml
+ADD https://raw.githubusercontent.com/NVIDIA/dgx-selinux/master/bin/RHEL9/nvidia-container.pp \
+    /tmp/ublue-os-nvidia-addons/rpmbuild/SOURCES/nvidia-container.pp
+
+RUN install -D /etc/pki/akmods/certs/public_key.der /tmp/ublue-os-nvidia-addons/rpmbuild/SOURCES/public_key.der
 
 RUN rpmbuild -ba \
-    --define '_topdir /tmp/akmods-nvidia-key/rpmbuild' \
+    --define '_topdir /tmp/ublue-os-nvidia-addons/rpmbuild' \
     --define '%_tmppath %{_topdir}/tmp' \
-    /tmp/akmods-nvidia-key/akmods-nvidia-key.spec
+    /tmp/ublue-os-nvidia-addons/ublue-os-nvidia-addons.spec
 
 
 RUN cp /tmp/nvidia-package-name.txt /var/cache/akmods/nvidia-package-name.txt
@@ -60,8 +70,13 @@ RUN rpm -q "xorg-x11-drv-$(cat /tmp/nvidia-package-name.txt)" \
 
 FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION}
 
-COPY --from=builder /var/cache/akmods      /tmp/akmods
-COPY --from=builder /tmp/akmods-nvidia-key /tmp/akmods-nvidia-key
+COPY --from=builder /var/cache/akmods /tmp/akmods
+COPY --from=builder /tmp/ublue-os-nvidia-addons /tmp/ublue-os-nvidia-addons
+
+RUN sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-{cisco-openh264,modular,updates-modular}.repo
+
+RUN install -D /tmp/ublue-os-nvidia-addons/rpmbuild/SOURCES/nvidia-container-runtime.repo \
+    /etc/yum.repos.d/nvidia-container-runtime.repo
 
 RUN KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')" \
     NVIDIA_FULL_VERSION="$(cat /tmp/akmods/nvidia-full-version.txt)" \
@@ -71,13 +86,18 @@ RUN KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}
             https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
             https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm \
     && \
-        sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/{fedora-{cisco-openh264,modular,updates-modular},rpmfusion-free{,-updates}}.repo \
+        sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/rpmfusion-free{,-updates}.repo \
     && \
         rpm-ostree install \
             xorg-x11-drv-${NVIDIA_PACKAGE_NAME}-{,cuda-,devel-,kmodsrc-,power-}${NVIDIA_FULL_VERSION} \
-            kernel-devel-${KERNEL_VERSION} \
+            kernel-devel-${KERNEL_VERSION} nvidia-container-toolkit \
             "/tmp/akmods/${NVIDIA_PACKAGE_NAME}/kmod-${NVIDIA_PACKAGE_NAME}-${KERNEL_VERSION}-${NVIDIA_FULL_VERSION#*:}.rpm" \
-            /tmp/akmods-nvidia-key/rpmbuild/RPMS/noarch/akmods-nvidia-key-*.rpm \
+            /tmp/ublue-os-nvidia-addons/rpmbuild/RPMS/noarch/ublue-os-nvidia-addons-*.rpm \
+    && \
+        mv /etc/nvidia-container-runtime/config.toml{,.orig} && \
+        cp /etc/nvidia-container-runtime/config{-rootless,}.toml \
+    && \
+        semodule --verbose --install /usr/share/selinux/packages/nvidia-container.pp \
     && \
         sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/rpmfusion-nonfree{,-updates}.repo \
     && \
