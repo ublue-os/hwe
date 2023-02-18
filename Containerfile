@@ -105,6 +105,7 @@ RUN KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}
             --install=mesa-va-drivers-freeworld \
             --install=mesa-vdpau-drivers-freeworld \
             --install=libva-intel-driver \
+            --install=nvtop \
             --install=nvidia-vaapi-driver \
             --install=ffmpeg-libs \
             --install=ffmpeg \
