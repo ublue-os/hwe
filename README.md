@@ -127,7 +127,25 @@ $ podman run \
 
 ## Video playback
 
-Additional runtime packages are added for enabling hardware-accelerated video playback. [Some additional configuration may be needed to enable support in flatpak](https://github.com/elFarto/nvidia-vaapi-driver/issues/23).
+Additional runtime packages are added for enabling hardware-accelerated video playback. This can the enabled in Firefox (RPM or flatpak) by setting the following options to `true` in `about:config`:
+
+* `gfx.webrender.all`
+* `media.ffmpeg.vaapi.enabled`
+
+
+Extensive host access and reduced sandboxing is needed for Firefox flatpak to use `/usr/lib64/dri/nvidia_drv_video.so`:
+
+```
+$ flatpak override \
+    --user \
+    --filesystem=host-os \
+    --env=LIBVA_DRIVER_NAME=nvidia \
+    --env=LIBVA_DRIVERS_PATH=/run/host/usr/lib64/dri \
+    --env=LIBVA_MESSAGING_LEVEL=1 \
+    --env=MOZ_DISABLE_RDD_SANDBOX=1 \
+    --env=NVD_BACKEND=direct \
+    org.mozilla.firefox
+```
 
 ## Acknowledgements
 
