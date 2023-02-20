@@ -82,19 +82,9 @@ If you're forking this repo you should [read the docs](https://docs.github.com/e
 
 ## Building locally
 
-1. Generate signing keys
+1. Build container
 
-    Self-generated signing keys in `certs/` are required for kernel module signing to succeed:
-
-```
-$ ./generate-akmod-key
-```
-
-    If you are forking this repo, you also need to add the private key to the repository secrets under the name AKMOD_PRIVKEY.
-
-2. Build container
-
-    A container build can be invoked by simply running:
+A container build can be invoked by simply running:
 
 ```
 $ podman build \
@@ -102,15 +92,27 @@ $ podman build \
     --tag build-test:latest
 ```
 
-    Or to specify the version of Fedora and/or Nvidia driver:
+Or to specify the version of Fedora and/or Nvidia driver:
 
 ```
 $ podman build \
+    --build-arg IMAGE_NAME=silverblue \
     --build-arg FEDORA_MAJOR_VERSION=37 \
     --build-arg NVIDIA_MAJOR_VERSION=525 \
     --file Containerfile \
     --tag build-test:latest
 ```
+
+2. Generate signing keys
+
+If you are forking this repo, then you should add a private key to the repository secrets:
+
+```
+$ ./generate-akmod-key
+$ gh secret set AKMOD_PRIVKEY < certs/private_key.priv.prod
+$ cp certs/public_key.der.prod certs/public_key.der
+```
+
 
 ## Using Nvidia GPUs in containers
 

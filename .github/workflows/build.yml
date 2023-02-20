@@ -116,16 +116,7 @@ jobs:
         run: |
           mkdir -p certs
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-              openssl req -new \
-                  -nodes \
-                  -utf8 \
-                  -sha256 \
-                  -days 365 \
-                  -batch \
-                  -x509 \
-                  -outform DER \
-                  -out certs/public_key.der \
-                  -keyout certs/private_key.priv
+              echo "Using test signing key"
           else
               echo "${{ secrets.AKMOD_PRIVKEY }}" > certs/private_key.priv
           fi
