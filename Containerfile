@@ -27,10 +27,15 @@ RUN rpm-ostree install \
 # alternatives cannot create symlinks on its own during a container build
 RUN ln -s /usr/bin/ld.bfd /etc/alternatives/ld && ln -s /etc/alternatives/ld /usr/bin/ld
 
-ADD certs/public_key.der   /etc/pki/akmods/certs/public_key.der
-ADD certs/private_key.priv /etc/pki/akmods/private/private_key.priv
+ADD certs /tmp/certs
 
-RUN chmod 644 /etc/pki/akmods/{private/private_key.priv,certs/public_key.der}
+RUN [[ -s "/tmp/certs/private_key.priv" ]] || \
+    echo "WARNING: Using test signing key. Run './generate-akmods-key' for production builds." && \
+    cp /tmp/certs/private_key.priv{.test,} && \
+    cp /tmp/certs/public_key.der{.test,}
+
+RUN install -Dm644 /tmp/certs/public_key.der   /etc/pki/akmods/certs/public_key.der
+RUN install -Dm644 /tmp/certs/private_key.priv /etc/pki/akmods/private/private_key.priv
 
 # Either successfully build and install the kernel modules, or fail early with debug output
 RUN NVIDIA_PACKAGE_NAME="$(cat /tmp/nvidia-package-name.txt)" \
