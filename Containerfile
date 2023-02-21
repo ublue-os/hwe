@@ -131,4 +131,7 @@ RUN KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}
             /tmp/* \
             /var/* \
     && \
-        ostree container commit
+        ostree container commit \
+    && \
+        mkdir -p /var/tmp && \
+        chmod -R 1777 /var/tmp
