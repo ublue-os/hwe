@@ -16,29 +16,39 @@ Note: This project is a work-in-progress. You should at a minimum be familiar wi
 
    Note: The image previously titled "nvidia" will not be updated anymore. If you wish to retain the same functionality, switch to "silverblue-nvidia".
 
-    Silverblue (GNOME):  
+    [Silverblue (GNOME):](https://github.com/ublue-os/nvidia/pkgs/container/silverblue-nvidia)
     ```
     rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/silverblue-nvidia:latest
     ```
 
-    Kinoite (KDE):  
+    [Kinoite (KDE):](https://github.com/ublue-os/nvidia/pkgs/container/kinoite-nvidia)
     ```
     rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/kinoite-nvidia:latest
     ```
 
-    Vauxite (XFCE, unofficial):  
+    [Vauxite (XFCE, unofficial):](https://github.com/ublue-os/nvidia/pkgs/container/vauxite-nvidia)
     ```
     rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/vauxite-nvidia:latest
     ```
 
-    Base (no DE preinstalled):  
+    [Sericea (Sway, unofficial as of Fedora 38):](https://github.com/ublue-os/nvidia/pkgs/container/sericea-nvidia)
+    ```
+    rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/sericea-nvidia:38
+    ```
+
+    [Base (no DE preinstalled):](https://github.com/ublue-os/nvidia/pkgs/container/base-nvidia)
     ```
     rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/base-nvidia:latest
     ```
 
-    Sericea will be made available when there is a functioning Fedora 38 build.
-
    And then reboot.
+
+   Note: The Fedora release and Nvidia version can be set with the image tag as well:
+
+   |     | 525xx series                          | 520xx series  |
+   |-----|---------------------------------------|---------------|
+   | F37 | :latest / :37 / :37-525 / :37-current | :37-520       |
+   | F38 | :38 / :38-525 / :38-current           |               | 
 
 2. Set kargs after rebasing
 
