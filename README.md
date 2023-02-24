@@ -76,12 +76,22 @@ Alternatively, the key can be enrolled from within this repo:
 sudo mokutil --import ./certs/public_key.der
 ```
 
-## Rolling back
+## Rolling back and rebasing
 
-   To rollback to a specific date, use a date tag:
+   Generally you can [perform a rollback](https://docs.fedoraproject.org/en-US/fedora-silverblue/updates-upgrades-rollbacks/#rolling-back) with the following:
 
-       rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/nvidia:20230128
-       
+       rpm-ostree rollback
+
+   To rebase onto a specific date, use a date tag:
+
+       rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/silverblue-nvidia:20230128
+
+    Or to rebase onto a specific release, driver, and date:
+
+        rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/silverblue-nvidia:37-525-20230128
+
+    [More options for image tags can be found on the container catalog.](https://github.com/ublue-os/nvidia/pkgs/container/silverblue-nvidia/versions)
+
  ## Verification
 
 These images are signed with sisgstore's [cosign](https://docs.sigstore.dev/cosign/overview/). You can verify the signature by downloading the `cosign.pub` key from this repo and running the following command:
