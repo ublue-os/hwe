@@ -59,6 +59,7 @@ ADD files/etc/nvidia-container-runtime/config-rootless.toml \
     /tmp/ublue-os-nvidia-addons/rpmbuild/SOURCES/config-rootless.toml
 ADD https://raw.githubusercontent.com/NVIDIA/dgx-selinux/master/bin/RHEL9/nvidia-container.pp \
     /tmp/ublue-os-nvidia-addons/rpmbuild/SOURCES/nvidia-container.pp
+ADD files/etc/sway/environment /tmp/ublue-os-nvidia-addons/rpmbuild/SOURCES/environment
 
 RUN install -D /etc/pki/akmods/certs/public_key.der /tmp/ublue-os-nvidia-addons/rpmbuild/SOURCES/public_key.der
 
@@ -74,6 +75,8 @@ RUN rpm -q "xorg-x11-drv-$(cat /tmp/nvidia-package-name.txt)" \
     --queryformat '%{EPOCH}:%{VERSION}-%{RELEASE}.%{ARCH}' > /var/cache/akmods/nvidia-full-version.txt
 
 FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION}
+
+ARG IMAGE_NAME="${IMAGE_NAME}"
 
 COPY --from=builder /var/cache/akmods /tmp/akmods
 COPY --from=builder /tmp/ublue-os-nvidia-addons /tmp/ublue-os-nvidia-addons
@@ -126,6 +129,10 @@ RUN KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}
     && \
         ln -s /usr/bin/ld.bfd /etc/alternatives/ld && \
         ln -s /etc/alternatives/ld /usr/bin/ld \
+    && \
+       ([[ "${IMAGE_NAME}" == "sericea" ]] && \
+       mv /etc/sway/environment{,.orig} && \
+       install -Dm644 /usr/share/ublue-os/etc/sway/environment /etc/sway/environment) ||: \
     && \
         rm -rf \
             /tmp/* \
