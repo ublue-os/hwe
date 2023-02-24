@@ -45,10 +45,10 @@ Note: This project is a work-in-progress. You should at a minimum be familiar wi
 
    Note: The Fedora release and Nvidia version can be set with the image tag as well:
 
-   |     | 525xx series                          | 520xx series  |
-   |-----|---------------------------------------|---------------|
-   | F37 | :latest / :37 / :37-525 / :37-current | :37-520       |
-   | F38 | :38 / :38-525 / :38-current           |               | 
+   |     | 525xx series                          | 520xx series  | 470xx series (Kepler 2012-2014 support) |
+   |-----|---------------------------------------|---------------|-----------------------------------------|
+   | F37 | :latest / :37 / :37-525 / :37-current | :37-520       | :37-470                                 |
+   | F38 | :38 / :38-525 / :38-current           |               |                                         |
 
 2. Set kargs after rebasing
 
@@ -76,12 +76,22 @@ Alternatively, the key can be enrolled from within this repo:
 sudo mokutil --import ./certs/public_key.der
 ```
 
-## Rolling back
+## Rolling back and rebasing
 
-   To rollback to a specific date, use a date tag:
+   Generally you can [perform a rollback](https://docs.fedoraproject.org/en-US/fedora-silverblue/updates-upgrades-rollbacks/#rolling-back) with the following:
 
-       rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/nvidia:20230128
-       
+       rpm-ostree rollback
+
+   To rebase onto a specific date, use a date tag:
+
+       rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/silverblue-nvidia:20230128
+
+   Or to rebase onto a specific release, driver, and date:
+
+       rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/silverblue-nvidia:37-525-20230128
+
+   [More options for image tags can be found on the container catalog.](https://github.com/ublue-os/nvidia/pkgs/container/silverblue-nvidia/versions)
+
  ## Verification
 
 These images are signed with sisgstore's [cosign](https://docs.sigstore.dev/cosign/overview/). You can verify the signature by downloading the `cosign.pub` key from this repo and running the following command:
