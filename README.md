@@ -86,11 +86,11 @@ sudo mokutil --import ./certs/public_key.der
 
        rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/silverblue-nvidia:20230128
 
-    Or to rebase onto a specific release, driver, and date:
+   Or to rebase onto a specific release, driver, and date:
 
-        rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/silverblue-nvidia:37-525-20230128
+       rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/silverblue-nvidia:37-525-20230128
 
-    [More options for image tags can be found on the container catalog.](https://github.com/ublue-os/nvidia/pkgs/container/silverblue-nvidia/versions)
+   [More options for image tags can be found on the container catalog.](https://github.com/ublue-os/nvidia/pkgs/container/silverblue-nvidia/versions)
 
  ## Verification
 
