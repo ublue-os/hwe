@@ -48,7 +48,7 @@ Note: This project is a work-in-progress. You should at a minimum be familiar wi
    |     | 525xx series                          | 520xx series  | 470xx series (Kepler 2012-2014 support) |
    |-----|---------------------------------------|---------------|-----------------------------------------|
    | F37 | :latest / :37 / :37-525 / :37-current | :37-520       | :37-470                                 |
-   | F38 | :38 / :38-525 / :38-current           |               | :38-470                                 |
+   | F38 | :38 / :38-525 / :38-current           |               |                                         |
 
 2. Set kargs after rebasing
 
