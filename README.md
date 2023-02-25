@@ -32,6 +32,9 @@ Note: This project is a work-in-progress. You should at a minimum be familiar wi
     ```
 
     [Sericea (Sway, unofficial as of Fedora 38):](https://github.com/ublue-os/nvidia/pkgs/container/sericea-nvidia)
+
+    Note: [The Sway session has some custom configuration options set to improve stability on Nvidia GPUs](https://github.com/ublue-os/nvidia/blob/main/files/etc/sway/environment)
+
     ```
     rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/sericea-nvidia:38
     ```
