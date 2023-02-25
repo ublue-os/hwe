@@ -96,7 +96,7 @@ RUN KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}
     && \
         rpm-ostree install \
             xorg-x11-drv-${NVIDIA_PACKAGE_NAME}-{,cuda-,devel-,kmodsrc-,power-}${NVIDIA_FULL_VERSION} \
-            kernel-devel-${KERNEL_VERSION} nvidia-container-toolkit \
+            kernel-devel-${KERNEL_VERSION} nvidia-container-toolkit steam-devices \
             "/tmp/akmods/${NVIDIA_PACKAGE_NAME}/kmod-${NVIDIA_PACKAGE_NAME}-${KERNEL_VERSION}-${NVIDIA_FULL_VERSION#*:}.rpm" \
             /tmp/ublue-os-nvidia-addons/rpmbuild/RPMS/noarch/ublue-os-nvidia-addons-*.rpm \
     && \
