@@ -1,5 +1,5 @@
 ARG IMAGE_NAME="${IMAGE_NAME:-silverblue}"
-ARG BASE_IMAGE="quay.io/fedora-ostree-desktops/${IMAGE_NAME}"
+ARG BASE_IMAGE="ghcr.io/ublue-os/${IMAGE_NAME}-main"
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-37}"
 
 FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION} AS builder
@@ -8,20 +8,13 @@ ARG NVIDIA_MAJOR_VERSION="${NVIDIA_MAJOR_VERSION:-525}"
 
 RUN sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-{cisco-openh264,modular,updates-modular}.repo
 
-RUN rpm-ostree install \
-        https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm \
-        fedora-repos-archive
-
 # nvidia 520.xxx and newer currently don't have a -$VERSIONxx suffix in their
 # package names
 RUN if [ "${NVIDIA_MAJOR_VERSION}" -ge 520 ]; then echo "nvidia"; else echo "nvidia-${NVIDIA_MAJOR_VERSION}xx"; fi > /tmp/nvidia-package-name.txt
 
 RUN rpm-ostree install \
-        akmods \
-        mock \
-        xorg-x11-drv-$(cat /tmp/nvidia-package-name.txt)-{,cuda,devel,kmodsrc,power}*:${NVIDIA_MAJOR_VERSION}.*.fc$(rpm -E '%fedora.%_arch')  \
-        binutils \
-        kernel-devel-$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')
+        akmods mock \
+        xorg-x11-drv-$(cat /tmp/nvidia-package-name.txt)-{,cuda,devel,kmodsrc,power}*:${NVIDIA_MAJOR_VERSION}.*.fc$(rpm -E '%fedora.%_arch')
 
 
 # alternatives cannot create symlinks on its own during a container build
@@ -42,7 +35,7 @@ RUN NVIDIA_PACKAGE_NAME="$(cat /tmp/nvidia-package-name.txt)" \
     KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')" \
     NVIDIA_VERSION="$(basename "$(rpm -q "xorg-x11-drv-$(cat /tmp/nvidia-package-name.txt)" --queryformat '%{VERSION}-%{RELEASE}')" ".fc$(rpm -E '%fedora')")" \
     && \
-        echo $NVIDIA_VERSION && akmods --force --kernels "${KERNEL_VERSION}" --kmod "${NVIDIA_PACKAGE_NAME}" \
+        akmods --force --kernels "${KERNEL_VERSION}" --kmod "${NVIDIA_PACKAGE_NAME}" \
     && \
         modinfo /usr/lib/modules/${KERNEL_VERSION}/extra/${NVIDIA_PACKAGE_NAME}/nvidia{,-drm,-modeset,-peermem,-uvm}.ko.xz > /dev/null \
     || \
@@ -91,34 +84,10 @@ RUN KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}
     NVIDIA_PACKAGE_NAME="$(cat /tmp/akmods/nvidia-package-name.txt)" \
     && \
         rpm-ostree install \
-            https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
-            https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm \
-    && \
-        rpm-ostree install \
             xorg-x11-drv-${NVIDIA_PACKAGE_NAME}-{,cuda-,devel-,kmodsrc-,power-}${NVIDIA_FULL_VERSION} \
-            kernel-devel-${KERNEL_VERSION} nvidia-container-toolkit steam-devices \
+            nvidia-container-toolkit nvidia-vaapi-driver \
             "/tmp/akmods/${NVIDIA_PACKAGE_NAME}/kmod-${NVIDIA_PACKAGE_NAME}-${KERNEL_VERSION}-${NVIDIA_FULL_VERSION#*:}.rpm" \
             /tmp/ublue-os-nvidia-addons/rpmbuild/RPMS/noarch/ublue-os-nvidia-addons-*.rpm \
-    && \
-        rpm-ostree override remove $(rpm -qa --queryformat='%{NAME} ' \
-            mesa-va-drivers \
-            libavutil-free \
-            libswscale-free \
-            libswresample-free \
-            libavformat-free \
-            libavcodec-free \
-            libavfilter-free \
-            libavdevice-free \
-            libpostproc-free) \
-            --install=mesa-va-drivers-freeworld \
-            --install=mesa-vdpau-drivers-freeworld \
-            --install=libva-intel-driver \
-            --install=nvtop \
-            --install=nvidia-vaapi-driver \
-            --install=ffmpeg-libs \
-            --install=ffmpeg \
-            --install=libavcodec-freeworld \
-            --install=libva-utils \
     && \
         mv /etc/nvidia-container-runtime/config.toml{,.orig} && \
         cp /etc/nvidia-container-runtime/config{-rootless,}.toml \
