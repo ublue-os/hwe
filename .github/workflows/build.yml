@@ -15,7 +15,6 @@ on:
   
 env:
     IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
-
 jobs:
   push-ghcr:
     name: Build and push image
@@ -56,6 +55,10 @@ jobs:
       - name: Checkout Push to Registry action
         uses: actions/checkout@v3
 
+      - name: Matrix Variables
+        run: |
+            REPO=${{ github.repository }}
+            echo "IMAGE_NAME=${{ matrix.image_name }}-${REPO##*/}" >> $GITHUB_ENV
       - name: Generate tags
         id: generate-tags
         shell: bash
@@ -133,11 +136,11 @@ jobs:
         id: meta
         with:
           images: |
-            ${{ format('{0}-nvidia', matrix.image_name) }}
+            $IMAGE_NAME
           labels: |
-            org.opencontainers.image.title=${{ format('{0}-nvidia', matrix.image_name) }}
-            org.opencontainers.image.description=Vanilla ${{ matrix.image_name }} with Nvidia drivers added
-            io.artifacthub.package.readme-url=https://raw.githubusercontent.com/ublue-os/nvidia/main/README.md
+            org.opencontainers.image.title=$IMAGE_NAME
+            org.opencontainers.image.description=ublue-os $IMAGE_NAME with Nvidia drivers added
+            io.artifacthub.package.readme-url=https://raw.githubusercontent.com/${{ github.repository }}/main/README.md
             io.artifacthub.package.logo-url=https://avatars.githubusercontent.com/u/1728152?s=200&v=4
       # Build image using Buildah action
       - name: Build Image
@@ -146,9 +149,7 @@ jobs:
         with:
           containerfiles: |
             ./Containerfile
-          # Postfix image name with -nvidia to make it a little more descriptive
-          # Syntax: https://docs.github.com/en/actions/learn-github-actions/expressions#format
-          image: ${{ format('{0}-nvidia', matrix.image_name) }}
+          image: ${{ env.IMAGE_NAME }}
           tags: |
             ${{ steps.generate-tags.outputs.alias_tags }}
           build-args: |
