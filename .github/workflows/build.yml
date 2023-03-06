@@ -5,7 +5,7 @@ on:
       - main
       - devel
   schedule:
-    - cron: '20 20 * * *'  # 8:20pm everyday
+    - cron: '20 21 * * *'  # 9:20pm everyday (1 hr delay after 'main' builds)
   push:
     branches:
       - main
