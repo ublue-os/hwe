@@ -1,12 +1,23 @@
-# nvidia
+# Nvidia
 
 [![build-ublue](https://github.com/ublue-os/nvidia/actions/workflows/build.yml/badge.svg)](https://github.com/ublue-os/nvidia/actions/workflows/build.yml)
 
-The purpose of these images is to provide builds of vanilla Fedora with Nvidia drivers built-in. This approach can lead to greater reliability as failures can be caught at the build level instead of the client machine. This also lets us generate individual sets of images for each series of Nvidia drivers, allowing users to remain current with their OS but on an older, known working driver. Performance regression with a recent driver update? Reboot into a known-working driver after one command. That's the goal!
+The purpose of these images is to provide [community Fedora images](https://github.com/ublue-os/main) with Nvidia drivers built-in. This approach can lead to greater reliability as failures can be caught at the build level instead of the client machine. This also lets us generate individual sets of images for each series of Nvidia drivers, allowing users to remain current with their OS but on an older, known working driver. Performance regression with a recent driver update? Reboot into a known-working driver after one command. That's the goal!
 
 These images are based on the experimental ostree native container images hosted at [quay.io](https://quay.io/organization/fedora-ostree-desktops) ([repo](https://gitlab.com/fedora/ostree/ci-test)).
 
 Note: This project is a work-in-progress. You should at a minimum be familiar with the [Fedora documentation](https://docs.fedoraproject.org/en-US/fedora-silverblue/) on how to administer an ostree system. This is currently for people who want to help figure this out, so there may be explosions and gnashing of teeth. 
+
+## Core image features:
+
+- Multiple Nvidia driver streams (525xx, 520xx, and 470xx)
+- CUDA support
+- [Container runtime support](https://github.com/ublue-os/nvidia#using-nvidia-gpus-in-containers)
+- Secure boot
+- [Hardware-accelerated video playback](https://github.com/ublue-os/nvidia#video-playback)
+- Selinux support
+- [Multiple Fedora flavors and releases](https://github.com/ublue-os/nvidia#setup)
+- Post-install setup with [`just`](https://github.com/ublue-os/nvidia/blob/main/justfile)
 
 ## Setup
 
@@ -26,11 +37,11 @@ Note: This project is a work-in-progress. You should at a minimum be familiar wi
     rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/kinoite-nvidia:latest
     ```
     
-    [LXQt:](https://github.com/ublue-os/nvidia/pkgs/container/lxqt-nvidia)
+    [LXQt (unofficial):](https://github.com/ublue-os/nvidia/pkgs/container/lxqt-nvidia)
     ```
     rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/lxqt-nvidia:latest
     ```
-    [MATE:](https://github.com/ublue-os/nvidia/pkgs/container/mate-nvidia)
+    [MATE (unofficial):](https://github.com/ublue-os/nvidia/pkgs/container/mate-nvidia)
     ```
     rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/mate-nvidia:latest
     ```
@@ -129,6 +140,7 @@ Or to specify the version of Fedora and/or Nvidia driver:
 ```
 $ podman build \
     --build-arg IMAGE_NAME=silverblue \
+    --build-arg SOURCE_IMAGE=silverblue \
     --build-arg FEDORA_MAJOR_VERSION=37 \
     --build-arg NVIDIA_MAJOR_VERSION=525 \
     --file Containerfile \
