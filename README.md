@@ -25,6 +25,15 @@ Note: This project is a work-in-progress. You should at a minimum be familiar wi
     ```
     rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/kinoite-nvidia:latest
     ```
+    
+    [LXQt:](https://github.com/ublue-os/nvidia/pkgs/container/lxqt-nvidia)
+    ```
+    rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/lxqt-nvidia:latest
+    ```
+    [MATE:](https://github.com/ublue-os/nvidia/pkgs/container/mate-nvidia)
+    ```
+    rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/mate-nvidia:latest
+    ```
 
     [Vauxite (XFCE, unofficial):](https://github.com/ublue-os/nvidia/pkgs/container/vauxite-nvidia)
     ```
