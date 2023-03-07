@@ -16,6 +16,10 @@ RUN rpm-ostree install \
         akmods mock \
         xorg-x11-drv-$(cat /tmp/nvidia-package-name.txt)-{,cuda,devel,kmodsrc,power}*:${NVIDIA_MAJOR_VERSION}.*.fc$(rpm -E '%fedora.%_arch')
 
+COPY --from=ghcr.io/ublue-os/config:latest /build /tmp/build
+COPY justfile /tmp/build/ublue-os-just/justfile
+RUN /tmp/build/ublue-os-just/build.sh
+
 
 # alternatives cannot create symlinks on its own during a container build
 RUN ln -s /usr/bin/ld.bfd /etc/alternatives/ld && ln -s /etc/alternatives/ld /usr/bin/ld
@@ -71,6 +75,7 @@ FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION}
 
 ARG IMAGE_NAME="${IMAGE_NAME}"
 
+COPY --from=builder /tmp/ublue-os /tmp/ublue-os
 COPY --from=builder /var/cache/akmods /tmp/akmods
 COPY --from=builder /tmp/ublue-os-nvidia-addons /tmp/ublue-os-nvidia-addons
 
@@ -88,6 +93,7 @@ RUN KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}
             nvidia-container-toolkit nvidia-vaapi-driver \
             "/tmp/akmods/${NVIDIA_PACKAGE_NAME}/kmod-${NVIDIA_PACKAGE_NAME}-${KERNEL_VERSION}-${NVIDIA_FULL_VERSION#*:}.rpm" \
             /tmp/ublue-os-nvidia-addons/rpmbuild/RPMS/noarch/ublue-os-nvidia-addons-*.rpm \
+            /tmp/ublue-os/rpmbuild/RPMS/noarch/ublue-os-just-*.noarch.rpm \
     && \
         mv /etc/nvidia-container-runtime/config.toml{,.orig} && \
         cp /etc/nvidia-container-runtime/config{-rootless,}.toml \
