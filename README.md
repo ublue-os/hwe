@@ -131,8 +131,11 @@ A container build can be invoked by simply running:
 
 ```
 $ podman build \
-    --file Containerfile \
+    --file build.Containerfile \
     --tag build-test:latest
+$ podman build \
+    --file install.Containerfile \
+    --tag install-test:latest
 ```
 
 Or to specify the version of Fedora and/or Nvidia driver:
@@ -140,10 +143,18 @@ Or to specify the version of Fedora and/or Nvidia driver:
 ```
 $ podman build \
     --build-arg IMAGE_NAME=silverblue \
-    --build-arg SOURCE_IMAGE=silverblue \
     --build-arg FEDORA_MAJOR_VERSION=37 \
     --build-arg NVIDIA_MAJOR_VERSION=525 \
-    --file Containerfile \
+    --file build.Containerfile \
+    --tag build-test:37-525
+
+$ podman build \
+    --build-arg IMAGE_NAME=silverblue \
+    --build-arg FEDORA_MAJOR_VERSION=37 \
+    --build-arg NVIDIA_MAJOR_VERSION=525 \
+    --build-arg AKMODS_CACHE=build-test \
+    --build-arg AKMODS_VERSION=37 \
+    --file install.Containerfile \
     --tag build-test:latest
 ```
 
