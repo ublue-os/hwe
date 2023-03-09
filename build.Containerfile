@@ -17,6 +17,9 @@ ADD ublue-os-nvidia-addons.spec /tmp/ublue-os-nvidia-addons/ublue-os-nvidia-addo
 ADD https://nvidia.github.io/nvidia-docker/rhel9.0/nvidia-docker.repo \
     /tmp/ublue-os-nvidia-addons/rpmbuild/SOURCES/nvidia-container-runtime.repo
 
+ADD https://nvidia.github.io/nvidia-docker/rhel9.0/nvidia-docker.repo \
+    /etc/yum.repos.d/nvidia-container-runtime.repo
+
 ADD files/etc/nvidia-container-runtime/config-rootless.toml \
     /tmp/ublue-os-nvidia-addons/rpmbuild/SOURCES/config-rootless.toml
 ADD https://raw.githubusercontent.com/NVIDIA/dgx-selinux/master/bin/RHEL9/nvidia-container.pp \
