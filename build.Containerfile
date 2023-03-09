@@ -25,18 +25,8 @@ ADD files/etc/sway/environment /tmp/ublue-os-nvidia-addons/rpmbuild/SOURCES/envi
 
 RUN /tmp/build.sh
 
-FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION}
+FROM scratch
 
-ARG IMAGE_NAME="${IMAGE_NAME}"
-
+COPY --from=builder /var/cache /var/cache
 COPY --from=builder /tmp/ublue-os /tmp/ublue-os
-COPY --from=builder /var/cache/akmods /tmp/akmods
 COPY --from=builder /tmp/ublue-os-nvidia-addons /tmp/ublue-os-nvidia-addons
-
-COPY install.sh /tmp/install.sh
-COPY post-install.sh /tmp/post-install.sh
-RUN /tmp/install.sh
-RUN /tmp/post-install.sh
-RUN rm -rf /tmp/* /var/*
-RUN ostree container commit
-RUN mkdir -p /var/tmp && chmod -R 1777 /var/tmp
