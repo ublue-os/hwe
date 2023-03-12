@@ -4,13 +4,17 @@ on:
     branches:
       - main
       - devel
+    paths-ignore:
+      - '**.md'
+      - '**.txt'  
   schedule:
     - cron: '20 21 * * *'  # 9:20pm everyday (1 hr delay after 'main' builds)
   push:
     branches:
       - main
     paths-ignore:
-      - '**/README.md'
+      - '**.md'
+      - '**.txt'
   workflow_dispatch:
   
 env:
