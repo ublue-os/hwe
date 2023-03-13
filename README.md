@@ -208,3 +208,12 @@ $ flatpak override \
 Thanks to Alex Diaz for advice, and who got this working first, check out this repo:
 
 - https://github.com/akdev1l/ostree-images
+
+## [![Repography logo](https://images.repography.com/logo.svg)](https://repography.com) / Recent activity [![Time period](https://images.repography.com/35181738/ublue-os/nvidia/recent-activity/1c8ovnGsRhmILlhMg4JBeas3ii7RQ8RN5ETspwa_MKs/XClgd0l5PqadFLWZmE8aQN6H4DKSp1budGqJbeT1NN0_badge.svg)](https://repography.com)
+[![Timeline graph](https://images.repography.com/35181738/ublue-os/nvidia/recent-activity/1c8ovnGsRhmILlhMg4JBeas3ii7RQ8RN5ETspwa_MKs/XClgd0l5PqadFLWZmE8aQN6H4DKSp1budGqJbeT1NN0_timeline.svg)](https://github.com/ublue-os/nvidia/commits)
+[![Issue status graph](https://images.repography.com/35181738/ublue-os/nvidia/recent-activity/1c8ovnGsRhmILlhMg4JBeas3ii7RQ8RN5ETspwa_MKs/XClgd0l5PqadFLWZmE8aQN6H4DKSp1budGqJbeT1NN0_issues.svg)](https://github.com/ublue-os/nvidia/issues)
+[![Pull request status graph](https://images.repography.com/35181738/ublue-os/nvidia/recent-activity/1c8ovnGsRhmILlhMg4JBeas3ii7RQ8RN5ETspwa_MKs/XClgd0l5PqadFLWZmE8aQN6H4DKSp1budGqJbeT1NN0_prs.svg)](https://github.com/ublue-os/nvidia/pulls)
+[![Trending topics](https://images.repography.com/35181738/ublue-os/nvidia/recent-activity/1c8ovnGsRhmILlhMg4JBeas3ii7RQ8RN5ETspwa_MKs/XClgd0l5PqadFLWZmE8aQN6H4DKSp1budGqJbeT1NN0_words.svg)](https://github.com/ublue-os/nvidia/commits)
+[![Top contributors](https://images.repography.com/35181738/ublue-os/nvidia/recent-activity/1c8ovnGsRhmILlhMg4JBeas3ii7RQ8RN5ETspwa_MKs/XClgd0l5PqadFLWZmE8aQN6H4DKSp1budGqJbeT1NN0_users.svg)](https://github.com/ublue-os/nvidia/graphs/contributors)
+[![Activity map](https://images.repography.com/35181738/ublue-os/nvidia/recent-activity/1c8ovnGsRhmILlhMg4JBeas3ii7RQ8RN5ETspwa_MKs/XClgd0l5PqadFLWZmE8aQN6H4DKSp1budGqJbeT1NN0_map.svg)](https://github.com/ublue-os/nvidia/commits)
+
