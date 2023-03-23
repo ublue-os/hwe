@@ -116,7 +116,7 @@ jobs:
           tags: |
             ${{ steps.generate-tags.outputs.alias_tags }}
           build-args: |
-            IMAGE_NAME=base
+            IMAGE_NAME=base-main
             FEDORA_MAJOR_VERSION=${{ matrix.major_version }}
             NVIDIA_MAJOR_VERSION=${{ matrix.driver_version }}
           labels: ${{ steps.meta.outputs.labels }}
