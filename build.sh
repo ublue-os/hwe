@@ -19,8 +19,6 @@ rpm-ostree install \
     xorg-x11-drv-${NVIDIA_PACKAGE_NAME}-{,cuda,devel,kmodsrc,power}*:${NVIDIA_MAJOR_VERSION}.*.fc${RELEASE} \
     mock
 
-/tmp/build/ublue-os-just/build.sh
-
 # alternatives cannot create symlinks on its own during a container build
 ln -s /usr/bin/ld.bfd /etc/alternatives/ld && ln -s /etc/alternatives/ld /usr/bin/ld
 
@@ -45,8 +43,6 @@ modinfo /usr/lib/modules/${KERNEL_VERSION}/extra/${NVIDIA_PACKAGE_NAME}/nvidia{,
 (cat /var/cache/akmods/${NVIDIA_PACKAGE_NAME}/${NVIDIA_AKMOD_VERSION}-for-${KERNEL_VERSION}.failed.log && exit 1)
 
 sed -i "s@gpgcheck=0@gpgcheck=1@" /tmp/ublue-os-nvidia-addons/rpmbuild/SOURCES/nvidia-container-runtime.repo
-
-install -D /etc/pki/akmods/certs/public_key.der /tmp/ublue-os-nvidia-addons/rpmbuild/SOURCES/public_key.der
 
 rpmbuild -ba \
     --define '_topdir /tmp/ublue-os-nvidia-addons/rpmbuild' \

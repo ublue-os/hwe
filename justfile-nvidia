@@ -7,9 +7,6 @@ set-kargs:
         --append=modprobe.blacklist=nouveau \
         --append=nvidia-drm.modeset=1
 
-enroll-secure-boot-key:
-    sudo mokutil --import /etc/pki/akmods/certs/akmods-nvidia.der
-
 test-cuda:
     podman run \
         --user 1000:1000 \
