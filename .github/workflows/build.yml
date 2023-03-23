@@ -8,7 +8,7 @@ on:
       - '**.md'
       - '**.txt'  
   schedule:
-    - cron: '9 0 * * *'  # 9:00am everyday (1 h delay after 'extended' builds)
+    - cron: '0 9 * * *'  # 9:00am everyday (1 h delay after 'extended' builds)
   push:
     branches:
       - main
