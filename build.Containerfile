@@ -1,6 +1,6 @@
 #Build from ublue/base, simpley because it's the smallest image
 ARG IMAGE_NAME="${IMAGE_NAME:-base-main}"
-ARG BASE_IMAGE="ghcr.io/dhoell/${IMAGE_NAME}"
+ARG BASE_IMAGE="ghcr.io/ublue-os/${IMAGE_NAME}"
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-37}"
 
 FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION} AS builder
