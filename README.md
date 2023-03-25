@@ -66,13 +66,6 @@ Note: This project is a work-in-progress. You should at a minimum be familiar wi
 
    And then reboot.
 
-   Note: The Fedora release and Nvidia version can be set with the image tag as well:
-
-   |     | 525xx series (latest, best supported) | 520xx series (deprecated) | 470xx series (Kepler 2012-2014 support) |
-   |-----|---------------------------------------|---------------------------|-----------------------------------------|
-   | F37 | :latest / :37 / :37-525 / :37-current | :37-520                   | :37-470                                 |
-   | F38 | :38 / :38-525 / :38-current           |                           |                                         |
-
 2. Set kargs after rebasing
 
    Setting kargs to disable nouveau and enabling nvidia early at boot is [currently not supported within container builds](https://github.com/coreos/rpm-ostree/issues/3738). They must be set after rebasing:
@@ -114,6 +107,21 @@ sudo mokutil --import ./certs/public_key.der
        rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/silverblue-nvidia:37-525-20230128
 
    [More options for image tags can be found on the container catalog.](https://github.com/ublue-os/nvidia/pkgs/container/silverblue-nvidia/versions)
+   
+## Support
+
+Note: The Fedora release and Nvidia version can be set with the image tag as well:
+
+   |     | 525xx series (latest, best supported) | 520xx series (deprecated) | 470xx series (Kepler 2012-2014 support) |
+   |-----|---------------------------------------|---------------------------|-----------------------------------------|
+   | F37 | :latest / :37 / :37-525 / :37-current | :37-520                   | :37-470                                 |
+   | F38 | :38 / :38-525 / :38-current           |                           |                                         |
+
+It is *strongly encouraged* for you to subscribe to [the Nvidia driver announcements](https://github.com/orgs/ublue-os/discussions/categories/nvidia-driver-announcements?discussions_q=is%3Aopen+category%3A%22Nvidia+Driver+Announcements%22) section of the forums to keep up with the latest changes and news. 
+
+- Drivers are provided by Nvidia and packaged by RPMFusion, therefore we cannot make any guarantees on support outside of the support these two organizations provide.
+- Due to the nature of third party kernel modules, support for older versions is best effort.
+- TLDR, we do the best we can but sometimes need to drop support depending on what's going with Nvidia, RPMFusion, Fedora, and the Linux kernel. 
 
  ## Verification
 
