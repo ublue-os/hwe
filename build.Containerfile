@@ -5,6 +5,7 @@ ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-37}"
 FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION} AS builder
 
 ARG NVIDIA_MAJOR_VERSION="${NVIDIA_MAJOR_VERSION:-525}"
+ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION}"
 
 COPY --from=ghcr.io/ublue-os/config:latest /build /tmp/build
 COPY justfile /tmp/build/ublue-os-just/justfile
@@ -16,6 +17,8 @@ ADD ublue-os-nvidia-addons.spec /tmp/ublue-os-nvidia-addons/ublue-os-nvidia-addo
 
 ADD https://nvidia.github.io/nvidia-docker/rhel9.0/nvidia-docker.repo \
     /tmp/ublue-os-nvidia-addons/rpmbuild/SOURCES/nvidia-container-runtime.repo
+ADD https://copr.fedorainfracloud.org/coprs/lukenukem/asus-linux/repo/fedora-${FEDORA_MAJOR_VERSION}/lukenukem-asus-linux-fedora-${FEDORA_MAJOR_VERSION}.repo \
+    /tmp/ublue-os-nvidia-addons/rpmbuild/SOURCES/lukenukem-asus-linux.repo
 
 ADD https://nvidia.github.io/nvidia-docker/rhel9.0/nvidia-docker.repo \
     /etc/yum.repos.d/nvidia-container-runtime.repo
@@ -27,6 +30,8 @@ ADD https://raw.githubusercontent.com/NVIDIA/dgx-selinux/master/bin/RHEL9/nvidia
 ADD files/etc/sway/environment /tmp/ublue-os-nvidia-addons/rpmbuild/SOURCES/environment
 
 RUN /tmp/build.sh
+
+RUN rpm -ql /tmp/ublue-os-nvidia-addons/rpmbuild/RPMS/*/*.rpm
 
 FROM scratch
 

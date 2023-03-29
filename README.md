@@ -18,6 +18,7 @@ Note: This project is a work-in-progress. You should at a minimum be familiar wi
 - Selinux support
 - [Multiple Fedora flavors and releases](https://github.com/ublue-os/nvidia#setup)
 - Post-install setup with [`just`](https://github.com/ublue-os/nvidia/blob/main/justfile)
+- Multi-GPU support with [`supergfxctl`](https://gitlab.com/asus-linux/supergfxctl) ([optional Gnome Shell extension](https://extensions.gnome.org/extension/5344/supergfxctl-gex/))
 
 ## Setup
 
