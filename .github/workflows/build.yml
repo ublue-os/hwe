@@ -8,7 +8,7 @@ on:
       - '**.md'
       - '**.txt'  
   schedule:
-    - cron: '20 21 * * *'  # 9:20pm everyday (1 hr delay after 'main' builds)
+    - cron: '0 9 * * *'  # 9:00am everyday (1 hr delay after future 'akmods' builds)
   push:
     branches:
       - main
