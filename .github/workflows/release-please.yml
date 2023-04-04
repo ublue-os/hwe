@@ -36,7 +36,11 @@ jobs:
           ostreecontainer --url="ghcr.io/ublue-os/${{ matrix.image_name }}:${{ matrix.major_version }}" --no-signature-verification
           url --url="https://download.fedoraproject.org/pub/fedora/linux/development/38/Everything/x86_64/os/"
 
-          %post --logfile=/root/ks-post.log --erroronfail
+          %post --nochroot --logfile=/mnt/sysimage/root/ks-post.log --erroronfail
+             rpm-ostree kargs \
+             --append=rd.driver.blacklist=nouveau \
+             --append=modprobe.blacklist=nouveau \
+             --append=nvidia-drm.modeset=1
           %end
           END
       - name: Generate ISO  
