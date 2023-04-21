@@ -64,7 +64,7 @@ jobs:
           BUILD_TAGS=()
 
           # Have tags for tracking builds during pull request
-          SHA_SHORT="$(git rev-parse --short HEAD)"
+          SHA_SHORT="${GITHUB_SHA::7}"
           COMMIT_TAGS+=("pr-${{ github.event.number }}-${VARIANT}")
           COMMIT_TAGS+=("${SHA_SHORT}-${VARIANT}")
 
@@ -173,7 +173,7 @@ jobs:
 
       - name: Sign container image
         run: |
-          cosign sign -y --key cosign.key ${{ steps.registry_case.outputs.lowercase }}/${{ steps.build_image.outputs.image }}@${TAGS}
+          cosign sign -y --key env://COSIGN_PRIVATE_KEY ${{ steps.registry_case.outputs.lowercase }}/${{ env.IMAGE_NAME }}@${TAGS}
         env:
           TAGS: ${{ steps.push.outputs.digest }}
           COSIGN_EXPERIMENTAL: false
