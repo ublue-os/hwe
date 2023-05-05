@@ -1,9 +1,6 @@
 name: build-ublue
 on:
   pull_request:
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
   merge_group:    
   schedule:
     - cron: '20 21 * * *'  # 9:20pm everyday (1 hr delay after 'main' builds)
