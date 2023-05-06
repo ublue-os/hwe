@@ -7,8 +7,6 @@ FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION} AS builder
 ARG NVIDIA_MAJOR_VERSION="${NVIDIA_MAJOR_VERSION:-525}"
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION}"
 
-COPY --from=ghcr.io/ublue-os/config:latest /build /tmp/build
-COPY justfile /tmp/build/ublue-os-just/justfile
 COPY build.sh /tmp/build.sh
 
 ADD certs /tmp/certs
