@@ -124,7 +124,7 @@ It is *strongly encouraged* for you to subscribe to [the Nvidia driver announcem
 - Due to the nature of third party kernel modules, support for older versions is best effort.
 - TLDR, we do the best we can but sometimes need to drop support depending on what's going with Nvidia, RPMFusion, Fedora, and the Linux kernel. 
 
- ## Verification
+## Verification
 
 These images are signed with sisgstore's [cosign](https://docs.sigstore.dev/cosign/overview/). You can verify the signature by downloading the `cosign.pub` key from this repo and running the following command:
 
