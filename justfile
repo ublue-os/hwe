@@ -1,5 +1,3 @@
-default:
-    @just --list
 
 set-kargs:
     rpm-ostree kargs \
