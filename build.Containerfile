@@ -34,5 +34,4 @@ RUN rpm -ql /tmp/ublue-os-nvidia-addons/rpmbuild/RPMS/*/*.rpm
 FROM scratch
 
 COPY --from=builder /var/cache /var/cache
-COPY --from=builder /tmp/ublue-os /tmp/ublue-os
 COPY --from=builder /tmp/ublue-os-nvidia-addons /tmp/ublue-os-nvidia-addons
