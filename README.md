@@ -17,7 +17,7 @@ Note: This project is a work-in-progress. You should at a minimum be familiar wi
 - [Hardware-accelerated video playback](https://github.com/ublue-os/nvidia#video-playback)
 - Selinux support
 - [Multiple Fedora flavors and releases](https://github.com/ublue-os/nvidia#setup)
-- Post-install setup with [`just`](https://github.com/ublue-os/nvidia/blob/main/justfile)
+- Post-install setup with [`just`](https://github.com/ublue-os/config/blob/main/build/ublue-os-just/nvidia.just)
 - Multi-GPU support with [`supergfxctl`](https://gitlab.com/asus-linux/supergfxctl) ([optional Gnome Shell extension](https://extensions.gnome.org/extension/5344/supergfxctl-gex/))
 
 ## Setup
