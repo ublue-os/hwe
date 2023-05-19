@@ -22,7 +22,7 @@ Note: This project is a work-in-progress. You should at a minimum be familiar wi
 
 ## Setup
 
-1. Rebase onto the image
+### 1. Rebase onto the image
 
    Any system running `rpm-ostree` should be able to rebase onto one of the images built in this project:
 
@@ -67,7 +67,7 @@ Note: This project is a work-in-progress. You should at a minimum be familiar wi
 
    And then reboot.
 
-2. Set kargs after rebasing
+### 2. Set kargs after rebasing
 
    Setting kargs to disable nouveau and enabling nvidia early at boot is [currently not supported within container builds](https://github.com/coreos/rpm-ostree/issues/3738). They must be set after rebasing:
 
@@ -79,9 +79,9 @@ rpm-ostree kargs \
 ```
    And then reboot one more time!
 
-3. Enable Secure Boot support
+### 3. Enable Secure Boot support
 
-IMPORTANT NOTE: On June 17, 00:00 UTC, we will make a change to the key which is used to sign nvidia kernel modules. The new key is being made available May 17. The new key is `akmods-ublue.der` / `public_key.der.new` in the code blocks below. Until this document is updated to remove the old key, please import BOTH keys! This will ensure your SecureBoot system boots as expected after the cutover on June 17.
+**IMPORTANT NOTE:** On June 17, 00:00 UTC, we will make a change to the key which is used to sign nvidia kernel modules. The new key is being made available May 17. The new key is `akmods-ublue.der` / `public_key.der.new` in the code blocks below. Until this document is updated to remove the old key, please import BOTH keys! This will ensure your SecureBoot system boots as expected after the cutover on June 17.
 
 [Secure Boot](https://rpmfusion.org/Howto/Secure%20Boot) support for the nvidia kernel modules can be enabled by enrolling the signing key:
 
