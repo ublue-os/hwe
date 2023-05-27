@@ -24,52 +24,46 @@ Note: This project is a work-in-progress. You should at a minimum be familiar wi
 
 ### 1. Rebase onto the image
 
-   Any system running `rpm-ostree` should be able to rebase onto one of the images built in this project:
+Any system running `rpm-ostree` should be able to rebase onto one of the images built in this project:
 
-   Note: The image previously titled "nvidia" will not be updated anymore. If you wish to retain the same functionality, switch to "silverblue-nvidia".
+Note: The image previously titled "nvidia" will not be updated anymore. If you wish to retain the same functionality, switch to "silverblue-nvidia".
 
-    [Silverblue (GNOME):](https://github.com/ublue-os/nvidia/pkgs/container/silverblue-nvidia)
-    ```
+[Silverblue (GNOME):](https://github.com/ublue-os/nvidia/pkgs/container/silverblue-nvidia)
+
     rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/silverblue-nvidia:latest
-    ```
 
-    [Kinoite (KDE):](https://github.com/ublue-os/nvidia/pkgs/container/kinoite-nvidia)
-    ```
+
+[Kinoite (KDE):](https://github.com/ublue-os/nvidia/pkgs/container/kinoite-nvidia)
+
     rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/kinoite-nvidia:latest
-    ```
     
-    [LXQt (unofficial):](https://github.com/ublue-os/nvidia/pkgs/container/lxqt-nvidia)
-    ```
+[LXQt (unofficial):](https://github.com/ublue-os/nvidia/pkgs/container/lxqt-nvidia)
+
     rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/lxqt-nvidia:latest
-    ```
-    [MATE (unofficial):](https://github.com/ublue-os/nvidia/pkgs/container/mate-nvidia)
-    ```
+
+[MATE (unofficial):](https://github.com/ublue-os/nvidia/pkgs/container/mate-nvidia)
+
     rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/mate-nvidia:latest
-    ```
 
-    [Vauxite (XFCE, unofficial):](https://github.com/ublue-os/nvidia/pkgs/container/vauxite-nvidia)
-    ```
+[Vauxite (XFCE, unofficial):](https://github.com/ublue-os/nvidia/pkgs/container/vauxite-nvidia)
+
     rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/vauxite-nvidia:latest
-    ```
 
-    [Sericea (Sway, unofficial as of Fedora 38):](https://github.com/ublue-os/nvidia/pkgs/container/sericea-nvidia)
+[Sericea (Sway, unofficial as of Fedora 38):](https://github.com/ublue-os/nvidia/pkgs/container/sericea-nvidia)
 
-    Note: [The Sway session has some custom configuration options set to improve stability on Nvidia GPUs](https://github.com/ublue-os/nvidia/blob/main/files/etc/sway/environment)
+Note: [The Sway session has some custom configuration options set to improve stability on Nvidia GPUs](https://github.com/ublue-os/nvidia/blob/main/files/etc/sway/environment)
 
-    ```
     rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/sericea-nvidia:38
-    ```
 
-    [Base (no DE preinstalled):](https://github.com/ublue-os/nvidia/pkgs/container/base-nvidia)
-    ```
+[Base (no DE preinstalled):](https://github.com/ublue-os/nvidia/pkgs/container/base-nvidia)
+
     rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/base-nvidia:latest
-    ```
 
-   And then reboot.
+And then reboot.
 
 ### 2. Set kargs after rebasing
 
-   Setting kargs to disable nouveau and enabling nvidia early at boot is [currently not supported within container builds](https://github.com/coreos/rpm-ostree/issues/3738). They must be set after rebasing:
+Setting kargs to disable nouveau and enabling nvidia early at boot is [currently not supported within container builds](https://github.com/coreos/rpm-ostree/issues/3738). They must be set after rebasing:
 
 ```
 rpm-ostree kargs \
@@ -77,10 +71,9 @@ rpm-ostree kargs \
     --append=modprobe.blacklist=nouveau \
     --append=nvidia-drm.modeset=1
 ```
-   And then reboot one more time!
+And then reboot one more time!
 
 ### 3. Enable Secure Boot support
-
 **IMPORTANT NOTE:** On June 17, 00:00 UTC, we will make a change to the key which is used to sign nvidia kernel modules. The new key is being made available May 17. The new key is `akmods-ublue.der` / `public_key.der.new` in the code blocks below. Until this document is updated to remove the old key, please import BOTH keys! This will ensure your SecureBoot system boots as expected after the cutover on June 17.
 
 [Secure Boot](https://rpmfusion.org/Howto/Secure%20Boot) support for the nvidia kernel modules can be enabled by enrolling the signing key:
@@ -99,19 +92,19 @@ sudo mokutil --import ./certs/public_key.der.new
 
 ## Rolling back and rebasing
 
-   Generally you can [perform a rollback](https://docs.fedoraproject.org/en-US/fedora-silverblue/updates-upgrades-rollbacks/#rolling-back) with the following:
+Generally you can [perform a rollback](https://docs.fedoraproject.org/en-US/fedora-silverblue/updates-upgrades-rollbacks/#rolling-back) with the following:
 
-       rpm-ostree rollback
+    rpm-ostree rollback
 
-   To rebase onto a specific date, use a date tag:
+To rebase onto a specific date, use a date tag:
 
-       rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/silverblue-nvidia:20230128
+    rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/silverblue-nvidia:20230128
 
-   Or to rebase onto a specific release, driver, and date:
+Or to rebase onto a specific release, driver, and date:
 
-       rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/silverblue-nvidia:37-525-20230128
+    rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/silverblue-nvidia:37-525-20230128
 
-   [More options for image tags can be found on the container catalog.](https://github.com/ublue-os/nvidia/pkgs/container/silverblue-nvidia/versions)
+[More options for image tags can be found on the container catalog.](https://github.com/ublue-os/nvidia/pkgs/container/silverblue-nvidia/versions)
    
 ## Support
 
