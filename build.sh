@@ -45,8 +45,6 @@ modinfo /usr/lib/modules/${KERNEL_VERSION}/extra/${NVIDIA_PACKAGE_NAME}/nvidia{,
 sed -i "s@gpgcheck=0@gpgcheck=1@" /tmp/ublue-os-nvidia-addons/rpmbuild/SOURCES/nvidia-container-runtime.repo
 
 install -D /etc/pki/akmods/certs/public_key.der /tmp/ublue-os-nvidia-addons/rpmbuild/SOURCES/public_key.der
-# copy new public key to facilitate user imports before switching
-install -Dm644 /tmp/certs/public_key.der.new   /tmp/ublue-os-nvidia-addons/rpmbuild/SOURCES/public_key.der.new
 
 rpmbuild -ba \
     --define '_topdir /tmp/ublue-os-nvidia-addons/rpmbuild' \

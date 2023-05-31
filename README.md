@@ -74,12 +74,11 @@ rpm-ostree kargs \
 And then reboot one more time!
 
 ### 3. Enable Secure Boot support
-**IMPORTANT NOTE:** On June 17, 00:00 UTC, we will make a change to the key which is used to sign nvidia kernel modules. The new key is being made available May 17. The new key is `akmods-ublue.der` / `public_key.der.new` in the code blocks below. Until this document is updated to remove the old key, please import BOTH keys! This will ensure your SecureBoot system boots as expected after the cutover on June 17.
+**IMPORTANT NOTE:** On June 17, 00:00 UTC, we changed the key used to sign nvidia kernel modules. If your nvidia kernel modules are not loading, you need to import the new key.
 
 [Secure Boot](https://rpmfusion.org/Howto/Secure%20Boot) support for the nvidia kernel modules can be enabled by enrolling the signing key:
 
 ```
-sudo mokutil --import /etc/pki/akmods/certs/akmods-nvidia.der
 sudo mokutil --import /etc/pki/akmods/certs/akmods-ublue.der
 ```
 
@@ -87,7 +86,6 @@ Alternatively, the key can be enrolled from within this repo:
 
 ```
 sudo mokutil --import ./certs/public_key.der
-sudo mokutil --import ./certs/public_key.der.new
 ```
 
 ## Rolling back and rebasing

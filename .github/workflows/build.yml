@@ -83,7 +83,7 @@ jobs:
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
               echo "Using test signing key"
           else
-              echo "${{ secrets.AKMOD_PRIVKEY }}" > certs/private_key.priv
+              echo "${{ secrets.AKMOD_PRIVKEY_20230518 }}" > certs/private_key.priv
           fi
           # DEBUG: get character count of key
           wc -c certs/private_key.priv
