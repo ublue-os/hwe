@@ -13,6 +13,7 @@ if [[ "${NVIDIA_MAJOR_VERSION}" -ge 520 ]]; then
 else
     NVIDIA_PACKAGE_NAME="nvidia-${NVIDIA_MAJOR_VERSION}xx"
 fi
+ln -s /usr/bin/rpm-ostree /usr/bin/dnf
 
 rpm-ostree install \
     akmod-${NVIDIA_PACKAGE_NAME}*:${NVIDIA_MAJOR_VERSION}.*.fc${RELEASE} \
