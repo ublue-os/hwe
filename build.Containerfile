@@ -7,6 +7,8 @@ FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION} AS builder
 ARG NVIDIA_MAJOR_VERSION="${NVIDIA_MAJOR_VERSION:-525}"
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION}"
 
+RUN ln -s /usr/bin/rpm-ostree /usr/bin/dnf
+
 COPY build.sh /tmp/build.sh
 
 ADD certs /tmp/certs
