@@ -110,8 +110,8 @@ Note: The Fedora release and Nvidia version can be set with the image tag as wel
 
    |     | 530xx series (latest, best supported) | 525xx series (deprecated) | 520xx series (deprecated) | 470xx series (Kepler 2012-2014 support) |
    |-----|---------------------------------------|---------------------------|---------------------------|-----------------------------------------|
-   | F37 | :latest / :37 / :37-530 / :37-current | :37-525                   | :37-520                   | :37-470                                 |
-   | F38 | :38 / :38-530 / :38-current           | :38-525                   |                           |                                         |
+   | F37 | :37 / :37-530 / :37-current | :37-525                   | :37-520                   | :37-470                                 |
+   | F38 | :latest / :38 / :38-530 / :38-current           | :38-525                   |                           |                                         |
 
 It is *strongly encouraged* for you to subscribe to [the Nvidia driver announcements](https://github.com/orgs/ublue-os/discussions/categories/nvidia-driver-announcements?discussions_q=is%3Aopen+category%3A%22Nvidia+Driver+Announcements%22) section of the forums to keep up with the latest changes and news. 
 

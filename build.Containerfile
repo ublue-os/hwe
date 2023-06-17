@@ -7,6 +7,8 @@ FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION} AS builder
 ARG NVIDIA_MAJOR_VERSION="${NVIDIA_MAJOR_VERSION:-525}"
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION}"
 
+RUN ln -s /usr/bin/rpm-ostree /usr/bin/dnf
+
 COPY build.sh /tmp/build.sh
 
 ADD certs /tmp/certs
@@ -17,6 +19,8 @@ ADD https://nvidia.github.io/nvidia-docker/rhel9.0/nvidia-docker.repo \
     /tmp/ublue-os-nvidia-addons/rpmbuild/SOURCES/nvidia-container-runtime.repo
 ADD https://copr.fedorainfracloud.org/coprs/lukenukem/asus-linux/repo/fedora-${FEDORA_MAJOR_VERSION}/lukenukem-asus-linux-fedora-${FEDORA_MAJOR_VERSION}.repo \
     /tmp/ublue-os-nvidia-addons/rpmbuild/SOURCES/lukenukem-asus-linux.repo
+ADD https://copr.fedorainfracloud.org/coprs/jhyub/supergfxctl-plasmoid/repo/fedora-${FEDORA_MAJOR_VERSION}/jhyub-supergfxctl-plasmoid-fedora-${FEDORA_MAJOR_VERSION}.repo \
+    /tmp/ublue-os-nvidia-addons/rpmbuild/SOURCES/jhyub-supergfxctl-plasmoid.repo
 
 ADD https://nvidia.github.io/nvidia-docker/rhel9.0/nvidia-docker.repo \
     /etc/yum.repos.d/nvidia-container-runtime.repo

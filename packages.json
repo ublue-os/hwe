@@ -1,0 +1,38 @@
+{
+    "all": {
+        "include": {
+            "all": [],
+            "silverblue": [],
+            "kinoite": [
+                "supergfxctl-plasmoid"
+            ],
+            "lxqt": [],
+            "mate": [],
+            "sericea": [],
+            "vauxite": []
+        },
+        "exclude": {
+            "all": [],
+            "mate": []
+        }
+    },
+    "37": {
+        "include": {
+            "all": [],
+            "mate": []
+        },
+        "exclude": {
+            "all": []
+        }
+    },
+    "38": {
+        "include": {
+            "all": [],
+            "mate": [],
+            "kinoite":[]
+        },
+        "exclude": {
+            "all": []
+        }
+    }
+}
