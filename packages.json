@@ -3,9 +3,7 @@
         "include": {
             "all": [],
             "silverblue": [],
-            "kinoite": [
-                "supergfxctl-plasmoid"
-            ],
+            "kinoite": [],
             "lxqt": [],
             "mate": [],
             "sericea": [],
