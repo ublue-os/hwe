@@ -14,7 +14,6 @@ COPY --from=${AKMODS_CACHE}:${AKMODS_VERSION}-${NVIDIA_MAJOR_VERSION} / .
 
 COPY install.sh /tmp/install.sh
 COPY post-install.sh /tmp/post-install.sh
-COPY packages.json /tmp/packages.json
 RUN /tmp/install.sh
 RUN /tmp/post-install.sh
 RUN rm -rf /tmp/* /var/*
