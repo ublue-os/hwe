@@ -3,6 +3,9 @@
 set -ouex pipefail
 
 sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-{cisco-openh264,modular,updates-modular}.repo
+# Enable the RPM Fusion testing repositories for NVIDIA 535
+# https://rpmfind.net/linux/rpm2html/search.php?query=akmod-nvidia
+sed -i 's@enabled=0@enabled=1@g' /etc/yum.repos.d/rpmfusion-{free,nonfree}-updates-testing.repo
 
 install -D /tmp/ublue-os-nvidia-addons/rpmbuild/SOURCES/nvidia-container-runtime.repo \
     /etc/yum.repos.d/nvidia-container-runtime.repo

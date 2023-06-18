@@ -5,6 +5,9 @@ set -oeux pipefail
 RELEASE="$(rpm -E '%fedora.%_arch')"
 
 sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-{cisco-openh264,modular,updates-modular}.repo
+# Enable the RPM Fusion testing repositories for NVIDIA 535
+# https://rpmfind.net/linux/rpm2html/search.php?query=akmod-nvidia
+sed -i 's@enabled=0@enabled=1@g' /etc/yum.repos.d/rpmfusion-{free,nonfree}-updates-testing.repo
 
 # nvidia 520.xxx and newer currently don't have a -$VERSIONxx suffix in their
 # package names
@@ -15,7 +18,7 @@ else
 fi
 
 rpm-ostree install \
-    akmod-${NVIDIA_PACKAGE_NAME}*:${NVIDIA_MAJOR_VERSION}.*.fc${RELEASE} \
+    akmod-${NVIDIA_PACKAGE_NAME}-${NVIDIA_MAJOR_VERSION}.*.fc${RELEASE} \
     xorg-x11-drv-${NVIDIA_PACKAGE_NAME}-{,cuda,devel,kmodsrc,power}*:${NVIDIA_MAJOR_VERSION}.*.fc${RELEASE} \
     mock
 
