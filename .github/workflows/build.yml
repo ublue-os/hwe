@@ -20,17 +20,9 @@ jobs:
       fail-fast: false
       matrix:
         major_version: [37, 38]
-        driver_version: [470, 520, 525, 530, 535]
+        driver_version: [470, 530, 535]
         exclude:
           - driver_version: 470
-            major_version: 38
-          - driver_version: 520
-            major_version: 37
-          - driver_version: 520
-            major_version: 38
-          - driver_version: 525
-            major_version: 37
-          - driver_version: 525
             major_version: 38
           - driver_version: 535
             major_version: 37
