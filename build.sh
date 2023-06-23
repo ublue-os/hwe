@@ -15,7 +15,7 @@ else
 fi
 
 rpm-ostree install \
-    akmod-${NVIDIA_PACKAGE_NAME}-${NVIDIA_MAJOR_VERSION}.*.fc${RELEASE} \
+    akmod-${NVIDIA_PACKAGE_NAME}*:${NVIDIA_MAJOR_VERSION}.*.fc${RELEASE} \
     xorg-x11-drv-${NVIDIA_PACKAGE_NAME}-{,cuda,devel,kmodsrc,power}*:${NVIDIA_MAJOR_VERSION}.*.fc${RELEASE} \
     mock
 
