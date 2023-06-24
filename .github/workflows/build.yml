@@ -20,18 +20,12 @@ jobs:
       fail-fast: false
       matrix:
         major_version: [37, 38]
-        driver_version: [520, 525, 530, 470]
+        driver_version: [470, 530, 535]
         exclude:
-          - driver_version: 525
-            major_version: 37
-          - driver_version: 525
-            major_version: 38
-          - driver_version: 520
-            major_version: 37
-          - driver_version: 520
-            major_version: 38
           - driver_version: 470
             major_version: 38
+          - driver_version: 530
+            major_version: 37
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
@@ -182,34 +176,25 @@ jobs:
       matrix:
         image_name: [silverblue, kinoite, vauxite, sericea, base, lxqt, mate]
         major_version: [37, 38]
-        driver_version: [520, 525, 530, 470]
+        driver_version: [470, 530, 535]
         include:
-        # - major_version: 36
-        #   is_latest_version: false
-        #   is_stable_version: true
           - major_version: 37
             is_latest_version: false
             is_stable_version: true
           - major_version: 38
             is_latest_version: true
             is_stable_version: true
-          - driver_version: 530
+          - driver_version: 535
             is_latest_driver: true
         exclude:
           # There is no Fedora 37 version of sericea
           # When F38 is added, sericea will automatically be built too
           - image_name: sericea
             major_version: 37
-          - driver_version: 525
-            major_version: 37
-          - driver_version: 525
-            major_version: 38
-          - driver_version: 520
-            major_version: 37
-          - driver_version: 520
-            major_version: 38
           - driver_version: 470
             major_version: 38
+          - driver_version: 530
+            major_version: 37
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
