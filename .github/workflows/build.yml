@@ -24,6 +24,8 @@ jobs:
         exclude:
           - driver_version: 470
             major_version: 38
+          - driver_version: 530
+            major_version: 37
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
@@ -191,6 +193,8 @@ jobs:
             major_version: 37
           - driver_version: 470
             major_version: 38
+          - driver_version: 530
+            major_version: 37
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
