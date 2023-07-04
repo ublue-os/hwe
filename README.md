@@ -191,6 +191,7 @@ Additional runtime packages are added for enabling hardware-accelerated video pl
 
 * `gfx.webrender.all`
 * `media.ffmpeg.vaapi.enabled`
+* `widget.dmabuf.force-enabled`
 
 
 Extensive host access and reduced sandboxing is needed for Firefox flatpak to use `/usr/lib64/dri/nvidia_drv_video.so`:
