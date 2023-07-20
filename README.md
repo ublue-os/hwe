@@ -96,12 +96,12 @@ Generally you can [perform a rollback](https://docs.fedoraproject.org/en-US/fedo
 
 To rebase onto a specific date, use a date tag:
 
-    rpm-ostree rebase ostree-image-signed:docker://ghcr.io/ublue-os/silverblue-nvidia:20230128
+    rpm-ostree rebase ostree-image-signed:docker://ghcr.io/ublue-os/silverblue-nvidia:20230720
 
 Or to rebase onto a specific release, driver, and date:
 
-    rpm-ostree rebase ostree-image-signed:docker://ghcr.io/ublue-os/silverblue-nvidia:37-525-20230128
-
+    rpm-ostree rebase ostree-image-signed:docker://ghcr.io/ublue-os/silverblue-nvidia:38-535-20230720
+    
 [More options for image tags can be found on the container catalog.](https://github.com/ublue-os/nvidia/pkgs/container/silverblue-nvidia/versions)
    
 ## Support
