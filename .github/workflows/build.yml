@@ -176,7 +176,7 @@ jobs:
       matrix:
         image_name: [silverblue, kinoite, vauxite, sericea, base, lxqt, mate]
         major_version: [37, 38]
-        driver_version: [470, 530, 535]
+        driver_version: [470, 535]
         include:
           - major_version: 37
             is_latest_version: false
@@ -191,7 +191,7 @@ jobs:
           # When F38 is added, sericea will automatically be built too
           - image_name: sericea
             major_version: 37
-          - driver_version: 470
+          - driver_version: 530
             major_version: 38
           - driver_version: 530
             major_version: 37
