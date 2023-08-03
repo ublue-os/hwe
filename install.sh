@@ -6,10 +6,8 @@ sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-{cisco-openh264,modular
 
 install -D /tmp/ublue-os-nvidia-addons/rpmbuild/SOURCES/nvidia-container-runtime.repo \
     /etc/yum.repos.d/nvidia-container-runtime.repo
-install -D /tmp/ublue-os-nvidia-addons/rpmbuild/SOURCES/lukenukem-asus-linux.repo \
-    /etc/yum.repos.d/lukenukem-asus-linux.repo
-install -D /tmp/ublue-os-nvidia-addons/rpmbuild/SOURCES/jhyub-supergfxctl-plasmoid.repo \
-    /etc/yum.repos.d/jhyub-supergfxctl-plasmoid.repo
+install -D /tmp/ublue-os-nvidia-addons/rpmbuild/SOURCES/eyecantcu-supergfxctl.repo \
+    /etc/yum.repos.d/eyecantcu-supergfxctl.repo
 
 source /var/cache/akmods/nvidia-vars
 
