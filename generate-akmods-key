@@ -22,5 +22,3 @@ podman run \
      kmodgenca --auto && \
      cp /etc/pki/akmods/private/private_key.priv private_key.priv.prod && \
      cp /etc/pki/akmods/certs/public_key.der public_key.der.prod"
-
-cp certs/public_key.der.prod certs/public_key.der
