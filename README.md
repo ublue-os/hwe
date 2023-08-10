@@ -31,7 +31,7 @@ Note: This project is a work-in-progress. You should at a minimum be familiar wi
 
 !!! warning
 
-    Ensure that the packages `kmod-nvidia` and/or `akmod-nvidia` are not installed on your system. These may break the build in graphics card drivers and you may end up with no output from your GPU.  
+    Ensure that the packages `kmod-nvidia` and/or `akmod-nvidia` are not installed on your system. These may break the built in graphics card drivers and you may end up with no output from your GPU.  
     You can check for their presence with `rpm-ostree status`.
 
 ### 1. Rebase onto the image
