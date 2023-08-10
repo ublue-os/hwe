@@ -29,6 +29,11 @@ Note: This project is a work-in-progress. You should at a minimum be familiar wi
 
         rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/silverblue-main
 
+!!! warning
+
+    Ensure that the packages `kmod-nvidia` and/or `akmod-nvidia` are not installed on your system. These may break the build in graphics card drivers and you may end up with no output from your GPU.  
+    You can check for their presence with `rpm-ostree status`.
+
 ### 1. Rebase onto the image
 
 Any system running `rpm-ostree` should be able to rebase onto one of the images built in this project:
