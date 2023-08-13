@@ -19,13 +19,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        major_version: [37, 38]
+        major_version: [37, 38, 39]
         driver_version: [470, 535]
         exclude:
-          - driver_version: 530
-            major_version: 38
-          - driver_version: 530
-            major_version: 37
+          - driver_version: 470
+            major_version: 39
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
@@ -175,7 +173,7 @@ jobs:
       fail-fast: false
       matrix:
         image_name: [silverblue, kinoite, vauxite, sericea, base, lxqt, mate]
-        major_version: [37, 38]
+        major_version: [37, 38, 39]
         driver_version: [470, 535]
         include:
           - major_version: 37
@@ -191,10 +189,8 @@ jobs:
           # When F38 is added, sericea will automatically be built too
           - image_name: sericea
             major_version: 37
-          - driver_version: 530
-            major_version: 38
-          - driver_version: 530
-            major_version: 37
+          - driver_version: 470
+            major_version: 39
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
