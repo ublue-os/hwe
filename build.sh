@@ -4,7 +4,12 @@ set -oeux pipefail
 
 RELEASE="$(rpm -E '%fedora.%_arch')"
 
-sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-{cisco-openh264,modular,updates-modular}.repo
+# Modularity repositories are not available on Fedora 39 and above, so don't try to disable them
+if [[ "${FEDORA_VERSION}" -le 38 ]]; then
+    sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-{cisco-openh264,modular,updates-modular}.repo
+else
+    sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-cisco-openh264.repo
+fi
 
 # nvidia 520.xxx and newer currently don't have a -$VERSIONxx suffix in their
 # package names
