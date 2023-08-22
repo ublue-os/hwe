@@ -2,25 +2,23 @@
 
 set -oeux pipefail
 
-readonly LANG="${LANG:-en_US.UTF-8}"
-
+readonly LANG="en_US.UTF-8"
 readonly CERT_DIR=certs
-
-readonly IMAGE="quay.io/fedora-ostree-desktops/silverblue"
-readonly TAG="37"
+readonly IMAGE="quay.io/fedora/fedora-coreos"
+readonly TAG="stable"
 
 mkdir -p "${PWD}/${CERT_DIR}"
+rm -rf "${PWD}/${CERT_DIR}/*.prod"
 
 # Bootstrap keys with a pre-existing image to avoid touching '/etc' or
 # installing additional packages on host
 podman run \
     --env="LANG=${LANG}" \
-    --volume="${PWD}/${CERT_DIR}:/tmp/${CERT_DIR}:z" \
+    --volume="${PWD}/${CERT_DIR}:/tmp/${CERT_DIR}" \
     --workdir="/tmp/${CERT_DIR}" \
     --entrypoint=/bin/sh \
     "${IMAGE}:${TAG}" -c \
-    "sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-{cisco-openh264,modular,updates-modular,updates-archive}.repo && \
-     rpm-ostree install akmods && \
+    "rpm-ostree install langpacks-en akmods && \
      kmodgenca --auto && \
      cp /etc/pki/akmods/private/private_key.priv private_key.priv.prod && \
      cp /etc/pki/akmods/certs/public_key.der public_key.der.prod"
