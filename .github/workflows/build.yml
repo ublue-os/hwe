@@ -28,8 +28,7 @@ jobs:
           - lxqt
           - mate
           - vauxite
-        #major_version: [37, 38, 39]
-        major_version: [37, 38]
+        major_version: [37, 38, 39]
         driver_version: [470, 535]
         include:
           - major_version: 37
@@ -42,10 +41,10 @@ jobs:
             is_gts_driver: true
           - driver_version: 535
             is_latest_driver: true
-          #- major_version: 39
-          #  is_latest_version: true
-          #  is_stable_version: false
-          #  is_gts_version: false
+          - major_version: 39
+            is_latest_version: true
+            is_stable_version: false
+            is_gts_version: false
         exclude:
           # There is no Fedora 37 version of sericea
           # When F38 is added, sericea will automatically be built too
