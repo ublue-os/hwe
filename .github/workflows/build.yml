@@ -19,23 +19,45 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image_name: [silverblue, kinoite, vauxite, sericea, base, lxqt, mate]
+        image_name:
+          - silverblue
+          - kinoite
+          - sericea
+          - onyx
+          - base
+          - lxqt
+          - mate
+          - vauxite
+        #major_version: [37, 38, 39]
         major_version: [37, 38]
         driver_version: [470, 535]
         include:
           - major_version: 37
             is_latest_version: false
             is_stable_version: true
+            is_gts_driver: false
           - major_version: 38
             is_latest_version: true
             is_stable_version: true
+            is_gts_driver: true
           - driver_version: 535
             is_latest_driver: true
+          #- major_version: 39
+          #  is_latest_version: true
+          #  is_stable_version: false
+          #  is_gts_version: false
         exclude:
           # There is no Fedora 37 version of sericea
           # When F38 is added, sericea will automatically be built too
           - image_name: sericea
             major_version: 37
+          # There is no Fedora 37 or 38 version of onyx
+          - image_name: onyx
+            major_version: 37
+          - image_name: onyx
+            major_version: 38
+          - image_name: vauxite
+            major_version: 39
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
@@ -85,6 +107,12 @@ jobs:
              [[ "${{ matrix.is_latest_driver }}" == "true" ]]; then
               BUILD_TAGS+=("${TIMESTAMP}")
               BUILD_TAGS+=("latest")
+          fi
+
+          if [[ "${{ matrix.is_gtst_version }}" == "true" ]] && \
+             [[ "${{ matrix.is_latest_driver }}" == "true" ]]; then
+              BUILD_TAGS+=("gts-${TIMESTAMP}")
+              BUILD_TAGS+=("gts")
           fi
 
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
