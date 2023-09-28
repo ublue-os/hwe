@@ -32,7 +32,7 @@ jobs:
           - bluefin
           - bluefin-dx
           - onyx
-        major_version: [37, 38, 39]
+        major_version: [38, 39]
         driver_version: [470, 535]
         include:
           - major_version: 37
