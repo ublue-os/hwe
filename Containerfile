@@ -14,7 +14,7 @@ COPY image-info.sh /tmp/image-info.sh
 COPY install.sh /tmp/install.sh
 COPY post-install.sh /tmp/post-install.sh
 
-COPY --from=ghcr.io/ublue-os/akmods-nvidia:main-${FEDORA_MAJOR_VERSION}-${NVIDIA_MAJOR_VERSION} /rpms /tmp/akmods-rpms
+COPY --from=ghcr.io/ublue-os/akmods-nvidia:asus-${FEDORA_MAJOR_VERSION}-${NVIDIA_MAJOR_VERSION} /rpms /tmp/akmods-rpms
 
 RUN /tmp/image-info.sh && \
     /tmp/install.sh && \
