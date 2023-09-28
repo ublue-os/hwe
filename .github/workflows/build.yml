@@ -10,7 +10,7 @@ env:
 
 jobs:
   push-ghcr:
-    name: Build and push image
+    name: nvidia image
     runs-on: ubuntu-22.04
     permissions:
       contents: read
