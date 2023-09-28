@@ -1,0 +1,6 @@
+version: "1"
+rules:
+  - base: nvidia
+    upstream: ublue-os:nvidia
+    mergeMethod: merge
+    mergeUnstable: false
