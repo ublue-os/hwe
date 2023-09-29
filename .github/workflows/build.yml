@@ -27,10 +27,6 @@ jobs:
           - base
           - lxqt
           - mate
-          - bazzite
-          - bazzite-gnome
-          - bluefin
-          - bluefin-dx
           - onyx
         major_version: [38, 39]
         driver_version: [470, 535]
@@ -52,10 +48,6 @@ jobs:
         exclude:
           - image_name: sericea
             major_version: 37
-          - image_name: bazzite
-            major_version: 39
-          - image_name: bazzite-gnome
-            major_version: 39
           - image_name: vauxite
             major_version: 39
           - image_name: onyx
