@@ -29,7 +29,7 @@ jobs:
           - mate
           - onyx
         major_version: [38]
-        driver_version: [470, 535]
+        driver_version: [535]
         include:
           - major_version: 38
             is_latest_version: true
