@@ -31,10 +31,6 @@ jobs:
         major_version: [38, 39]
         driver_version: [470, 535]
         include:
-          - major_version: 37
-            is_latest_version: false
-            is_stable_version: true
-            is_gts_driver: false
           - major_version: 38
             is_latest_version: true
             is_stable_version: true
@@ -46,12 +42,8 @@ jobs:
             is_stable_version: false
             is_gts_version: false
         exclude:
-          - image_name: sericea
-            major_version: 37
           - image_name: vauxite
             major_version: 39
-          - image_name: onyx
-            major_version: 37
           - image_name: onyx
             major_version: 38
     steps:
