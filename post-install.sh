@@ -2,10 +2,7 @@
 
 set -ouex pipefail
 
-sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/{eyecantcu-supergfxctl,nvidia-container-runtime}.repo
-
-mv /etc/nvidia-container-runtime/config.toml{,.orig}
-cp /etc/nvidia-container-runtime/config{-rootless,}.toml
+sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/{eyecantcu-supergfxctl,nvidia-container-toolkit}.repo
 
 semodule --verbose --install /usr/share/selinux/packages/nvidia-container.pp
 ln -s /usr/bin/ld.bfd /etc/alternatives/ld
