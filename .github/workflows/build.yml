@@ -36,14 +36,14 @@ jobs:
             is_stable_version: true
             is_gts_driver: false
           - major_version: 38
-            is_latest_version: true
+            is_latest_version: false
             is_stable_version: true
             is_gts_driver: true
           - driver_version: 535
             is_latest_driver: true
           - major_version: 39
             is_latest_version: true
-            is_stable_version: false
+            is_stable_version: true
             is_gts_version: false
         exclude:
           # There is no Fedora 37 version of sericea
