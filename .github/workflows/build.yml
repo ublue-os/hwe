@@ -42,8 +42,6 @@ jobs:
           - driver_version: 535
             is_latest_driver: true
         exclude:
-          - image_name: vauxite
-            major_version: 39
           - image_name: onyx
             major_version: 38
     steps:
