@@ -3,7 +3,7 @@ on:
   pull_request:
   merge_group:
   schedule:
-    - cron: '0 8 * * *'  # 8:00am everyday (1 hr delay after 'main' builds)
+    - cron: '30 7 * * *'  # 7:30am everyday (30 min delay after 'main' builds)
   workflow_dispatch:
 env:
   IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
