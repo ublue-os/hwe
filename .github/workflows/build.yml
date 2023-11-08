@@ -33,10 +33,10 @@ jobs:
         include:
           - major_version: 39
             is_latest_version: true
-            is_stable_version: false
+            is_stable_version: true
             is_gts_driver: false
           - major_version: 38
-            is_latest_version: true
+            is_latest_version: false
             is_stable_version: true
             is_gts_driver: true
           - driver_version: 535
@@ -163,7 +163,7 @@ jobs:
       # https://github.com/macbre/push-to-ghcr/issues/12
       - name: Lowercase Registry
         id: registry_case
-        uses: ASzc/change-string-case-action@v5
+        uses: ASzc/change-string-case-action@v6
         with:
           string: ${{ env.IMAGE_REGISTRY }}
 
