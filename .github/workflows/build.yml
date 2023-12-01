@@ -29,7 +29,7 @@ jobs:
           - mate
           - vauxite
         major_version: [37, 38, 39]
-        driver_version: [470, 535, 545]
+        driver_version: [470, 545]
         include:
           - major_version: 37
             is_latest_version: false
