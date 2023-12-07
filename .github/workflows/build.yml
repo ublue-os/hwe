@@ -1,4 +1,4 @@
-name: build asus-nvidia
+name: build surface-nvidia
 on:
   pull_request:
   merge_group:
@@ -33,7 +33,7 @@ jobs:
           - mate
           - onyx
         major_version: [38, 39]
-        driver_version: [470, 545]
+        driver_version: [545]
         include:
           - major_version: 39
             is_latest_version: true
