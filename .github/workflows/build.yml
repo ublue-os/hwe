@@ -49,12 +49,17 @@ jobs:
           - image_name: lazurite
             major_version: 38
     steps:
-      - name: Maximize build space
-        uses: ublue-os/remove-unwanted-software@v6
-
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
         uses: actions/checkout@v4
+
+      - name: Verify base image
+        uses: EyeCantCU/cosign-action/verify@v0.2.1
+        with:
+          containers: ${{ matrix.image_name }}-main:${{ matrix.major_version }}
+
+      - name: Maximize build space
+        uses: ublue-os/remove-unwanted-software@v6
 
       - name: Matrix Variables
         run: |
