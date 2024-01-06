@@ -26,9 +26,9 @@ jobs:
           - onyx
           - base
           - lxqt
+          - lazurite
           - mate
           - vauxite
-          - lazurite
         major_version: [38, 39]
         driver_version: [470, 545]
         include:
@@ -48,6 +48,9 @@ jobs:
             major_version: 38
           - image_name: lazurite
             major_version: 38
+          # There is no Fedora 39 version of lxqt as it was replaced by lazurite
+          - image_name: lxqt
+            major_version: 39
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
