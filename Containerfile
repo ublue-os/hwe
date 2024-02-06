@@ -19,6 +19,19 @@ COPY --from=ghcr.io/ublue-os/akmods-nvidia:main-${FEDORA_MAJOR_VERSION}-${NVIDIA
 RUN rpm-ostree override replace \
     --experimental \
     --from repo=updates \
+         mesa-filesystem \
+         mesa-libxatracker \
+         mesa-vulkan-drivers \
+         mesa-libglapi \
+         mesa-dri-drivers \
+         mesa-libgbm \
+         mesa-libEG \
+         mesa-libGL \
+         mesa-filesystem \
+         mesa-vulkan-drivers \
+         mesa-libglapi \
+         mesa-dri-drivers \
+         mesa-libGL \
          mesa-libgbm \
          mesa-libEGL \
         || true && \
