@@ -16,7 +16,12 @@ COPY post-install.sh /tmp/post-install.sh
 
 COPY --from=ghcr.io/ublue-os/akmods-nvidia:main-${FEDORA_MAJOR_VERSION}-${NVIDIA_MAJOR_VERSION} /rpms /tmp/akmods-rpms
 
-RUN /tmp/image-info.sh && \
+RUN rpm-ostree override replace \
+    --experimental \
+    --from repo=updates \
+         mesa-libEGL \
+        || true && \
+    /tmp/image-info.sh && \
     /tmp/install.sh && \
     /tmp/post-install.sh && \
     rm -rf /tmp/* /var/*
