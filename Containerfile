@@ -19,6 +19,7 @@ COPY --from=ghcr.io/ublue-os/akmods-nvidia:main-${FEDORA_MAJOR_VERSION}-${NVIDIA
 RUN rpm-ostree override replace \
     --experimental \
     --from repo=updates \
+         mesa-libgbm \
          mesa-libEGL \
         || true && \
     /tmp/image-info.sh && \
