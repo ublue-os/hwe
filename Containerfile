@@ -25,7 +25,7 @@ RUN rpm-ostree override replace \
          mesa-libglapi \
          mesa-dri-drivers \
          mesa-libgbm \
-         mesa-libEG \
+         mesa-libEGL \
          mesa-libGL \
          mesa-filesystem \
          mesa-vulkan-drivers \
@@ -34,7 +34,6 @@ RUN rpm-ostree override replace \
          mesa-libGL \
          mesa-libgbm \
          mesa-libEGL \
-         libglvnd-gles \
         || true && \
     /tmp/image-info.sh && \
     /tmp/install.sh && \
