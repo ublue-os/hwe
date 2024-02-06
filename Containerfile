@@ -34,6 +34,7 @@ RUN rpm-ostree override replace \
          mesa-libGL \
          mesa-libgbm \
          mesa-libEGL \
+         libglvnd-gles \
         || true && \
     /tmp/image-info.sh && \
     /tmp/install.sh && \
