@@ -61,9 +61,6 @@ jobs:
         with:
           containers: ${{ matrix.image_name }}-main:${{ matrix.major_version }}
 
-      - name: Maximize build space
-        uses: ublue-os/remove-unwanted-software@v6
-
       - name: Matrix Variables
         run: |
             REPO=${{ github.repository }}
