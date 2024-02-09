@@ -170,6 +170,7 @@ jobs:
             IMAGE_NAME=${{ matrix.image_name }}
             FEDORA_MAJOR_VERSION=${{ matrix.major_version }}
             NVIDIA_MAJOR_VERSION=${{ matrix.driver_version }}
+            RPMFUSION_MIRROR=${{ vars.RPMFUSION_MIRROR }}
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
 
