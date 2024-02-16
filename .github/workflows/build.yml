@@ -30,13 +30,13 @@ jobs:
           - mate
           - vauxite
         major_version: [38, 39]
-        driver_version: [470, 545]
+        driver_version: [470, 545, 550]
         include:
           - major_version: 38
             is_latest_version: false
             is_stable_version: true
             is_gts_driver: true
-          - driver_version: 545
+          - driver_version: 550
             is_latest_driver: true
           - major_version: 39
             is_latest_version: true
