@@ -3,7 +3,7 @@ on:
   pull_request:
   merge_group:
   schedule:
-    - cron: '45 15 * * *'  # 15:30-ish UTC everyday (30 min delay after 'main' builds)
+    - cron: '40 15 * * *'  # 15:30-ish UTC everyday (30 min delay after 'main' builds)
   workflow_dispatch:
 
 jobs:
