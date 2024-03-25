@@ -1,16 +1,17 @@
 name: build-ublue
 on:
-  pull_request:
-  merge_group:
-  schedule:
-    - cron: '30 15 * * *'  # 15:30 UTC everyday (30 min delay after 'main' builds)
-  workflow_dispatch:
+  workflow_call:
+    inputs:
+      fedora_version:
+        description: 'The Fedora release version: 38, 39, 40, etc'
+        required: true
+        type: string
 env:
   IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
 
 jobs:
   push-ghcr:
-    name: nvidia image
+    name: nvidia
     runs-on: ubuntu-22.04
     permissions:
       contents: read
@@ -19,6 +20,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        fedora_version:
+          - ${{ inputs.fedora_version }}
         image_name:
           - silverblue
           - kinoite
@@ -29,28 +32,23 @@ jobs:
           - lazurite
           - mate
           - vauxite
-        major_version: [38, 39]
-        driver_version: [470, 550]
-        include:
-          - major_version: 38
-            is_latest_version: false
-            is_stable_version: true
-            is_gts_driver: true
-          - driver_version: 550
-            is_latest_driver: true
-          - major_version: 39
-            is_latest_version: true
-            is_stable_version: true
-            is_gts_version: false
+        driver_version:
+          - 470
+          - 550
         exclude:
           # There is no Fedora 38 version of onyx or lazurite
           - image_name: onyx
-            major_version: 38
+            fedora_version: 38
           - image_name: lazurite
-            major_version: 38
-          # There is no Fedora 39 version of lxqt as it was replaced by lazurite
+            fedora_version: 38
+          # There is no Fedora 39+ version of lxqt as it was replaced by lazurite
           - image_name: lxqt
-            major_version: 39
+            fedora_version: 39
+          - image_name: lxqt
+            fedora_version: 40
+          # There is currently no Fedora 40 version of mate
+          - image_name: mate
+            fedora_version: 40
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
@@ -59,7 +57,7 @@ jobs:
       - name: Verify base image
         uses: EyeCantCU/cosign-action/verify@v0.2.2
         with:
-          containers: ${{ matrix.image_name }}-main:${{ matrix.major_version }}
+          containers: ${{ matrix.image_name }}-main:${{ matrix.fedora_version }}
 
       - name: Matrix Variables
         run: |
@@ -71,7 +69,25 @@ jobs:
         run: |
           # Generate a timestamp for creating an image version history
           TIMESTAMP="$(date +%Y%m%d)"
-          VARIANT="${{ matrix.major_version }}-${{ matrix.driver_version }}"
+          VARIANT="${{ matrix.fedora_version }}-${{ matrix.driver_version }}"
+
+          if [[ "${{ matrix.fedora_version }}" -eq "38" ]]; then
+            IS_LATEST_VERSION=false
+            IS_STABLE_VERSION=true
+            IS_GTS_VERSION=true
+          elif [[ "${{ matrix.fedora_version }}" -eq "39" ]]; then
+            IS_LATEST_VERSION=true
+            IS_STABLE_VERSION=true
+            IS_GTS_VERSION=false
+          elif [[ "${{ matrix.fedora_version }}" -eq "40" ]]; then
+            IS_LATEST_VERSION=false
+            IS_STABLE_VERSION=false
+            IS_GTS_VERSION=false
+          fi
+
+          if [[ "${{ matrix.driver_version }}" -eq "550" ]]; then
+            IS_LATEST_DRIVER=true
+          fi
 
           COMMIT_TAGS=()
           BUILD_TAGS=()
@@ -81,18 +97,18 @@ jobs:
           COMMIT_TAGS+=("pr-${{ github.event.number }}-${VARIANT}")
           COMMIT_TAGS+=("${SHA_SHORT}-${VARIANT}")
 
-          if [[ "${{ matrix.is_latest_version }}" == "true" ]] && \
-             [[ "${{ matrix.is_stable_version }}" == "true" ]] && \
-             [[ "${{ matrix.is_latest_driver }}" == "true" ]]; then
+          if [[ "${IS_LATEST_VERSION}" == "true" ]] && \
+             [[ "${IS_STABLE_VERSION}" == "true" ]] && \
+             [[ "${IS_LATEST_DRIVER}" == "true" ]]; then
               COMMIT_TAGS+=("pr-${{ github.event.number }}")
               COMMIT_TAGS+=("${SHA_SHORT}")
           fi
 
           BUILD_TAGS=("${VARIANT}")
 
-          if [[ "${{ matrix.is_latest_driver }}" == "true" ]]; then
-              BUILD_TAGS+=("${{ matrix.major_version }}-current")
-              BUILD_TAGS+=("${{ matrix.major_version }}")
+          if [[ "${IS_LATEST_DRIVER}" == "true" ]]; then
+              BUILD_TAGS+=("${{ matrix.fedora_version }}-current")
+              BUILD_TAGS+=("${{ matrix.fedora_version }}")
           fi
 
           # Append matching timestamp tags to keep a version history
@@ -100,15 +116,15 @@ jobs:
               BUILD_TAGS+=("${TAG}-${TIMESTAMP}")
           done
 
-          if [[ "${{ matrix.is_latest_version }}" == "true" ]] && \
-             [[ "${{ matrix.is_stable_version }}" == "true" ]] && \
-             [[ "${{ matrix.is_latest_driver }}" == "true" ]]; then
+          if [[ "${IS_LATEST_VERSION}" == "true" ]] && \
+             [[ "${IS_STABLE_VERSION}" == "true" ]] && \
+             [[ "${IS_LATEST_DRIVER}" == "true" ]]; then
               BUILD_TAGS+=("${TIMESTAMP}")
               BUILD_TAGS+=("latest")
           fi
 
-          if [[ "${{ matrix.is_gtst_version }}" == "true" ]] && \
-             [[ "${{ matrix.is_latest_driver }}" == "true" ]]; then
+          if [[ "${IS_GTS_VERSION}" == "true" ]] && \
+             [[ "${IS_LATEST_DRIVER}" == "true" ]]; then
               BUILD_TAGS+=("gts-${TIMESTAMP}")
               BUILD_TAGS+=("gts")
           fi
@@ -139,7 +155,7 @@ jobs:
           attempt_delay: 15000
           command: |
             set -eo pipefail
-            ver=$(skopeo inspect docker://ghcr.io/ublue-os/${{ matrix.image_name }}-main:${{ matrix.major_version }} | jq -r '.Labels["org.opencontainers.image.version"]')
+            ver=$(skopeo inspect docker://ghcr.io/ublue-os/${{ matrix.image_name }}-main:${{ matrix.fedora_version }} | jq -r '.Labels["org.opencontainers.image.version"]')
             if [ -z "$ver" ] || [ "null" = "$ver" ]; then
               echo "inspected image version must not be empty or null"
               exit 1
@@ -168,7 +184,7 @@ jobs:
           command: |
             # pull the base image used for FROM in containerfile so
             # we can retry on that unfortunately common failure case
-            podman pull ghcr.io/ublue-os/${{ matrix.image_name }}-main:${{ matrix.major_version }}
+            podman pull ghcr.io/ublue-os/${{ matrix.image_name }}-main:${{ matrix.fedora_version }}
 
       # Build image using Buildah action
       - name: Build Image
@@ -182,7 +198,7 @@ jobs:
             ${{ steps.generate-tags.outputs.alias_tags }}
           build-args: |
             IMAGE_NAME=${{ matrix.image_name }}
-            FEDORA_MAJOR_VERSION=${{ matrix.major_version }}
+            FEDORA_MAJOR_VERSION=${{ matrix.fedora_version }}
             NVIDIA_MAJOR_VERSION=${{ matrix.driver_version }}
             RPMFUSION_MIRROR=${{ vars.RPMFUSION_MIRROR }}
           labels: ${{ steps.meta.outputs.labels }}
