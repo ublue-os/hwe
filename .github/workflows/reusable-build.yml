@@ -10,7 +10,7 @@ env:
   IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
 
 jobs:
-  push-ghcr:
+  build_ublue:
     name: nvidia
     runs-on: ubuntu-22.04
     permissions:
@@ -22,6 +22,10 @@ jobs:
       matrix:
         fedora_version:
           - ${{ inputs.fedora_version }}
+        hwe_flavor:
+          - main
+          - asus
+          - surface
         image_name:
           - silverblue
           - kinoite
@@ -33,8 +37,9 @@ jobs:
           - mate
           - vauxite
         driver_version:
-          - 470
-          - 550
+          - 0   # No Nvidia drivers (this indicates to only build "main" image target
+          - 470 # Older Nvidia driver
+          - 550 # Latest Nvidia driver (update IS_LATEST_DRIVER below if version changes)
         exclude:
           # There is no Fedora 38 version of onyx or lazurite
           - image_name: onyx
@@ -49,6 +54,14 @@ jobs:
           # There is currently no Fedora 40 version of mate
           - image_name: mate
             fedora_version: 40
+          # Don't build/push "main" since it would be a duplicate of the "base" `*-main` images
+          - driver_version: 0
+            hwe_flavor: main
+          # Only build latest Fedora versions for "asus" and "surface" HWE flavors
+          - fedora_version: 38
+            hwe_flavor: asus
+          - fedora_version: 38
+            hwe_flavor: surface
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
@@ -61,15 +74,24 @@ jobs:
 
       - name: Matrix Variables
         run: |
-            REPO=${{ github.repository }}
-            echo "IMAGE_NAME=${{ matrix.image_name }}-${REPO##*/}" >> $GITHUB_ENV
+          if [[ ${{ matrix.hwe_flavor }} == "main" ]]; then
+            if ${{ matrix.driver_version }} == "0" ]]; then
+              echo "this workflow does not build main image without Nvidia drivers"
+              exit 1
+            fi
+            echo "IMAGE_NAME=${{ matrix.image_name }}-nvidia" >> $GITHUB_ENV
+          else
+            echo "IMAGE_NAME=${{ matrix.image_name }}-${{ matrix.hwe_flavor }}${{ matrix.driver_version != "0" && '-nvidia' }}" >> $GITHUB_ENV
+          fi
+          echo "SOURCE_IMAGE=${{ matrix.image_name }}-main" >> $GITHUB_ENV
+
       - name: Generate tags
         id: generate-tags
         shell: bash
         run: |
           # Generate a timestamp for creating an image version history
           TIMESTAMP="$(date +%Y%m%d)"
-          VARIANT="${{ matrix.fedora_version }}-${{ matrix.driver_version }}"
+          VARIANT="${{ matrix.fedora_version }}${{ matrix.driver_version != '0' && '-'matrix.driver_version }}"
 
           if [[ "${{ matrix.fedora_version }}" -eq "38" ]]; then
             IS_LATEST_VERSION=false
@@ -155,7 +177,7 @@ jobs:
           attempt_delay: 15000
           command: |
             set -eo pipefail
-            ver=$(skopeo inspect docker://ghcr.io/ublue-os/${{ matrix.image_name }}-main:${{ matrix.fedora_version }} | jq -r '.Labels["org.opencontainers.image.version"]')
+            ver=$(skopeo inspect docker://ghcr.io/ublue-os/${{ env.SOURCE_IMAGE }}:${{ matrix.fedora_version }} | jq -r '.Labels["org.opencontainers.image.version"]')
             if [ -z "$ver" ] || [ "null" = "$ver" ]; then
               echo "inspected image version must not be empty or null"
               exit 1
@@ -171,7 +193,7 @@ jobs:
             ${{ env.IMAGE_NAME }}
           labels: |
             org.opencontainers.image.title=${{ env.IMAGE_NAME }}
-            org.opencontainers.image.description=ublue-os ${{ matrix.image_name }} with Nvidia drivers added
+            org.opencontainers.image.description=ublue-os ${{ matrix.image_name }}${{ matrix.hwe_flavor == 'asus' && ' for ASUS devices' }}${{ matrix.hwe_flavor == 'surface' && ' for Surface laptops' }}${{ matrix.driver_version != '0' && ' with Nvidia drivers' }}
             org.opencontainers.image.version=${{ env.SOURCE_IMAGE_VERSION }}
             io.artifacthub.package.readme-url=https://raw.githubusercontent.com/${{ github.repository }}/main/README.md
             io.artifacthub.package.logo-url=https://avatars.githubusercontent.com/u/1728152?s=200&v=4
@@ -198,11 +220,15 @@ jobs:
             ${{ steps.generate-tags.outputs.alias_tags }}
           build-args: |
             IMAGE_NAME=${{ matrix.image_name }}
+            SOURCE_IMAGE=${{ env.SOURCE_IMAGE }}
             FEDORA_MAJOR_VERSION=${{ matrix.fedora_version }}
             NVIDIA_MAJOR_VERSION=${{ matrix.driver_version }}
+            HWE_FLAVOR=${{ matrix.hwe_flavor }}
             RPMFUSION_MIRROR=${{ vars.RPMFUSION_MIRROR }}
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
+          extra-args: |
+            --target=${{ matrix.driver_version == '0' && 'main' || 'nvidia' }}
 
       # Workaround bug where capital letters in your GitHub username make it impossible to push to GHCR.
       # https://github.com/macbre/push-to-ghcr/issues/12
@@ -260,13 +286,13 @@ jobs:
           echo "${{ toJSON(steps.push.outputs) }}"
 
   check:
-    name: Check all builds successful
+    name: Check all ${{ inputs.fedora_version }} builds successful
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
-    needs: [push-ghcr]
+    needs: [build_ublue]
     steps:
       - name: Exit on failure
-        if: ${{ needs.push-ghcr.result == 'failure' }}
+        if: ${{ needs.build_ublue.result == 'failure' }}
         shell: bash
         run: exit 1
       - name: Exit
