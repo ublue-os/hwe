@@ -9,15 +9,18 @@ if [ "${HWE_FLAVOR}" = "main" ]; then
     exit 0
 fi
 
+# after F40 launches, bump to 41
+if [[ "${FEDORA_MAJOR_VERSION}" -ge 40 ]]; then
+    # note: this is done before single mirror hack to ensure this persists in image and is not reset
+    # pre-release rpmfusion is in a different location
+    sed -i "s%free/fedora/releases%free/fedora/development%" /etc/yum.repos.d/rpmfusion-*.repo
+fi
+
 if [ -n "${RPMFUSION_MIRROR}" ]; then
     # force use of single rpmfusion mirror
     echo "Using single rpmfusion mirror: ${RPMFUSION_MIRROR}"
     sed -i.bak "s%^metalink=%#metalink=%" /etc/yum.repos.d/rpmfusion-*.repo
     sed -i "s%^#baseurl=http://download1.rpmfusion.org%baseurl=${RPMFUSION_MIRROR}%" /etc/yum.repos.d/rpmfusion-*.repo
-    # after F40 launches, bump to 41
-    if [[ "${FEDORA_MAJOR_VERSION}" -ge 40 ]]; then
-        sed -i "s%free/fedora/releases%free/fedora/development%" /etc/yum.repos.d/rpmfusion-*.repo
-    fi
 fi
 
 # do HWE specific things
