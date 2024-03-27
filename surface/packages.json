@@ -1,0 +1,12 @@
+{
+    "all": {
+        "include": {
+            "all": [
+                "fprintd"
+            ]
+        },
+        "exclude": {
+            "all": []
+        }
+    }
+}
