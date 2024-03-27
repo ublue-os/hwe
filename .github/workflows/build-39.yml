@@ -1,4 +1,4 @@
-name: ublue nvidia 39
+name: ublue hwe 39
 on:
   pull_request:
   merge_group:

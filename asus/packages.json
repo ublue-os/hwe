@@ -1,0 +1,14 @@
+{
+    "all": {
+        "include": {
+            "all": [
+                "asusctl",
+                "asusctl-rog-gui",
+                "fprintd"
+            ]
+        },
+        "exclude": {
+            "all": []
+        }
+    }
+}
