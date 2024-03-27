@@ -88,7 +88,7 @@ jobs:
             fi
             echo "IMAGE_NAME=${{ matrix.image_name }}-nvidia" >> $GITHUB_ENV
           else
-            echo "IMAGE_NAME=${{ matrix.image_name }}-${{ matrix.hwe_flavor }}${{ matrix.nvidia_version != '0' && '-nvidia' }}" >> $GITHUB_ENV
+            echo "IMAGE_NAME=${{ matrix.image_name }}-${{ matrix.hwe_flavor }}${{ matrix.nvidia_version != '0' && '-nvidia' || ''}}" >> $GITHUB_ENV
           fi
           echo "SOURCE_IMAGE=${{ matrix.image_name }}-main" >> $GITHUB_ENV
 
