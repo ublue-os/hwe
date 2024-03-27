@@ -62,6 +62,9 @@ jobs:
             hwe_flavor: asus
           - fedora_version: 38
             hwe_flavor: surface
+          # Only build latest nvidia version for "surface" HWE flavor
+          - driver_version: 470
+            hwe_flavor: surface
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
