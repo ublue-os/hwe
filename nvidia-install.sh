@@ -1,6 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 
 set -ouex pipefail
+
+RELEASE="$(rpm -E %fedora)"
 
 if [[ "${FEDORA_MAJOR_VERSION}" -le 38 ]]; then
     sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-{cisco-openh264,modular,updates-modular}.repo
@@ -19,8 +21,9 @@ if [ -n "${RPMFUSION_MIRROR}" ]; then
     fi
 fi
 
-rpm-ostree install \
-    /tmp/akmods-rpms/ublue-os/ublue-os-nvidia-addons-*.rpm
+
+# nvidia install steps
+rpm-ostree install /tmp/akmods-rpms/ublue-os/ublue-os-nvidia-addons-*.rpm
 
 source /tmp/akmods-rpms/kmods/nvidia-vars.${NVIDIA_MAJOR_VERSION}
 
@@ -37,6 +40,19 @@ rpm-ostree install \
     xorg-x11-drv-${NVIDIA_PACKAGE_NAME}-libs.i686 \
     nvidia-container-toolkit nvidia-vaapi-driver ${VARIANT_PKGS} \
     /tmp/akmods-rpms/kmods/kmod-${NVIDIA_PACKAGE_NAME}-${KERNEL_VERSION}-${NVIDIA_AKMOD_VERSION}.fc${RELEASE}.rpm
+
+
+# nvidia post-install steps
+sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/{eyecantcu-supergfxctl,nvidia-container-toolkit}.repo
+
+systemctl enable ublue-nvctk-cdi.service
+semodule --verbose --install /usr/share/selinux/packages/nvidia-container.pp
+
+if [[ "${IMAGE_NAME}" == "sericea" ]]; then
+    mv /etc/sway/environment{,.orig}
+    install -Dm644 /usr/share/ublue-os/etc/sway/environment /etc/sway/environment
+fi
+
 
 if [ -n "${RPMFUSION_MIRROR}" ]; then
     # reset forced use of single rpmfusion mirror

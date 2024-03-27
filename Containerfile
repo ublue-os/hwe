@@ -36,13 +36,11 @@ ARG RPMFUSION_MIRROR=""
 
 COPY --from=ghcr.io/ublue-os/akmods-nvidia:${HWE_FLAVOR}-${FEDORA_MAJOR_VERSION}-${NVIDIA_MAJOR_VERSION} /rpms /tmp/akmods-rpms
 
-COPY image-info.sh /tmp/
-COPY nvidia/*.sh /tmp/
+COPY *.sh /tmp/
 
 RUN mkdir -p /var/lib/alternatives && \
     IMAGE_FLAVOR=nvidia /tmp/image-info.sh && \
-    /tmp/install.sh && \
-    /tmp/post-install.sh && \
+    /tmp/nvidia-install.sh && \
     mv /var/lib/alternatives /staged-alternatives && \
     rm -rf /tmp/* /var/* && \
     ostree container commit && \
