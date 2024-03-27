@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+INITRAMFS=$(rpm-ostree initramfs-etc)
+SURFACE_INITRAMFS=("/etc/crypttab")
+APPLY_INITRAMFS=false
+
+echo "Current initramfs: $INITRAMFS"
+
+SURFACE_INITRAMFS+=("/etc/modules-load.d/ublue-surface.conf")
+
+# Verify initramfs options are applied
+for ARG in ${SURFACE_INITRAMFS[@]}; do
+  if [[ ! $INITRAMFS =~ "$ARG" ]]; then
+    APPLY_INITRAMFS=true
+  fi
+done
+
+# Update initramfs
+if $APPLY_INITRAMFS; then
+  echo "Found needed initramfs changes, applying the following: ${SURFACE_INITRAMFS[*]}"
+  plymouth display-message --text="Updating initramfs - System will reboot" || true
+  rpm-ostree initramfs-etc "${SURFACE_INITRAMFS[@]/#/--track=}" --reboot         
+else
+  echo "No initramfs changes needed"
+fi
