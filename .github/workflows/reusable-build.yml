@@ -82,13 +82,13 @@ jobs:
       - name: Matrix Variables
         run: |
           if [[ "${{ matrix.hwe_flavor }}" == "main" ]]; then
-            if "${{ matrix.nvidia_version }}" == "0" ]]; then
+            if [[ "${{ matrix.nvidia_version }}" == "0" ]]; then
               echo "this workflow does not build main image without Nvidia drivers"
               exit 1
             fi
             echo "IMAGE_NAME=${{ matrix.image_name }}-nvidia" >> $GITHUB_ENV
           else
-            if "${{ matrix.nvidia_version }}" == "0" ]]; then
+            if [[ "${{ matrix.nvidia_version }}" == "0" ]]; then
               echo "IMAGE_NAME=${{ matrix.image_name }}-${{ matrix.hwe_flavor }}" >> $GITHUB_ENV
             else
               echo "IMAGE_NAME=${{ matrix.image_name }}-${{ matrix.hwe_flavor }}-nvidia" >> $GITHUB_ENV
@@ -102,7 +102,7 @@ jobs:
         run: |
           # Generate a timestamp for creating an image version history
           TIMESTAMP="$(date +%Y%m%d)"
-          if "${{ matrix.nvidia_version }}" == "0" ]]; then
+          if [[ "${{ matrix.nvidia_version }}" == "0" ]]; then
             VARIANT="${{ matrix.fedora_version }}"
           else
             VARIANT="${{ matrix.fedora_version }}-${{ matrix.nvidia_version }}"
