@@ -69,6 +69,9 @@ jobs:
           # Only build latest nvidia version for "surface" HWE flavor
           - nvidia_version: 470
             hwe_flavor: surface
+          # Only build latest nvidia version for F40 (temporarily broken? not building in akmods)
+          - fedora_version: 40
+            nvidia_version: 470
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
