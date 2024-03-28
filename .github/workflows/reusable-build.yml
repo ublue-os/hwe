@@ -80,6 +80,7 @@ jobs:
           containers: ${{ matrix.image_name }}-main:${{ matrix.fedora_version }}
 
       - name: Matrix Variables
+        shell: bash
         run: |
           if [[ "${{ matrix.hwe_flavor }}" == "main" ]]; then
             if [[ "${{ matrix.nvidia_version }}" == "0" ]]; then
