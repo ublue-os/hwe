@@ -98,7 +98,7 @@ jobs:
         run: |
           # Generate a timestamp for creating an image version history
           TIMESTAMP="$(date +%Y%m%d)"
-          VARIANT="${{ matrix.fedora_version }}${{ matrix.nvidia_version == '0' && '' || format('-{0}', matrix.driver_version) }}"
+          VARIANT="${{ matrix.fedora_version }}${{ matrix.nvidia_version == '0' && '' || format('-{0}', matrix.nvidia_version) }}"
 
           if [[ "${{ matrix.fedora_version }}" -eq "38" ]]; then
             IS_LATEST_VERSION=false
