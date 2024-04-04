@@ -72,6 +72,10 @@ jobs:
           # Only build latest nvidia version for F40 (temporarily broken? not building in akmods)
           - fedora_version: 40
             nvidia_version: 470
+          # Nvidia 470 no longer builds for Asus on F39
+          - fedora_version: 39
+            hwe_flavor: asus
+            nvidia_version: 470
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
