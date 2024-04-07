@@ -10,3 +10,4 @@ The purpose of these images is to provide [community Fedora images](https://gith
 - [Documentation for these images](https://universal-blue.org/images/)
 - [Installation](https://universal-blue.org/installation/) - follow this for clean installation
 - [Rebase instructions](https://universal-blue.org/images/) - follow this if you want to switch to another image.
+- [Scope document](https://universal-blue.discourse.group/t/universal-blue-project-governance/51)
