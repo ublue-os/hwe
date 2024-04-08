@@ -6,7 +6,7 @@ The purpose of these images is to provide [community Fedora images](https://gith
 
 # Documentation
 
-- [Main website and documentation](https://universal-blue.org)
-- [Documentation for these images](https://universal-blue.org/images/)
-- [Installation](https://universal-blue.org/installation/) - follow this for clean installation
-- [Rebase instructions](https://universal-blue.org/images/) - follow this if you want to switch to another image.
+- [Main website](https://universal-blue.org)
+- [Documentation](https://universal-blue.discourse.group/docs?category=4)
+- [Installation](https://universal-blue.discourse.group/docs?topic=868) - follow this for clean installation
+- [Scope document](https://universal-blue.discourse.group/t/universal-blue-project-governance/51)
