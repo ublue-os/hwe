@@ -42,7 +42,6 @@ jobs:
           - vauxite
         nvidia_version:
           - 0   # No Nvidia drivers (this indicates to only build "main" image target
-          - 470 # Older Nvidia driver
           - 550 # Latest Nvidia driver (update IS_LATEST_DRIVER below if version changes)
         exclude:
           # There is no Fedora 38 version of onyx or lazurite
@@ -66,16 +65,6 @@ jobs:
             hwe_flavor: asus
           - fedora_version: 38
             hwe_flavor: surface
-          # Only build latest nvidia version for "surface" HWE flavor
-          - nvidia_version: 470
-            hwe_flavor: surface
-          # Only build latest nvidia version for F40 (temporarily broken? not building in akmods)
-          - fedora_version: 40
-            nvidia_version: 470
-          # Nvidia 470 no longer builds for Asus on F39
-          - fedora_version: 39
-            hwe_flavor: asus
-            nvidia_version: 470
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
