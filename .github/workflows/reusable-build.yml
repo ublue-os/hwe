@@ -41,8 +41,9 @@ jobs:
           - mate
           - vauxite
         nvidia_version:
-          - 0   # No Nvidia drivers (this indicates to only build "main" image target
-          - 550 # Latest Nvidia driver (update IS_LATEST_DRIVER below if version changes)
+          - none   # No Nvidia drivers (this indicates to only build "main" image target
+          - proprierary # Latest proprietary Nvidia driver (update IS_LATEST_DRIVER below if version changes)
+          - open  # The open-source Nvidia driver
         exclude:
           # There is no Fedora 38 version of onyx or lazurite
           - image_name: onyx
