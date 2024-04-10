@@ -2,6 +2,7 @@ name: ublue hwe 40
 on:
   pull_request:
   merge_group:
+  push:
   schedule:
     - cron: '35 15 * * *'  # 15:30-ish UTC everyday (30 min delay after 'main' builds)
   workflow_dispatch:
