@@ -25,15 +25,10 @@ if [ -n "${RPMFUSION_MIRROR}" ]; then
 fi
 
 
-## nvidia install steps
+# nvidia install steps
 rpm-ostree install /tmp/akmods-rpms/ublue-os/ublue-os-nvidia-addons-*.rpm
 
-# enables nvidia repos provided by ublue-os-nvidia-addons
-sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/eyecantcu-supergfxctl.repo
-sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/negativo17-fedora-nvidia.repo
-sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/nvidia-container-toolkit.repo
-
-source /tmp/akmods-rpms/kmods/nvidia-vars
+source /tmp/akmods-rpms/kmods/nvidia-vars.${NVIDIA_MAJOR_VERSION}
 
 if [[ "${IMAGE_NAME}" == "kinoite" ]]; then
     VARIANT_PKGS="supergfxctl-plasmoid supergfxctl"
@@ -44,22 +39,14 @@ else
 fi
 
 rpm-ostree install \
-    nvidia-driver \
-    nvidia-driver-cuda \
-    nvidia-driver-cuda-libs.i686 \
-    nvidia-driver-libs.i686 \
-    nvidia-driver-NVML.i686 \
-    nvidia-driver-NvFBCOpenGL \
-    nvidia-modprobe \
-    nvidia-persistenced \
-    nvidia-settings \
-    nvidia-container-toolkit ${VARIANT_PKGS} \
-    /tmp/akmods-rpms/kmods/kmod-nvidia-${KERNEL_VERSION}-${NVIDIA_AKMOD_VERSION}.fc${RELEASE}.rpm
+    xorg-x11-drv-${NVIDIA_PACKAGE_NAME}-{,cuda-,devel-,kmodsrc-,power-}${NVIDIA_FULL_VERSION} \
+    xorg-x11-drv-${NVIDIA_PACKAGE_NAME}-libs.i686 \
+    nvidia-container-toolkit nvidia-vaapi-driver ${VARIANT_PKGS} \
+    /tmp/akmods-rpms/kmods/kmod-${NVIDIA_PACKAGE_NAME}-${KERNEL_VERSION}-${NVIDIA_AKMOD_VERSION}.fc${RELEASE}.rpm
 
 
-## nvidia post-install steps
-# disables nvidia repos provided by ublue-os-nvidia-addons
-sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/{eyecantcu-supergfxctl,negativo17-fedora-nvidia,nvidia-container-toolkit}.repo
+# nvidia post-install steps
+sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/{eyecantcu-supergfxctl,nvidia-container-toolkit}.repo
 
 systemctl enable ublue-nvctk-cdi.service
 semodule --verbose --install /usr/share/selinux/packages/nvidia-container.pp
