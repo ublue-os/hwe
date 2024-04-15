@@ -44,6 +44,8 @@ else
 fi
 
 rpm-ostree install \
+    libva-nvidia-driver \
+    mesa-vulkan-drivers.i686 \
     nvidia-driver \
     nvidia-driver-cuda \
     nvidia-driver-cuda-libs.i686 \
