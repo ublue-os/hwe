@@ -164,7 +164,7 @@ jobs:
       - name: Verify main image
         uses: EyeCantCU/cosign-action/verify@v0.2.2
         with:
-          containers: ${{ matrix.image_name }}-main:${{ matrix.fedora_version }}
+          containers: ${{ env.SOURCE_IMAGE }}:${{ matrix.fedora_version }}
           registry: ${{ env.IMAGE_REGISTRY }}
 
       - name: Verify akmods-common image
