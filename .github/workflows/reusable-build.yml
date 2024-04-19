@@ -70,11 +70,6 @@ jobs:
       - name: Checkout Push to Registry action
         uses: actions/checkout@v4
 
-      - name: Verify base image
-        uses: EyeCantCU/cosign-action/verify@v0.2.2
-        with:
-          containers: ${{ matrix.image_name }}-main:${{ matrix.fedora_version }}
-
       - name: Matrix Variables
         shell: bash
         run: |
@@ -166,6 +161,36 @@ jobs:
 
           echo "alias_tags=${alias_tags[*]}" >> $GITHUB_OUTPUT
 
+      - name: Verify main image
+        uses: EyeCantCU/cosign-action/verify@v0.2.2
+        with:
+          containers: ${{ matrix.image_name }}-main:${{ matrix.fedora_version }}
+          registry: ${{ env.IMAGE_REGISTRY }}
+
+      - name: Verify akmods-common image
+        uses: EyeCantCU/cosign-action/verify@v0.2.2
+        with:
+          containers: akmods:${{ matrix.kernel_flavor}}-${{ matrix.fedora_version }}
+          registry: ${{ env.IMAGE_REGISTRY }}
+
+      - name: Verify akmods-nvidia image
+        uses: EyeCantCU/cosign-action/verify@v0.2.2
+        with:
+          containers: akmods-nvidia:${{ matrix.kernel_flavor}}-${{ matrix.fedora_version }}
+          registry: ${{ env.IMAGE_REGISTRY }}
+
+      - name: Pull main and akmods images
+        uses: Wandalen/wretry.action@v2.1.0
+        with:
+          attempt_limit: 3
+          attempt_delay: 15000
+          command: |
+            # pull the base image used for FROM in containerfile so
+            # we can retry on that unfortunately common failure case
+            podman pull ${{ env.IMAGE_REGISTRY }}/${{ env.SOURCE_IMAGE }}:${{ matrix.fedora_version }}
+            podman pull ${{ env.IMAGE_REGISTRY }}/akmods:${{ matrix.kernel_flavor }}:${{ matrix.fedora_version }}
+            podman pull ${{ env.IMAGE_REGISTRY }}/akmods-nvidia:${{ matrix.kernel_flavor }}:${{ matrix.fedora_version }}
+
       - name: Get current version
         id: labels
         uses: Wandalen/wretry.action@v2.1.0
@@ -174,12 +199,21 @@ jobs:
           attempt_delay: 15000
           command: |
             set -eo pipefail
-            ver=$(skopeo inspect docker://ghcr.io/ublue-os/${{ env.SOURCE_IMAGE }}:${{ matrix.fedora_version }} | jq -r '.Labels["org.opencontainers.image.version"]')
+            skopeo inspect docker://${{ env.IMAGE_REGISTRY }}/${{ env.SOURCE_IMAGE }}:${{ matrix.fedora_version }} > source.json
+            ver=$(jq -r '.Labels["org.opencontainers.image.version"]' source.json)
             if [ -z "$ver" ] || [ "null" = "$ver" ]; then
               echo "inspected image version must not be empty or null"
               exit 1
             fi
             echo "SOURCE_IMAGE_VERSION=$ver" >> $GITHUB_ENV
+
+            skopeo inspect docker://${{ env.IMAGE_REGISTRY }}/akmods:${{ matrix.kernel_flavor }}-${{ matrix.fedora_version }} > akmods.json
+            linux=$(jq -r '.Labels["ostree.linux"]' akmods.json)
+            if [ -z "$linux" ] || [ "null" = "$linux" ]; then
+              echo "inspected image linux version must not be empty or null"
+              exit 1
+            fi
+            echo "KERNEL_VERSION=$linux" >> $GITHUB_ENV
 
       # Build metadata
       - name: Image Metadata
@@ -192,18 +226,9 @@ jobs:
             org.opencontainers.image.title=${{ env.IMAGE_NAME }}
             org.opencontainers.image.description=ublue-os ${{ matrix.image_name }}${{ matrix.hwe_flavor == 'asus' && ' for ASUS devices' || '' }}${{ matrix.hwe_flavor == 'surface' && ' for Surface laptops' || ''}}${{ matrix.image_target == 'nvidia' && ' with Nvidia drivers' || ''}}
             org.opencontainers.image.version=${{ env.SOURCE_IMAGE_VERSION }}
+            ostree.linux=${{ env.KERNEL_VERSION }}
             io.artifacthub.package.readme-url=https://raw.githubusercontent.com/${{ github.repository }}/main/README.md
             io.artifacthub.package.logo-url=https://avatars.githubusercontent.com/u/1728152?s=200&v=4
-
-      - name: Pull base image
-        uses: Wandalen/wretry.action@v2.1.0
-        with:
-          attempt_limit: 3
-          attempt_delay: 15000
-          command: |
-            # pull the base image used for FROM in containerfile so
-            # we can retry on that unfortunately common failure case
-            podman pull ghcr.io/ublue-os/${{ matrix.image_name }}-main:${{ matrix.fedora_version }}
 
       # Build image using Buildah action
       - name: Build Image
@@ -220,6 +245,7 @@ jobs:
             SOURCE_IMAGE=${{ env.SOURCE_IMAGE }}
             FEDORA_MAJOR_VERSION=${{ matrix.fedora_version }}
             HWE_FLAVOR=${{ matrix.hwe_flavor }}
+            KERNEL_VERSION=${{ env.KERNEL_VERSION }}
             RPMFUSION_MIRROR=${{ vars.RPMFUSION_MIRROR }}
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
