@@ -26,7 +26,7 @@ jobs:
       matrix:
         fedora_version:
           - ${{ inputs.fedora_version }}
-        hwe_flavor:
+        kernel_flavor:
           - main
           - asus
           - surface
@@ -40,9 +40,9 @@ jobs:
           - lazurite
           - mate
           - vauxite
-        nvidia_version:
-          - 0   # No Nvidia drivers (this indicates to only build "main" image target
-          - 550 # Latest Nvidia driver (update IS_LATEST_DRIVER below if version changes)
+        image_target:
+          - main
+          - nvidia
         exclude:
           # There is no Fedora 38 version of onyx or lazurite
           - image_name: onyx
@@ -58,37 +58,32 @@ jobs:
           - image_name: mate
             fedora_version: 40
           # Don't build/push "main" since it would be a duplicate of the "base" `*-main` images
-          - nvidia_version: 0
-            hwe_flavor: main
+          - kernel_flavor: main
+            image_target: main
           # Only build latest Fedora versions for "asus" and "surface" HWE flavors
           - fedora_version: 38
-            hwe_flavor: asus
+            kernel_flavor: asus
           - fedora_version: 38
-            hwe_flavor: surface
+            kernel_flavor: surface
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
         uses: actions/checkout@v4
 
-      - name: Verify base image
-        uses: EyeCantCU/cosign-action/verify@v0.2.2
-        with:
-          containers: ${{ matrix.image_name }}-main:${{ matrix.fedora_version }}
-
       - name: Matrix Variables
         shell: bash
         run: |
-          if [[ "${{ matrix.hwe_flavor }}" == "main" ]]; then
-            if [[ "${{ matrix.nvidia_version }}" == "0" ]]; then
+          if [[ "${{ matrix.kernel_flavor }}" == "main" ]]; then
+            if [[ "${{ matrix.image_target }}" == "main" ]]; then
               echo "this workflow does not build main image without Nvidia drivers"
               exit 1
             fi
             echo "IMAGE_NAME=${{ matrix.image_name }}-nvidia" >> $GITHUB_ENV
           else
-            if [[ "${{ matrix.nvidia_version }}" == "0" ]]; then
-              echo "IMAGE_NAME=${{ matrix.image_name }}-${{ matrix.hwe_flavor }}" >> $GITHUB_ENV
+            if [[ "${{ matrix.image_target }}" == "main" ]]; then
+              echo "IMAGE_NAME=${{ matrix.image_name }}-${{ matrix.kernel_flavor }}" >> $GITHUB_ENV
             else
-              echo "IMAGE_NAME=${{ matrix.image_name }}-${{ matrix.hwe_flavor }}-nvidia" >> $GITHUB_ENV
+              echo "IMAGE_NAME=${{ matrix.image_name }}-${{ matrix.kernel_flavor }}-nvidia" >> $GITHUB_ENV
             fi
           fi
           echo "SOURCE_IMAGE=${{ matrix.image_name }}-main" >> $GITHUB_ENV
@@ -99,11 +94,7 @@ jobs:
         run: |
           # Generate a timestamp for creating an image version history
           TIMESTAMP="$(date +%Y%m%d)"
-          if [[ "${{ matrix.nvidia_version }}" == "0" ]]; then
-            VARIANT="${{ matrix.fedora_version }}"
-          else
-            VARIANT="${{ matrix.fedora_version }}-${{ matrix.nvidia_version }}"
-          fi
+          VARIANT="${{ matrix.fedora_version }}"
 
           if [[ "${{ matrix.fedora_version }}" -eq "38" ]]; then
             IS_LATEST_VERSION=false
@@ -119,10 +110,6 @@ jobs:
             IS_GTS_VERSION=false
           fi
 
-          if [[ "${{ matrix.nvidia_version }}" -eq "550" ]]; then
-            IS_LATEST_DRIVER=true
-          fi
-
           COMMIT_TAGS=()
           BUILD_TAGS=()
 
@@ -132,18 +119,12 @@ jobs:
           COMMIT_TAGS+=("${SHA_SHORT}-${VARIANT}")
 
           if [[ "${IS_LATEST_VERSION}" == "true" ]] && \
-             [[ "${IS_STABLE_VERSION}" == "true" ]] && \
-             [[ "${IS_LATEST_DRIVER}" == "true" ]]; then
+             [[ "${IS_STABLE_VERSION}" == "true" ]]; then
               COMMIT_TAGS+=("pr-${{ github.event.number }}")
               COMMIT_TAGS+=("${SHA_SHORT}")
           fi
 
           BUILD_TAGS=("${VARIANT}")
-
-          if [[ "${IS_LATEST_DRIVER}" == "true" ]]; then
-              BUILD_TAGS+=("${{ matrix.fedora_version }}-current")
-              BUILD_TAGS+=("${{ matrix.fedora_version }}")
-          fi
 
           # Append matching timestamp tags to keep a version history
           for TAG in "${BUILD_TAGS[@]}"; do
@@ -151,14 +132,13 @@ jobs:
           done
 
           if [[ "${IS_LATEST_VERSION}" == "true" ]] && \
-             [[ "${IS_STABLE_VERSION}" == "true" ]] && \
-             [[ "${IS_LATEST_DRIVER}" == "true" ]]; then
+             [[ "${IS_STABLE_VERSION}" == "true" ]]; then
               BUILD_TAGS+=("${TIMESTAMP}")
               BUILD_TAGS+=("latest")
           fi
 
           if [[ "${IS_GTS_VERSION}" == "true" ]] && \
-             [[ "${IS_LATEST_DRIVER}" == "true" ]]; then
+             [[ "${IS_STABLE_VERSION}" == "true" ]]; then
               BUILD_TAGS+=("gts-${TIMESTAMP}")
               BUILD_TAGS+=("gts")
           fi
@@ -181,6 +161,29 @@ jobs:
 
           echo "alias_tags=${alias_tags[*]}" >> $GITHUB_OUTPUT
 
+      - name: Verify main image
+        uses: EyeCantCU/cosign-action/verify@v0.2.2
+        with:
+          containers: ${{ env.SOURCE_IMAGE }}:${{ matrix.fedora_version }}
+          registry: ${{ env.IMAGE_REGISTRY }}
+
+      - name: Verify akmods-nvidia image
+        uses: EyeCantCU/cosign-action/verify@v0.2.2
+        with:
+          containers: akmods-nvidia:${{ matrix.kernel_flavor}}-${{ matrix.fedora_version }}
+          registry: ${{ env.IMAGE_REGISTRY }}
+
+      - name: Pull main and akmods-nvidia images
+        uses: Wandalen/wretry.action@v2.1.0
+        with:
+          attempt_limit: 3
+          attempt_delay: 15000
+          command: |
+            # pull the base image used for FROM in containerfile so
+            # we can retry on that unfortunately common failure case
+            podman pull ${{ env.IMAGE_REGISTRY }}/${{ env.SOURCE_IMAGE }}:${{ matrix.fedora_version }}
+            podman pull ${{ env.IMAGE_REGISTRY }}/akmods-nvidia:${{ matrix.kernel_flavor }}-${{ matrix.fedora_version }}
+
       - name: Get current version
         id: labels
         uses: Wandalen/wretry.action@v2.1.0
@@ -189,12 +192,21 @@ jobs:
           attempt_delay: 15000
           command: |
             set -eo pipefail
-            ver=$(skopeo inspect docker://ghcr.io/ublue-os/${{ env.SOURCE_IMAGE }}:${{ matrix.fedora_version }} | jq -r '.Labels["org.opencontainers.image.version"]')
+            skopeo inspect docker://${{ env.IMAGE_REGISTRY }}/${{ env.SOURCE_IMAGE }}:${{ matrix.fedora_version }} > source.json
+            ver=$(jq -r '.Labels["org.opencontainers.image.version"]' source.json)
             if [ -z "$ver" ] || [ "null" = "$ver" ]; then
               echo "inspected image version must not be empty or null"
               exit 1
             fi
             echo "SOURCE_IMAGE_VERSION=$ver" >> $GITHUB_ENV
+
+            skopeo inspect docker://${{ env.IMAGE_REGISTRY }}/akmods-nvidia:${{ matrix.kernel_flavor }}-${{ matrix.fedora_version }} > akmods.json
+            linux=$(jq -r '.Labels["ostree.linux"]' akmods.json)
+            if [ -z "$linux" ] || [ "null" = "$linux" ]; then
+              echo "inspected image linux version must not be empty or null"
+              exit 1
+            fi
+            echo "KERNEL_VERSION=$linux" >> $GITHUB_ENV
 
       # Build metadata
       - name: Image Metadata
@@ -205,20 +217,11 @@ jobs:
             ${{ env.IMAGE_NAME }}
           labels: |
             org.opencontainers.image.title=${{ env.IMAGE_NAME }}
-            org.opencontainers.image.description=ublue-os ${{ matrix.image_name }}${{ matrix.hwe_flavor == 'asus' && ' for ASUS devices' || '' }}${{ matrix.hwe_flavor == 'surface' && ' for Surface laptops' || ''}}${{ matrix.nvidia_version != '0' && ' with Nvidia drivers' || ''}}
+            org.opencontainers.image.description=ublue-os ${{ matrix.image_name }}${{ matrix.kernel_flavor == 'asus' && ' for ASUS devices' || '' }}${{ matrix.kernel_flavor == 'surface' && ' for Surface laptops' || ''}}${{ matrix.image_target == 'nvidia' && ' with Nvidia drivers' || ''}}
             org.opencontainers.image.version=${{ env.SOURCE_IMAGE_VERSION }}
+            ostree.linux=${{ env.KERNEL_VERSION }}
             io.artifacthub.package.readme-url=https://raw.githubusercontent.com/${{ github.repository }}/main/README.md
             io.artifacthub.package.logo-url=https://avatars.githubusercontent.com/u/1728152?s=200&v=4
-
-      - name: Pull base image
-        uses: Wandalen/wretry.action@v2.1.0
-        with:
-          attempt_limit: 3
-          attempt_delay: 15000
-          command: |
-            # pull the base image used for FROM in containerfile so
-            # we can retry on that unfortunately common failure case
-            podman pull ghcr.io/ublue-os/${{ matrix.image_name }}-main:${{ matrix.fedora_version }}
 
       # Build image using Buildah action
       - name: Build Image
@@ -234,13 +237,12 @@ jobs:
             IMAGE_NAME=${{ matrix.image_name }}
             SOURCE_IMAGE=${{ env.SOURCE_IMAGE }}
             FEDORA_MAJOR_VERSION=${{ matrix.fedora_version }}
-            NVIDIA_MAJOR_VERSION=${{ matrix.nvidia_version }}
-            HWE_FLAVOR=${{ matrix.hwe_flavor }}
+            KERNEL_FLAVOR=${{ matrix.kernel_flavor }}
             RPMFUSION_MIRROR=${{ vars.RPMFUSION_MIRROR }}
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
           extra-args: |
-            --target=${{ matrix.nvidia_version == '0' && 'main' || 'nvidia' }}
+            --target=${{ matrix.image_target }}
 
       # Workaround bug where capital letters in your GitHub username make it impossible to push to GHCR.
       # https://github.com/macbre/push-to-ghcr/issues/12
