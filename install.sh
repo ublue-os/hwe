@@ -4,8 +4,8 @@ set -ouex pipefail
 
 RELEASE="$(rpm -E %fedora)"
 
-if [ "${HWE_FLAVOR}" = "main" ]; then
-    # HWE_FLAVOR is main, no need to do anything
+if [ "${KERNEL_FLAVOR}" = "main" ]; then
+    # KERNEL_FLAVOR is main, no need to do anything
     exit 0
 fi
 
@@ -24,8 +24,8 @@ if [ -n "${RPMFUSION_MIRROR}" ]; then
 fi
 
 # do HWE specific things
-if [ "${HWE_FLAVOR}" = "asus" ]; then
-    echo "install.sh: steps for HWE_FLAVOR: ${HWE_FLAVOR}"
+if [ "${KERNEL_FLAVOR}" = "asus" ]; then
+    echo "install.sh: steps for KERNEL_FLAVOR: ${KERNEL_FLAVOR}"
     # Install Asus kernel
     wget https://copr.fedorainfracloud.org/coprs/lukenukem/asus-linux/repo/fedora-${RELEASE}/lukenukem-asus-linux-fedora-${RELEASE}.repo -O /etc/yum.repos.d/_copr_lukenukem-asus-linux.repo
     wget https://copr.fedorainfracloud.org/coprs/lukenukem/asus-kernel/repo/fedora-${RELEASE}/lukenukem-asus-kernel-fedora-${RELEASE}repo -O /etc/yum.repos.d/_copr_lukenukem-asus-kernel.repo
@@ -41,8 +41,8 @@ if [ "${HWE_FLAVOR}" = "asus" ]; then
     git clone https://gitlab.com/asus-linux/firmware.git --depth 1 /tmp/asus-firmware
     cp -rf /tmp/asus-firmware/* /usr/lib/firmware/
     rm -rf /tmp/asus-firmware
-elif [ "${HWE_FLAVOR}" = "surface" ]; then
-    echo "install.sh: steps for HWE_FLAVOR: ${HWE_FLAVOR}"
+elif [ "${KERNEL_FLAVOR}" = "surface" ]; then
+    echo "install.sh: steps for KERNEL_FLAVOR: ${KERNEL_FLAVOR}"
     # Install Surface kernel
     wget https://pkg.surfacelinux.com/fedora/linux-surface.repo -P /etc/yum.repos.d
     wget https://github.com/linux-surface/linux-surface/releases/download/silverblue-20201215-1/kernel-20201215-1.x86_64.rpm -O /tmp/surface-kernel.rpm
@@ -58,7 +58,7 @@ elif [ "${HWE_FLAVOR}" = "surface" ]; then
         --install libwacom-surface \
         --install libwacom-surface-data
 else
-    echo "install.sh: steps for unexpected HWE_FLAVOR: ${HWE_FLAVOR}"
+    echo "install.sh: steps for unexpected KERNEL_FLAVOR: ${KERNEL_FLAVOR}"
 fi
 
 # copy any shared sys files
@@ -77,17 +77,17 @@ if [ -f "/tmp/packages.json" ]; then
 fi
 
 # do HWE specific post-install things
-if [ "${HWE_FLAVOR}" = "asus" ]; then
-    echo "install.sh: post-install for: ${HWE_FLAVOR}"
-elif [ "${HWE_FLAVOR}" = "surface" ]; then
-    echo "install.sh: post-install for: ${HWE_FLAVOR}"
+if [ "${KERNEL_FLAVOR}" = "asus" ]; then
+    echo "install.sh: post-install for: ${KERNEL_FLAVOR}"
+elif [ "${KERNEL_FLAVOR}" = "surface" ]; then
+    echo "install.sh: post-install for: ${KERNEL_FLAVOR}"
     if grep -q "silverblue" <<< "${IMAGE_NAME}"; then
       systemctl enable dconf-update
     fi
     systemctl enable fprintd
     systemctl enable surface-hardware-setup
 else
-    echo "install.sh: post-install for unexpected HWE_FLAVOR: ${HWE_FLAVOR}"
+    echo "install.sh: post-install for unexpected KERNEL_FLAVOR: ${KERNEL_FLAVOR}"
 fi
 
 if [ -n "${RPMFUSION_MIRROR}" ]; then

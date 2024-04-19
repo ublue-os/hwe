@@ -7,13 +7,13 @@ ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-39}"
 FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION} AS main
 
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-39}"
-ARG HWE_FLAVOR="{HWE_FLAVOR:-main}"
+ARG KERNEL_FLAVOR="{KERNEL_FLAVOR:-main}"
 ARG IMAGE_NAME="${IMAGE_NAME:-silverblue}"
 ARG IMAGE_VENDOR="${IMAGE_VENDOR:-ublue-os}"
 ARG RPMFUSION_MIRROR=""
 
 COPY *.sh /tmp/
-COPY ${HWE_FLAVOR}/ /tmp/
+COPY ${KERNEL_FLAVOR}/ /tmp/
 
 RUN mkdir -p /var/lib/alternatives && \
     IMAGE_FLAVOR=main /tmp/image-info.sh && \
@@ -27,13 +27,14 @@ RUN mkdir -p /var/lib/alternatives && \
 
 FROM main AS nvidia
 
+ARG SOURCE_ORG="${SOURCE_ORG:-ublue-os}"
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-39}"
-ARG HWE_FLAVOR="{HWE_FLAVOR:-main}"
+ARG KERNEL_FLAVOR="{KERNEL_FLAVOR:-main}"
 ARG IMAGE_NAME="${IMAGE_NAME:-silverblue}"
 ARG IMAGE_VENDOR="${IMAGE_VENDOR:-ublue-os}"
 ARG RPMFUSION_MIRROR=""
 
-COPY --from=ghcr.io/ublue-os/akmods-nvidia:${HWE_FLAVOR}-${FEDORA_MAJOR_VERSION} /rpms /tmp/akmods-rpms
+COPY --from=ghcr.io/${SOURCE_ORG}/akmods-nvidia:${KERNEL_FLAVOR}-${FEDORA_MAJOR_VERSION} /rpms /tmp/akmods-rpms
 
 COPY *.sh /tmp/
 
