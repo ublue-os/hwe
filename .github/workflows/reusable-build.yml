@@ -182,7 +182,7 @@ jobs:
             # pull the base image used for FROM in containerfile so
             # we can retry on that unfortunately common failure case
             podman pull ${{ env.IMAGE_REGISTRY }}/${{ env.SOURCE_IMAGE }}:${{ matrix.fedora_version }}
-            podman pull ${{ env.IMAGE_REGISTRY }}/akmods-nvidia:${{ matrix.kernel_flavor }}:${{ matrix.fedora_version }}
+            podman pull ${{ env.IMAGE_REGISTRY }}/akmods-nvidia:${{ matrix.kernel_flavor }}-${{ matrix.fedora_version }}
 
       - name: Get current version
         id: labels
