@@ -10,8 +10,8 @@ else
     sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-cisco-openh264.repo
 fi
 
-# after F40 launches, bump to 41
-if [[ "${FEDORA_MAJOR_VERSION}" -ge 40 ]]; then
+# after F41 launches, bump to 42
+if [[ "${FEDORA_MAJOR_VERSION}" -ge 41 ]]; then
     # note: this is done before single mirror hack to ensure this persists in image and is not reset
     # pre-release rpmfusion is in a different location
     sed -i "s%free/fedora/releases%free/fedora/development%" /etc/yum.repos.d/rpmfusion-*.repo
