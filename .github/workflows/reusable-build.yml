@@ -3,7 +3,7 @@ on:
   workflow_call:
     inputs:
       fedora_version:
-        description: 'The Fedora release version: 38, 39, 40, etc'
+        description: 'The Fedora release version: 39, 40, etc'
         required: true
         type: string
 env:
@@ -36,7 +36,6 @@ jobs:
           - sericea
           - onyx
           - base
-          - lxqt
           - lazurite
           - mate
           - vauxite
@@ -44,27 +43,12 @@ jobs:
           - main
           - nvidia
         exclude:
-          # There is no Fedora 38 version of onyx or lazurite
-          - image_name: onyx
-            fedora_version: 38
-          - image_name: lazurite
-            fedora_version: 38
-          # There is no Fedora 39+ version of lxqt as it was replaced by lazurite
-          - image_name: lxqt
-            fedora_version: 39
-          - image_name: lxqt
-            fedora_version: 40
           # There is currently no Fedora 40 version of mate
           - image_name: mate
             fedora_version: 40
           # Don't build/push "main" since it would be a duplicate of the "base" `*-main` images
           - kernel_flavor: main
             image_target: main
-          # Only build latest Fedora versions for "asus" and "surface" HWE flavors
-          - fedora_version: 38
-            kernel_flavor: asus
-          - fedora_version: 38
-            kernel_flavor: surface
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
@@ -96,11 +80,7 @@ jobs:
           TIMESTAMP="$(date +%Y%m%d)"
           VARIANT="${{ matrix.fedora_version }}"
 
-          if [[ "${{ matrix.fedora_version }}" -eq "38" ]]; then
-            IS_LATEST_VERSION=false
-            IS_STABLE_VERSION=true
-            IS_GTS_VERSION=false
-          elif [[ "${{ matrix.fedora_version }}" -eq "39" ]]; then
+          if [[ "${{ matrix.fedora_version }}" -eq "39" ]]; then
             IS_LATEST_VERSION=false
             IS_STABLE_VERSION=true
             IS_GTS_VERSION=true
