@@ -4,11 +4,7 @@ set -ouex pipefail
 
 RELEASE="$(rpm -E %fedora)"
 
-if [[ "${FEDORA_MAJOR_VERSION}" -le 38 ]]; then
-    sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-{cisco-openh264,modular,updates-modular}.repo
-else
-    sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-cisco-openh264.repo
-fi
+sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-cisco-openh264.repo
 
 # after F41 launches, bump to 42
 if [[ "${FEDORA_MAJOR_VERSION}" -ge 41 ]]; then
