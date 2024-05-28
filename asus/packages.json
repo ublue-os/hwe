@@ -4,7 +4,8 @@
             "all": [
                 "asusctl",
                 "asusctl-rog-gui",
-                "fprintd"
+                "fprintd",
+                "supergfxctl"
             ]
         },
         "exclude": {
