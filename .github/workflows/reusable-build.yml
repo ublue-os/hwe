@@ -64,6 +64,9 @@ jobs:
             fi
             echo "IMAGE_NAME=${{ matrix.image_name }}-nvidia" >> $GITHUB_ENV
           else
+            if [[ "${{ matrix.kernel_flavor }}" == "surface" ]]; then
+              echo "KERNEL_SUFFIX=surface" >> $GITHUB_ENV
+            fi
             if [[ "${{ matrix.image_target }}" == "main" ]]; then
               echo "IMAGE_NAME=${{ matrix.image_name }}-${{ matrix.kernel_flavor }}" >> $GITHUB_ENV
             else
@@ -119,12 +122,14 @@ jobs:
              [[ "${IS_STABLE_VERSION}" == "true" ]]; then
               BUILD_TAGS+=("${TIMESTAMP}")
               BUILD_TAGS+=("latest")
+              echo "DEFAULT_TAG=latest" >> $GITHUB_ENV
           fi
 
           if [[ "${IS_GTS_VERSION}" == "true" ]] && \
              [[ "${IS_STABLE_VERSION}" == "true" ]]; then
               BUILD_TAGS+=("gts-${TIMESTAMP}")
               BUILD_TAGS+=("gts")
+              echo "DEFAULT_TAG=gts" >> $GITHUB_ENV
           fi
 
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
@@ -134,6 +139,7 @@ jobs:
               done
 
               alias_tags=("${COMMIT_TAGS[@]}")
+              echo "DEFAULT_TAG=${SHA_SHORT}-${VARIANT}" >> $GITHUB_ENV
           else
               alias_tags=("${BUILD_TAGS[@]}")
           fi
@@ -227,6 +233,18 @@ jobs:
           oci: false
           extra-args: |
             --target=${{ matrix.image_target }}
+
+      - name: Sign kernel
+        uses: ublue-os/kernel-signer@v0.2.3
+        if: github.event_name != 'pull_request'
+        with:
+          image: ${{ steps.build_image.outputs.image }}
+          default-tag: ${{ env.DEFAULT_TAG }}
+          privkey: ${{ secrets.AKMOD_PRIVKEY_20230518 }}
+          pubkey: /etc/pki/akmods/certs/akmods-ublue.der
+          tags: ${{ steps.build_image.outputs.tags }}
+          kernel_suffix: ${{ env.KERNEL_SUFFIX }}
+          strip: false
 
       # Workaround bug where capital letters in your GitHub username make it impossible to push to GHCR.
       # https://github.com/macbre/push-to-ghcr/issues/12
