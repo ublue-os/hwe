@@ -13,14 +13,6 @@ if [[ "${FEDORA_MAJOR_VERSION}" -ge 41 ]]; then
     sed -i "s%free/fedora/releases%free/fedora/development%" /etc/yum.repos.d/rpmfusion-*.repo
 fi
 
-if [ -n "${RPMFUSION_MIRROR}" ]; then
-    # force use of single rpmfusion mirror
-    echo "Using single rpmfusion mirror: ${RPMFUSION_MIRROR}"
-    sed -i.bak "s%^metalink=%#metalink=%" /etc/yum.repos.d/rpmfusion-*.repo
-    sed -i "s%^#baseurl=http://download1.rpmfusion.org%baseurl=${RPMFUSION_MIRROR}%" /etc/yum.repos.d/rpmfusion-*.repo
-fi
-
-
 ## nvidia install steps
 rpm-ostree install /tmp/akmods-rpms/ublue-os/ublue-os-nvidia-addons-*.rpm
 
@@ -62,14 +54,11 @@ sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/{eyecantcu-supergfxctl,negativ
 systemctl enable ublue-nvctk-cdi.service
 semodule --verbose --install /usr/share/selinux/packages/nvidia-container.pp
 
+# Universal Blue specific Initramfs fixes
+cp /etc/modprobe.d/nvidia-modeset.conf /usr/lib/modprobe.d/nvidia-modeset.conf
+sed -i 's@omit_drivers@force_drivers@g' /usr/lib/dracut/dracut.conf.d/99-nvidia.conf
+
 if [[ "${IMAGE_NAME}" == "sericea" ]]; then
     mv /etc/sway/environment{,.orig}
     install -Dm644 /usr/share/ublue-os/etc/sway/environment /etc/sway/environment
-fi
-
-
-if [ -n "${RPMFUSION_MIRROR}" ]; then
-    # reset forced use of single rpmfusion mirror
-    echo "Revert from single rpmfusion mirror: ${RPMFUSION_MIRROR}"
-    rename -v .repo.bak .repo /etc/yum.repos.d/rpmfusion-*repo.bak
 fi
