@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.2.0](https://github.com/ublue-os/hwe/compare/v1.1.0...v1.2.0) (2024-06-28)
+
+
+### Features
+
+* **asus:** add supergfctl ([#251](https://github.com/ublue-os/hwe/issues/251)) ([2fe54d1](https://github.com/ublue-os/hwe/commit/2fe54d1f3cde3758495872415d8fea4820563bd9))
+* build initramfs for surface, asus and nvidia ([#258](https://github.com/ublue-os/hwe/issues/258)) ([1b2c042](https://github.com/ublue-os/hwe/commit/1b2c042ed3e70fdf5ca4886c408a54d82c9d5c4e))
+* swap to negativo17 as nvidia driver source ([#234](https://github.com/ublue-os/hwe/issues/234)) ([98b6f7f](https://github.com/ublue-os/hwe/commit/98b6f7f2b40e9440279a04a4af872f82f6470e51))
+
+
+### Bug Fixes
+
+* adjust build schedule based on adjustments to main (https://github.com/ublue-os/main/pull/589) ([#254](https://github.com/ublue-os/hwe/issues/254)) ([cf77151](https://github.com/ublue-os/hwe/commit/cf7715106b10587f741c6e4bd3391f608906e8b0))
+* Disable Asus for Fedora -1 ([#256](https://github.com/ublue-os/hwe/issues/256)) ([7b601f1](https://github.com/ublue-os/hwe/commit/7b601f1a1f4db4ffd8adb4c8987d8cb14089b2f3))
+
 ## [1.1.0](https://github.com/ublue-os/hwe/compare/v1.0.0...v1.1.0) (2024-04-27)
 
 
