@@ -9,7 +9,9 @@ else
     KERNEL_SUFFIX=""
 fi
 
-rpm-ostree cliwrap install-to-root /
+if [ ! -f /usr/libexec/rpm-ostree/wrapped/dracut ]; then
+    rpm-ostree cliwrap install-to-root /
+fi
 
 QUALIFIED_KERNEL="$(rpm -qa | grep -P 'kernel-(|'"$KERNEL_SUFFIX"'-)(\d+\.\d+\.\d+)' | sed -E 's/kernel-(|'"$KERNEL_SUFFIX"'-)//')"
 

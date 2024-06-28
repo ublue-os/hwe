@@ -44,7 +44,7 @@ COPY *.sh /tmp/
 RUN mkdir -p /var/lib/alternatives && \
     IMAGE_FLAVOR=nvidia /tmp/image-info.sh && \
     /tmp/nvidia-install.sh && \
-    /tmp/build-initramfs.sh \
+    /tmp/build-initramfs.sh && \
     mv /var/lib/alternatives /staged-alternatives && \
     rm -rf /tmp/* /var/* && \
     ostree container commit && \
