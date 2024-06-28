@@ -2,11 +2,14 @@
 
 set -oue pipefail
 
-if [[ "${AKMODS_FLAVOR}" == "surface" ]]; then
+
+if [[ "${KERNEL_FLAVOR}" == "surface" ]]; then
     KERNEL_SUFFIX="surface"
 else
     KERNEL_SUFFIX=""
 fi
+
+rpm-ostree cliwrap install-to-root /
 
 QUALIFIED_KERNEL="$(rpm -qa | grep -P 'kernel-(|'"$KERNEL_SUFFIX"'-)(\d+\.\d+\.\d+)' | sed -E 's/kernel-(|'"$KERNEL_SUFFIX"'-)//')"
 
