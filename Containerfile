@@ -18,6 +18,9 @@ COPY ${KERNEL_FLAVOR}/ /tmp/
 RUN mkdir -p /var/lib/alternatives && \
     IMAGE_FLAVOR=main /tmp/image-info.sh && \
     /tmp/install.sh && \
+    if [ "${KERNEL_FLAVOR}" != "main" ]; then \
+       /tmp/build-initramfs.sh \
+    ; fi && \
     mv /var/lib/alternatives /staged-alternatives && \
     rm -rf /tmp/* /var/* && \
     ostree container commit && \
@@ -41,6 +44,7 @@ COPY *.sh /tmp/
 RUN mkdir -p /var/lib/alternatives && \
     IMAGE_FLAVOR=nvidia /tmp/image-info.sh && \
     /tmp/nvidia-install.sh && \
+    /tmp/build-initramfs.sh \
     mv /var/lib/alternatives /staged-alternatives && \
     rm -rf /tmp/* /var/* && \
     ostree container commit && \
