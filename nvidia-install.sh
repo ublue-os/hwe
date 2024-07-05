@@ -32,14 +32,14 @@ else
 fi
 
 rpm-ostree install \
+    libnvidia-fbc \
+    libnvidia-ml.i686 \
     libva-nvidia-driver \
     mesa-vulkan-drivers.i686 \
     nvidia-driver \
     nvidia-driver-cuda \
     nvidia-driver-cuda-libs.i686 \
     nvidia-driver-libs.i686 \
-    nvidia-driver-NVML.i686 \
-    nvidia-driver-NvFBCOpenGL \
     nvidia-modprobe \
     nvidia-persistenced \
     nvidia-settings \
