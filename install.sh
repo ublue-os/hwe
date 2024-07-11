@@ -27,36 +27,31 @@ fi
 if [ "${KERNEL_FLAVOR}" = "asus" ]; then
     echo "install.sh: steps for KERNEL_FLAVOR: ${KERNEL_FLAVOR}"
     # Install Asus kernel
-    wget https://copr.fedorainfracloud.org/coprs/lukenukem/asus-linux/repo/fedora-${RELEASE}/lukenukem-asus-linux-fedora-${RELEASE}.repo -O /etc/yum.repos.d/_copr_lukenukem-asus-linux.repo
-    wget https://copr.fedorainfracloud.org/coprs/lukenukem/asus-kernel/repo/fedora-${RELEASE}/lukenukem-asus-kernel-fedora-${RELEASE}repo -O /etc/yum.repos.d/_copr_lukenukem-asus-kernel.repo
-    rpm-ostree cliwrap install-to-root /
     rpm-ostree override replace \
-    --experimental \
-    --from repo=copr:copr.fedorainfracloud.org:lukenukem:asus-kernel \
-        kernel \
-        kernel-core \
-        kernel-modules \
-        kernel-modules-core \
-        kernel-modules-extra
+        --experimental \
+        /tmp/kernel-rpms/kernel-[0-9]*.rpm \
+        /tmp/kernel-rpms/kernel-core-*.rpm \
+        /tmp/kernel-rpms/kernel-modules-*.rpm
     git clone https://gitlab.com/asus-linux/firmware.git --depth 1 /tmp/asus-firmware
     cp -rf /tmp/asus-firmware/* /usr/lib/firmware/
     rm -rf /tmp/asus-firmware
 elif [ "${KERNEL_FLAVOR}" = "surface" ]; then
     echo "install.sh: steps for KERNEL_FLAVOR: ${KERNEL_FLAVOR}"
     # Install Surface kernel
-    wget https://pkg.surfacelinux.com/fedora/linux-surface.repo -P /etc/yum.repos.d
-    wget https://github.com/linux-surface/linux-surface/releases/download/silverblue-20201215-1/kernel-20201215-1.x86_64.rpm -O /tmp/surface-kernel.rpm
     rpm-ostree cliwrap install-to-root /
-    rpm-ostree override replace /tmp/surface-kernel.rpm \
+    rpm-ostree override replace \
+        --remove kernel \
         --remove kernel-core \
         --remove kernel-modules \
+        --remove kernel-modules-core \
         --remove kernel-modules-extra \
         --remove libwacom \
         --remove libwacom-data \
-        --install kernel-surface \
-        --install iptsd \
-        --install libwacom-surface \
-        --install libwacom-surface-data
+        --install /tmp/kernel-rpms/kernel-surface-[0-9]*.rpm \
+        --install /tmp/kernel-rpms/kernel-surface-core-*.rpm \
+        --install /tmp/kernel-rpms/kernel-surface-modules-*.rpm \
+        --install /tmp/kernel-rpms/iptsd*.rpm \
+        --install /tmp/kernel-rpms/libwacom-surface*.rpm
 else
     echo "install.sh: steps for unexpected KERNEL_FLAVOR: ${KERNEL_FLAVOR}"
 fi
@@ -95,3 +90,5 @@ if [ -n "${RPMFUSION_MIRROR}" ]; then
     echo "Revert from single rpmfusion mirror: ${RPMFUSION_MIRROR}"
     rename -v .repo.bak .repo /etc/yum.repos.d/rpmfusion-*repo.bak
 fi
+
+/tmp/build-initramfs.sh
