@@ -51,7 +51,6 @@ elif [ "${KERNEL_FLAVOR}" = "surface" ]; then
         libwacom-data
     rpm-ostree override replace \
         --experimental \
-        /tmp/kernel-rpms/libwacom-*.rpm \
         /tmp/kernel-rpms/kernel-surface-[0-9]*.rpm \
         /tmp/kernel-rpms/kernel-surface-core-*.rpm \
         /tmp/kernel-rpms/kernel-surface-modules-*.rpm
