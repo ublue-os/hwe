@@ -47,11 +47,12 @@ elif [ "${KERNEL_FLAVOR}" = "surface" ]; then
     rpm-ostree install \
         /tmp/kernel-rpms/kernel-surface-[0-9]*.rpm \
         /tmp/kernel-rpms/kernel-surface-core-*.rpm \
-        /tmp/kernel-rpms/kernel-surface-modules-*.rpm
+        /tmp/kernel-rpms/kernel-surface-modules-*.rpm \
+        /tmp/kernel-rpms/kernel-surface-watchdog-* \
+        /tmp/kernel-rpms/libwacom-surface*.rpm
     rpm-ostree override replace \
         --experimental \
-        /tmp/kernel-rpms/iptsd*.rpm \
-        /tmp/kernel-rpms/libwacom-surface*.rpm
+        /tmp/kernel-rpms/iptsd*.rpm
 else
     echo "install.sh: steps for unexpected KERNEL_FLAVOR: ${KERNEL_FLAVOR}"
 fi
