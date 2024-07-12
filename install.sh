@@ -44,20 +44,14 @@ elif [ "${KERNEL_FLAVOR}" = "surface" ]; then
         https://pkg.surfacelinux.com/fedora/linux-surface.repo
     # Install Surface kernel
     rpm-ostree cliwrap install-to-root /
+    rpm-ostree install \
+        /tmp/kernel-rpms/kernel-surface-[0-9]*.rpm \
+        /tmp/kernel-rpms/kernel-surface-core-*.rpm \
+        /tmp/kernel-rpms/kernel-surface-modules-*.rpm
     rpm-ostree override replace \
         --experimental \
-        --remove kernel \
-        --remove kernel-core \
-        --remove kernel-modules \
-        --remove kernel-modules-core \
-        --remove kernel-modules-extra \
-        --remove libwacom \
-        --remove libwacom-data \
-        --install /tmp/kernel-rpms/kernel-surface-[0-9]*.rpm \
-        --install /tmp/kernel-rpms/kernel-surface-core-*.rpm \
-        --install /tmp/kernel-rpms/kernel-surface-modules-*.rpm \
-        --install /tmp/kernel-rpms/iptsd*.rpm \
-        --install /tmp/kernel-rpms/libwacom-surface*.rpm
+        /tmp/kernel-rpms/iptsd*.rpm \
+        /tmp/kernel-rpms/libwacom-surface*.rpm
 else
     echo "install.sh: steps for unexpected KERNEL_FLAVOR: ${KERNEL_FLAVOR}"
 fi
