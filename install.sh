@@ -67,7 +67,7 @@ elif [ "${KERNEL_FLAVOR}" = "surface" ]; then
         /tmp/kernel-rpms/kernel-surface-modules-extra-"${KERNEL_VERSION}".rpm \
         /tmp/kernel-rpms/kernel-surface-default-watchdog-"${KERNEL_VERSION}".rpm \
         /tmp/kernel-rpms/libwacom-surface*.rpm \
-        /tmp/kernel-rpms/ipstd*.rpm
+        /tmp/kernel-rpms/iptsd*.rpm
     find /usr/lib/modules/
 else
     echo "install.sh: steps for unexpected KERNEL_FLAVOR: ${KERNEL_FLAVOR}"
