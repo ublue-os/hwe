@@ -27,36 +27,44 @@ fi
 if [ "${KERNEL_FLAVOR}" = "asus" ]; then
     echo "install.sh: steps for KERNEL_FLAVOR: ${KERNEL_FLAVOR}"
     # Install Asus kernel
-    wget https://copr.fedorainfracloud.org/coprs/lukenukem/asus-linux/repo/fedora-${RELEASE}/lukenukem-asus-linux-fedora-${RELEASE}.repo -O /etc/yum.repos.d/_copr_lukenukem-asus-linux.repo
-    wget https://copr.fedorainfracloud.org/coprs/lukenukem/asus-kernel/repo/fedora-${RELEASE}/lukenukem-asus-kernel-fedora-${RELEASE}repo -O /etc/yum.repos.d/_copr_lukenukem-asus-kernel.repo
+    curl -Lo /etc/yum.repos.d/_copr_lukenukem-asus-linux.repo \
+        https://copr.fedorainfracloud.org/coprs/lukenukem/asus-linux/repo/fedora-"${RELEASE}"/lukenukem-asus-linux-fedora-"${RELEASE}".repo
     rpm-ostree cliwrap install-to-root /
     rpm-ostree override replace \
-    --experimental \
-    --from repo=copr:copr.fedorainfracloud.org:lukenukem:asus-kernel \
-        kernel \
-        kernel-core \
-        kernel-modules \
-        kernel-modules-core \
-        kernel-modules-extra
+        --experimental \
+        /tmp/kernel-rpms/kernel-"${KERNEL_VERSION}".rpm \
+        /tmp/kernel-rpms/kernel-core-"${KERNEL_VERSION}".rpm \
+        /tmp/kernel-rpms/kernel-modules-"${KERNEL_VERSION}".rpm \
+        /tmp/kernel-rpms/kernel-modules-core-"${KERNEL_VERSION}".rpm \
+        /tmp/kernel-rpms/kernel-modules-extra-"${KERNEL_VERSION}".rpm
     git clone https://gitlab.com/asus-linux/firmware.git --depth 1 /tmp/asus-firmware
     cp -rf /tmp/asus-firmware/* /usr/lib/firmware/
     rm -rf /tmp/asus-firmware
 elif [ "${KERNEL_FLAVOR}" = "surface" ]; then
     echo "install.sh: steps for KERNEL_FLAVOR: ${KERNEL_FLAVOR}"
+    curl -Lo /etc/yum.repos.d/linux-surface.repo \
+        https://pkg.surfacelinux.com/fedora/linux-surface.repo
+    curl -Lo /tmp/surface-kernel.rpm \
+        https://github.com/linux-surface/linux-surface/releases/download/silverblue-20201215-1/kernel-20201215-1.x86_64.rpm
     # Install Surface kernel
-    wget https://pkg.surfacelinux.com/fedora/linux-surface.repo -P /etc/yum.repos.d
-    wget https://github.com/linux-surface/linux-surface/releases/download/silverblue-20201215-1/kernel-20201215-1.x86_64.rpm -O /tmp/surface-kernel.rpm
     rpm-ostree cliwrap install-to-root /
-    rpm-ostree override replace /tmp/surface-kernel.rpm \
+    rpm-ostree override replace \
+        --experimental \
+        --remove kernel \
         --remove kernel-core \
         --remove kernel-modules \
+        --remove kernel-modules-core \
         --remove kernel-modules-extra \
         --remove libwacom \
         --remove libwacom-data \
-        --install kernel-surface \
-        --install iptsd \
-        --install libwacom-surface \
-        --install libwacom-surface-data
+        /tmp/kernel-rpms/kernel-surface-"${KERNEL_VERSION}".rpm \
+        /tmp/kernel-rpms/kernel-surface-core-"${KERNEL_VERSION}".rpm \
+        /tmp/kernel-rpms/kernel-surface-modules-"${KERNEL_VERSION}".rpm \
+        /tmp/kernel-rpms/kernel-surface-modules-core-"${KERNEL_VERSION}".rpm \
+        /tmp/kernel-rpms/kernel-surface-modules-extra-"${KERNEL_VERSION}".rpm \
+        /tmp/kernel-rpms/kernel-surface-default-watchdog-"${KERNEL_VERSION}".rpm \
+        /tmp/kernel-rpms/libwacom-surface*.rpm \
+        /tmp/kernel-rpms/iptsd*.rpm
 else
     echo "install.sh: steps for unexpected KERNEL_FLAVOR: ${KERNEL_FLAVOR}"
 fi
@@ -95,3 +103,5 @@ if [ -n "${RPMFUSION_MIRROR}" ]; then
     echo "Revert from single rpmfusion mirror: ${RPMFUSION_MIRROR}"
     rename -v .repo.bak .repo /etc/yum.repos.d/rpmfusion-*repo.bak
 fi
+
+/tmp/build-initramfs.sh

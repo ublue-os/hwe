@@ -3,7 +3,7 @@ on:
   workflow_call:
     inputs:
       fedora_version:
-        description: 'The Fedora release version: 39, 40, etc'
+        description: "The Fedora release version: 39, 40, etc"
         required: true
         type: string
 env:
@@ -161,17 +161,6 @@ jobs:
           containers: akmods-nvidia:${{ matrix.kernel_flavor}}-${{ matrix.fedora_version }}
           registry: ${{ env.IMAGE_REGISTRY }}
 
-      - name: Pull main and akmods-nvidia images
-        uses: Wandalen/wretry.action@v3.5.0
-        with:
-          attempt_limit: 3
-          attempt_delay: 15000
-          command: |
-            # pull the base image used for FROM in containerfile so
-            # we can retry on that unfortunately common failure case
-            podman pull ${{ env.IMAGE_REGISTRY }}/${{ env.SOURCE_IMAGE }}:${{ matrix.fedora_version }}
-            podman pull ${{ env.IMAGE_REGISTRY }}/akmods-nvidia:${{ matrix.kernel_flavor }}-${{ matrix.fedora_version }}
-
       - name: Get current version
         id: labels
         uses: Wandalen/wretry.action@v3.5.0
@@ -187,14 +176,25 @@ jobs:
               exit 1
             fi
             echo "SOURCE_IMAGE_VERSION=$ver" >> $GITHUB_ENV
-
-            skopeo inspect docker://${{ env.IMAGE_REGISTRY }}/akmods-nvidia:${{ matrix.kernel_flavor }}-${{ matrix.fedora_version }} > akmods.json
-            linux=$(jq -r '.Labels["ostree.linux"]' akmods.json)
+            skopeo inspect docker://${{ env.IMAGE_REGISTRY }}/${{ matrix.kernel_flavor }}-kernel:${{ matrix.fedora_version }} > kernel.json
+            linux=$(jq -r '.Labels["ostree.linux"]' kernel.json)
             if [ -z "$linux" ] || [ "null" = "$linux" ]; then
               echo "inspected image linux version must not be empty or null"
               exit 1
             fi
             echo "KERNEL_VERSION=$linux" >> $GITHUB_ENV
+
+      - name: Pull main and akmods-nvidia images
+        uses: Wandalen/wretry.action@v3.5.0
+        with:
+          attempt_limit: 3
+          attempt_delay: 15000
+          command: |
+            # pull the base image used for FROM in containerfile so
+            # we can retry on that unfortunately common failure case
+            podman pull ${{ env.IMAGE_REGISTRY }}/${{ env.SOURCE_IMAGE }}:${{ matrix.fedora_version }}
+            podman pull ${{ env.IMAGE_REGISTRY }}/akmods-nvidia:${{ matrix.kernel_flavor }}-${{ matrix.fedora_version }}
+            podman pull ${{ env.IMAGE_REGISTRY }}/${{ matrix.kernel_flavor}}-kernel:${{ env.KERNEL_VERSION }}
 
       # Build metadata
       - name: Image Metadata
@@ -226,6 +226,7 @@ jobs:
             SOURCE_IMAGE=${{ env.SOURCE_IMAGE }}
             FEDORA_MAJOR_VERSION=${{ matrix.fedora_version }}
             KERNEL_FLAVOR=${{ matrix.kernel_flavor }}
+            KERNEL_VERSION=${{ env.KERNEL_VERSION }}
             RPMFUSION_MIRROR=${{ vars.RPMFUSION_MIRROR }}
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
