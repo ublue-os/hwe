@@ -53,7 +53,8 @@ elif [ "${KERNEL_FLAVOR}" = "surface" ]; then
         --experimental \
         /tmp/kernel-rpms/kernel-surface-[0-9]*.rpm \
         /tmp/kernel-rpms/kernel-surface-core-*.rpm \
-        /tmp/kernel-rpms/kernel-surface-modules-*.rpm
+        /tmp/kernel-rpms/kernel-surface-modules-*.rpm \
+        /tmp/kernel-rpms/kernel-surface-default-watchdog-*.rpm
     find /usr/lib/modules/
 else
     echo "install.sh: steps for unexpected KERNEL_FLAVOR: ${KERNEL_FLAVOR}"
