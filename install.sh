@@ -65,13 +65,9 @@ elif [ "${KERNEL_FLAVOR}" = "surface" ]; then
         /tmp/kernel-rpms/kernel-surface-default-watchdog-"${KERNEL_VERSION}".rpm \
         /tmp/kernel-rpms/libwacom-surface*.rpm \
         /tmp/kernel-rpms/iptsd*.rpm
-    find /usr/lib/modules/
 else
     echo "install.sh: steps for unexpected KERNEL_FLAVOR: ${KERNEL_FLAVOR}"
 fi
-
-rpm-ostree install sbsigntools
-sbverify --list /usr/lib/modules/"${KERNEL_VERSION}"/vmlinuz
 
 # copy any shared sys files
 if [ -d "/tmp/system_files/shared" ]; then
