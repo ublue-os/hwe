@@ -55,7 +55,7 @@ elif [ "${KERNEL_FLAVOR}" = "surface" ]; then
         --remove kernel-modules \
         --remove kernel-modules-core \
         --remove kernel-modules-extra \
-        --remove libwacon \
+        --remove libwacom \
         --remove libwacom-data \
         /tmp/kernel-rpms/kernel-surface-"${KERNEL_VERSION}".rpm \
         /tmp/kernel-rpms/kernel-surface-core-"${KERNEL_VERSION}".rpm \
