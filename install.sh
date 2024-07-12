@@ -40,7 +40,7 @@ if [ "${KERNEL_FLAVOR}" = "asus" ]; then
     rm -rf /tmp/asus-firmware
 elif [ "${KERNEL_FLAVOR}" = "surface" ]; then
     echo "install.sh: steps for KERNEL_FLAVOR: ${KERNEL_FLAVOR}"
-    curl -Lo /etc/yum.repos/d/linux-surface.repo \
+    curl -Lo /etc/yum.repos.d/linux-surface.repo \
         https://pkg.surfacelinux.com/fedora/linux-surface.repo
     # Install Surface kernel
     rpm-ostree cliwrap install-to-root /
@@ -61,6 +61,10 @@ elif [ "${KERNEL_FLAVOR}" = "surface" ]; then
 else
     echo "install.sh: steps for unexpected KERNEL_FLAVOR: ${KERNEL_FLAVOR}"
 fi
+
+# TODO Remove before merging
+rpm-ostree install sbsigntools
+sbverify --list /usr/lib/modules/*/vmlinuz
 
 # copy any shared sys files
 if [ -d "/tmp/system_files/shared" ]; then
