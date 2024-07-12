@@ -48,9 +48,6 @@ elif [ "${KERNEL_FLAVOR}" = "surface" ]; then
         https://github.com/linux-surface/linux-surface/releases/download/silverblue-20201215-1/kernel-20201215-1.x86_64.rpm
     # Install Surface kernel
     rpm-ostree cliwrap install-to-root /
-    rpm-ostree override remove \
-        libwacom \
-        libwacom-data
     rpm-ostree override replace \
         --experimental \
         --remove kernel \
