@@ -54,10 +54,7 @@ elif [ "${KERNEL_FLAVOR}" = "surface" ]; then
         /tmp/kernel-rpms/kernel-surface-[0-9]*.rpm \
         /tmp/kernel-rpms/kernel-surface-core-*.rpm \
         /tmp/kernel-rpms/kernel-surface-modules-*.rpm
-    cd /tmp/kernel-rpms
-    rpm2cpio /tmp/kernel-rpms/kernel-surface-core-*.rpm | cpio -idmv
-    cp ./lib/modules/*/vmlinuz /usr/lib/modules/*/vmlinuz
-    cd /
+    find /usr/lib/modules/
 else
     echo "install.sh: steps for unexpected KERNEL_FLAVOR: ${KERNEL_FLAVOR}"
 fi
