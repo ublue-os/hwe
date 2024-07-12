@@ -42,12 +42,14 @@ elif [ "${KERNEL_FLAVOR}" = "surface" ]; then
     echo "install.sh: steps for KERNEL_FLAVOR: ${KERNEL_FLAVOR}"
     curl -Lo /etc/yum.repos.d/linux-surface.repo \
         https://pkg.surfacelinux.com/fedora/linux-surface.repo
+    curl -Lo /tmp/surface-kernel.rpm \
+        https://github.com/linux-surface/linux-surface/releases/download/silverblue-20201215-1/kernel-20201215-1.x86_64.rpm
     # Install Surface kernel
     rpm-ostree cliwrap install-to-root /
-    rpm-ostree override replace \
-        --experimental \
+    rpm-ostree override replace /tmp/surface-kernel.rpm \
         --remove kernel-core \
         --remove kernel-modules \
+        --remove kernel-modules-extra \
         --remove libwacom \
         --remove libwacom-data \
         --install /tmp/kernel-rpms/kernel-surface-[0-9]*.rpm \
