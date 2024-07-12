@@ -47,8 +47,10 @@ elif [ "${KERNEL_FLAVOR}" = "surface" ]; then
     # Install Surface kernel
     rpm-ostree cliwrap install-to-root /
     rpm-ostree override replace /tmp/surface-kernel.rpm \
+        --remove kernel \
         --remove kernel-core \
         --remove kernel-modules \
+        --remove kernel-modules-core \
         --remove kernel-modules-extra \
         --remove libwacom \
         --remove libwacom-data \
