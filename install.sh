@@ -50,7 +50,6 @@ elif [ "${KERNEL_FLAVOR}" = "surface" ]; then
         --remove kernel-modules \
         --remove libwacom \
         --remove libwacom-data \
-        --remove iptsd \
         --install /tmp/kernel-rpms/kernel-surface-[0-9]*.rpm \
         --install /tmp/kernel-rpms/kernel-surface-core-*.rpm \
         --install /tmp/kernel-rpms/kernel-surface-modules-*.rpm \
