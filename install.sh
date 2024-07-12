@@ -48,9 +48,10 @@ elif [ "${KERNEL_FLAVOR}" = "surface" ]; then
     rpm-ostree cliwrap install-to-root /
     rpm-ostree override replace \
         --experimental \
-        --remove libwacom \
-        --remove libwacom-data \
-        --install /tmp/kernel-rpms/*.rpm
+        /tmp/kernel-rpms/libwacom-*.rpm \
+        /tmp/kernel-rpms/kernel-surface-[0-9]*.rpm \
+        /tmp/kernel-rpms/kernel-surface-core-*.rpm \
+        /tmp/kernel-rpms/kernel-surface-modules-*.rpm
     cd /tmp/kernel-rpms
     rpm2cpio /tmp/kernel-rpms/kernel-surface-core-*.rpm | cpio -idmv
     cp ./lib/modules/*/vmlinuz /usr/lib/modules/*/vmlinuz
