@@ -58,18 +58,21 @@ elif [ "${KERNEL_FLAVOR}" = "surface" ]; then
         --remove kernel-modules \
         --remove kernel-modules-core \
         --remove kernel-modules-extra \
+        --remove libwacon \
+        --remove libwacom-data \
         /tmp/kernel-rpms/kernel-surface-"${KERNEL_VERSION}".rpm \
         /tmp/kernel-rpms/kernel-surface-core-"${KERNEL_VERSION}".rpm \
         /tmp/kernel-rpms/kernel-surface-modules-"${KERNEL_VERSION}".rpm \
         /tmp/kernel-rpms/kernel-surface-modules-core-"${KERNEL_VERSION}".rpm \
         /tmp/kernel-rpms/kernel-surface-modules-extra-"${KERNEL_VERSION}".rpm \
-        /tmp/kernel-rpms/kernel-surface-default-watchdog-"${KERNEL_VERSION}".rpm
+        /tmp/kernel-rpms/kernel-surface-default-watchdog-"${KERNEL_VERSION}".rpm \
+        /tmp/kernel-rpms/libwacom-surface*.rpm \
+        /tmp/kernel-rpms/ipstd*.rpm
     find /usr/lib/modules/
 else
     echo "install.sh: steps for unexpected KERNEL_FLAVOR: ${KERNEL_FLAVOR}"
 fi
 
-# TODO Remove before merging
 rpm-ostree install sbsigntools
 sbverify --list /usr/lib/modules/"${KERNEL_VERSION}"/vmlinuz
 
