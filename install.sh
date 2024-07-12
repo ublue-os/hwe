@@ -52,13 +52,13 @@ elif [ "${KERNEL_FLAVOR}" = "surface" ]; then
         --remove kernel-modules-extra \
         --remove libwacom \
         --remove libwacom-data \
-        --install /tmp/kernel-rpms/kernel-surface-[0-9]*.rpm \
-        --install /tmp/kernel-rpms/kernel-surface-core-*.rpm \
-        --install /tmp/kernel-rpms/kernel-surface-modules-*.rpm \
-        --install /tmp/kernel-rpms/kernel-surface-default-watchdog-*.rpm \
-        --install /tmp/kernel-rpms/libwacom-surface*.rpm \
-        --install /tmp/kernel-rpms/iptsd*.rpm
-
+        --install kernel-surface \
+        --install iptsd \
+        --install libwacom-surface \
+        --install libwacom-surface-data
+    cd /tmp/kernel-rpms
+    rpm2cpio /tmp/kernel-rpms/kernel-surface-core-*.rpm | cpio -idmv
+    cp ./lib/modules/*/vmlinuz /usr/lib/modules/*/vmlinuz
 else
     echo "install.sh: steps for unexpected KERNEL_FLAVOR: ${KERNEL_FLAVOR}"
 fi
