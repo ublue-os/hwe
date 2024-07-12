@@ -32,9 +32,11 @@ if [ "${KERNEL_FLAVOR}" = "asus" ]; then
     rpm-ostree cliwrap install-to-root /
     rpm-ostree override replace \
         --experimental \
-        /tmp/kernel-rpms/kernel-[0-9]*.rpm \
-        /tmp/kernel-rpms/kernel-core-*.rpm \
-        /tmp/kernel-rpms/kernel-modules-*.rpm
+        /tmp/kernel-rpms/kernel-"${KERNEL_VERSION}".rpm \
+        /tmp/kernel-rpms/kernel-core-"${KERNEL_VERSION}".rpm \
+        /tmp/kernel-rpms/kernel-modules-"${KERNEL_VERSION}".rpm \
+        /tmp/kernel-rpms/kernel-modules-core-"${KERNEL_VERSION}".rpm \
+        /tmp/kernel-rpms/kernel-modules-extra-"${KERNEL_VERSION}".rpm
     git clone https://gitlab.com/asus-linux/firmware.git --depth 1 /tmp/asus-firmware
     cp -rf /tmp/asus-firmware/* /usr/lib/firmware/
     rm -rf /tmp/asus-firmware
@@ -51,10 +53,17 @@ elif [ "${KERNEL_FLAVOR}" = "surface" ]; then
         libwacom-data
     rpm-ostree override replace \
         --experimental \
-        /tmp/kernel-rpms/kernel-surface-[0-9]*.rpm \
-        /tmp/kernel-rpms/kernel-surface-core-*.rpm \
-        /tmp/kernel-rpms/kernel-surface-modules-*.rpm \
-        /tmp/kernel-rpms/kernel-surface-default-watchdog-*.rpm
+        --remove kernel \
+        --remove kernel-core \
+        --remove kernel-modules \
+        --remove kernel-modules-core \
+        --remove kernel-modules-extra \
+        /tmp/kernel-rpms/kernel-surface-"${KERNEL_VERSION}".rpm \
+        /tmp/kernel-rpms/kernel-surface-core-"${KERNEL_VERSION}".rpm \
+        /tmp/kernel-rpms/kernel-surface-modules-"${KERNEL_VERSION}".rpm \
+        /tmp/kernel-rpms/kernel-surface-modules-core-"${KERNEL_VERSION}".rpm \
+        /tmp/kernel-rpms/kernel-surface-modules-extra-"${KERNEL_VERSION}".rpm \
+        /tmp/kernel-rpms/kernel-surface-default-watchdog-"${KERNEL_VERSION}".rpm
     find /usr/lib/modules/
 else
     echo "install.sh: steps for unexpected KERNEL_FLAVOR: ${KERNEL_FLAVOR}"
@@ -62,7 +71,7 @@ fi
 
 # TODO Remove before merging
 rpm-ostree install sbsigntools
-sbverify --list /usr/lib/modules/*/vmlinuz
+sbverify --list /usr/lib/modules/"${KERNEL_VERSION}"/vmlinuz
 
 # copy any shared sys files
 if [ -d "/tmp/system_files/shared" ]; then
