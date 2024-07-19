@@ -1,7 +1,8 @@
 #!/usr/bin/bash
 
-set -oue pipefail
+set -ouex pipefail
 
+ls -la /lib/modules/
 
 if [[ "${KERNEL_FLAVOR}" == "surface" ]]; then
     KERNEL_SUFFIX="surface"
