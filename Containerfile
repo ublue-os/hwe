@@ -46,7 +46,7 @@ ARG RPMFUSION_MIRROR=""
 
 RUN --mount=type=cache,dst=/var/cache/rpm-ostree \
     --mount=type=bind,from=ctx,src=/,dst=/ctx \
-    --mount=type=bind,from=akmods_nvidia,src=/tmp/rpms,dst=/tmp/akmods-rpms \
+    --mount=type=bind,from=akmods_nvidia,src=/rpms,dst=/tmp/akmods-rpms \
     mkdir -p /var/lib/alternatives && \
     IMAGE_FLAVOR=nvidia /ctx/image-info.sh && \
     /ctx/nvidia-install.sh && \

@@ -81,7 +81,8 @@ fi
 
 # install any packages from packages.json
 if [ -f "/ctx/${KERNEL_FLAVOR}/packages.json" ]; then
-    /ctx/packages.sh /ctx/"${KERNEL_FLAVOR}"/packages.json
+    cp /ctx/"${KERNEL_FLAVOR}"/packages.json /tmp/packages.json
+    /ctx/packages.sh /tmp/packages.json
 fi
 
 # do HWE specific post-install things
