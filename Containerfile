@@ -27,8 +27,7 @@ RUN --mount=type=cache,dst=/var/cache/rpm-ostree \
     /ctx/install.sh && \
     mv /var/lib/alternatives /staged-alternatives && \
     rm -rf /tmp/* || true && \
-    bash -c "shopt -s extglob; rm -rf /var/!(cache) \
-    ; rm -rf /var/cache/!(rpm-ostree)" && \
+    bash -c "shopt -s extglob; rm -rf /var/!(cache); rm -rf /var/cache/!(rpm-ostree)" && \
     ostree container commit && \
     mkdir -p /var/lib && mv /staged-alternatives /var/lib/alternatives && \
     mkdir -p /var/tmp && \
@@ -54,8 +53,7 @@ RUN --mount=type=cache,dst=/var/cache/rpm-ostree \
     /ctx/build-initramfs.sh && \
     mv /var/lib/alternatives /staged-alternatives && \
     rm -rf /tmp/* || true && \
-    bash -c "shopt -s extglob; rm -rf /var/!(cache) \
-    ; rm -rf /var/cache/!(rpm-ostree)" && \
+    bash -c "shopt -s extglob; rm -rf /var/!(cache); rm -rf /var/cache/!(rpm-ostree)" && \
     ostree container commit && \
     mkdir -p /var/lib && mv /staged-alternatives /var/lib/alternatives && \
     mkdir -p /var/tmp && \
