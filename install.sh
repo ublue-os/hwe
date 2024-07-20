@@ -69,20 +69,19 @@ else
     echo "install.sh: steps for unexpected KERNEL_FLAVOR: ${KERNEL_FLAVOR}"
 fi
 
-# Copy over flavor files
-rsync -rvK /ctx/"${KERNEL_FLAVOR}"/ /
-
 # copy any shared sys files
-rsync -rvK /ctx/system_files/shared/ /
+if [[ -d /ctx/"${KERNEL_FLAVOR}"/system_files/shared ]]; then
+    rsync -rvK /ctx/"${KERNEL_FLAVOR}"/system_files/shared/ /
+fi
 
 # copy any flavor specific files, eg silverblue
-if [[ -d "/ctx/system_files/${IMAGE_NAME}" ]]; then
-    rsync -rvK /ctx/system_files/"${IMAGE_NAME}"/ /
+if [[ -d "/ctx/${KERNEL_FLAVOR}/system_files/${IMAGE_NAME}" ]]; then
+    rsync -rvK "/ctx/${KERNEL_FLAVOR}/system_files/${IMAGE_NAME}"/ /
 fi
 
 # install any packages from packages.json
-if [ -f "/ctx/packages.json" ]; then
-    /ctx/packages.sh /ctx/packages.json
+if [ -f "/ctx/${KERNEL_FLAVOR}/packages.json" ]; then
+    /ctx/"${KERNEL_FLAVOR}"/packages.sh /ctx/"${KERNEL_FLAVOR}"/packages.json
 fi
 
 # do HWE specific post-install things
