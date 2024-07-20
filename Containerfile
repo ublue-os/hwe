@@ -33,6 +33,8 @@ RUN --mount=type=cache,dst=/var/cache/rpm-ostree \
     mkdir -p /var/tmp && \
     chmod -R 1777 /var/tmp
 
+FROM ghcr.io/${SOURCE_ORG}/akmods-nvidia:${KERNEL_FLAVOR}-${FEDORA_MAJOR_VERSION} AS akmods_nvidia
+
 FROM main AS nvidia
 
 ARG SOURCE_ORG="${SOURCE_ORG:-ublue-os}"
@@ -41,8 +43,6 @@ ARG KERNEL_FLAVOR="${KERNEL_FLAVOR:-main}"
 ARG IMAGE_NAME="${IMAGE_NAME:-silverblue}"
 ARG IMAGE_VENDOR="${IMAGE_VENDOR:-ublue-os}"
 ARG RPMFUSION_MIRROR=""
-
-FROM ghcr.io/${SOURCE_ORG}/akmods-nvidia:${KERNEL_FLAVOR}-${FEDORA_MAJOR_VERSION} AS akmods_nvidia
 
 RUN --mount=type=cache,dst=/var/cache/rpm-ostree \
     --mount=type=bind,from=ctx,src=/,dst=/ctx \
