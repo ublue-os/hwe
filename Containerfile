@@ -8,6 +8,9 @@ ARG KERNEL_VERSION="${KERNEL_VERSION:-6.9.7-200.fc40.x86_64}"
 
 FROM ghcr.io/${SOURCE_ORG}/${KERNEL_FLAVOR}-kernel:${KERNEL_VERSION} AS kernel
 
+FROM scratch AS ctx
+COPY / /
+
 FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION} AS main
 
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-40}"
@@ -17,19 +20,19 @@ ARG IMAGE_VENDOR="${IMAGE_VENDOR:-ublue-os}"
 ARG RPMFUSION_MIRROR=""
 ARG KERNEL_VERSION="${KERNEL_VERSION:-6.9.7-200.fc40.x86_64}"
 
-COPY *.sh /tmp/
-COPY ${KERNEL_FLAVOR}/ /tmp/
-COPY --from=kernel /tmp/rpms /tmp/kernel-rpms/
-
-RUN mkdir -p /var/lib/alternatives && \
-    IMAGE_FLAVOR=main /tmp/image-info.sh && \
-    /tmp/install.sh && \
+RUN --mount=type=cache,dst=/var/cache/rpm-os \
+    --mount=type=bind,from=ctx,src=/,dst=/ctx \
+    --mount=type=bind,from=kernel,src=/tmp/rpms,dst=/tmp/kernel-rpms \
+    mkdir -p /var/lib/alternatives && \
+    IMAGE_FLAVOR=main /ctx/image-info.sh && \
+    /ctx/install.sh && \
     mv /var/lib/alternatives /staged-alternatives && \
-    rm -rf /tmp/* /var/* && \
+    rm -rf /tmp/* || true && \
+    rm -rf /var/* || true && \
     ostree container commit && \
     mkdir -p /var/lib && mv /staged-alternatives /var/lib/alternatives && \
-    mkdir -p /tmp /var/tmp && \
-    chmod -R 1777 /tmp /var/tmp
+    mkdir -p /var/tmp && \
+    chmod -R 1777 /var/tmp
 
 FROM main AS nvidia
 
@@ -40,17 +43,19 @@ ARG IMAGE_NAME="${IMAGE_NAME:-silverblue}"
 ARG IMAGE_VENDOR="${IMAGE_VENDOR:-ublue-os}"
 ARG RPMFUSION_MIRROR=""
 
-COPY --from=ghcr.io/${SOURCE_ORG}/akmods-nvidia:${KERNEL_FLAVOR}-${FEDORA_MAJOR_VERSION} /rpms /tmp/akmods-rpms
+FROM ghcr.io/${SOURCE_ORG}/akmods-nvidia:${KERNEL_FLAVOR}-${FEDORA_MAJOR_VERSION} AS akmods_nvidia
 
-COPY *.sh /tmp/
-
-RUN mkdir -p /var/lib/alternatives && \
-    IMAGE_FLAVOR=nvidia /tmp/image-info.sh && \
-    /tmp/nvidia-install.sh && \
-    /tmp/build-initramfs.sh && \
+RUN --mount=type=cache,dst=/var/cache/rpm-ostree \
+    --mount=type=bind,from=ctx,src=/,dst=/ctx \
+    --mount=type=bind,from=akmods_nvidia,src=/tmp/rpms,dst=/tmp/akmods-rpms \
+    mkdir -p /var/lib/alternatives && \
+    IMAGE_FLAVOR=nvidia /ctx/image-info.sh && \
+    /ctx/nvidia-install.sh && \
+    /ctx/build-initramfs.sh && \
     mv /var/lib/alternatives /staged-alternatives && \
-    rm -rf /tmp/* /var/* && \
+    rm -rf /tmp/* || true && \
+    rm -rf /var/* || true && \
     ostree container commit && \
     mkdir -p /var/lib && mv /staged-alternatives /var/lib/alternatives && \
-    mkdir -p /tmp /var/tmp && \
-    chmod -R 1777 /tmp /var/tmp
+    mkdir -p /var/tmp && \
+    chmod -R 1777 /var/tmp
