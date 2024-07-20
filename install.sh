@@ -69,13 +69,14 @@ else
     echo "install.sh: steps for unexpected KERNEL_FLAVOR: ${KERNEL_FLAVOR}"
 fi
 
+# Copy over flavor files
+rsync -rvK /ctx/"${KERNEL_FLAVOR}"/ /
+
 # copy any shared sys files
-if [ -d "/ctx/system_files/shared" ]; then
-    rsync -rvK /ctx/system_files/shared/ /
-fi
+rsync -rvK /ctx/system_files/shared/ /
 
 # copy any flavor specific files, eg silverblue
-if [ -d "/ctx/system_files/${IMAGE_NAME}" ]; then
+if [[ -d "/ctx/system_files/${IMAGE_NAME}" ]]; then
     rsync -rvK /ctx/system_files/"${IMAGE_NAME}"/ /
 fi
 
