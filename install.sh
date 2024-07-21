@@ -44,8 +44,8 @@ elif [ "${KERNEL_FLAVOR}" = "surface" ]; then
     echo "install.sh: steps for KERNEL_FLAVOR: ${KERNEL_FLAVOR}"
     curl -Lo /etc/yum.repos.d/linux-surface.repo \
         https://pkg.surfacelinux.com/fedora/linux-surface.repo
-    curl -Lo /tmp/surface-kernel.rpm \
-        https://github.com/linux-surface/linux-surface/releases/download/silverblue-20201215-1/kernel-20201215-1.x86_64.rpm
+    # curl -Lo /tmp/surface-kernel.rpm \
+    #     https://github.com/linux-surface/linux-surface/releases/download/silverblue-20201215-1/kernel-20201215-1.x86_64.rpm
     # Install Surface kernel
     rpm-ostree cliwrap install-to-root /
     rpm-ostree override replace \
@@ -70,18 +70,19 @@ else
 fi
 
 # copy any shared sys files
-if [ -d "/tmp/system_files/shared" ]; then
-    rsync -rvK /tmp/system_files/shared/ /
+if [[ -d /ctx/"${KERNEL_FLAVOR}"/system_files/shared ]]; then
+    rsync -rvK /ctx/"${KERNEL_FLAVOR}"/system_files/shared/ /
 fi
 
 # copy any flavor specific files, eg silverblue
-if [ -d "/tmp/system_files/${IMAGE_NAME}" ]; then
-    rsync -rvK /tmp/system_files/"${IMAGE_NAME}"/ /
+if [[ -d "/ctx/${KERNEL_FLAVOR}/system_files/${IMAGE_NAME}" ]]; then
+    rsync -rvK "/ctx/${KERNEL_FLAVOR}/system_files/${IMAGE_NAME}"/ /
 fi
 
 # install any packages from packages.json
-if [ -f "/tmp/packages.json" ]; then
-    /tmp/packages.sh /tmp/packages.json
+if [ -f "/ctx/${KERNEL_FLAVOR}/packages.json" ]; then
+    cp /ctx/"${KERNEL_FLAVOR}"/packages.json /tmp/packages.json
+    /ctx/packages.sh /tmp/packages.json
 fi
 
 # do HWE specific post-install things
@@ -104,4 +105,4 @@ if [ -n "${RPMFUSION_MIRROR}" ]; then
     rename -v .repo.bak .repo /etc/yum.repos.d/rpmfusion-*repo.bak
 fi
 
-/tmp/build-initramfs.sh
+/ctx/build-initramfs.sh
