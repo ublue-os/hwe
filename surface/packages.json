@@ -2,7 +2,12 @@
     "all": {
         "include": {
             "all": [
-                "fprintd"
+                "fprintd",
+                "libcamera",
+                "libcamera-tools",
+                "libcamera-gstreamer",
+                "libcamera-ipa",
+                "pipewire-plugin-libcamera"
             ]
         },
         "exclude": {
