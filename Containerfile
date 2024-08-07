@@ -32,7 +32,7 @@ RUN --mount=type=cache,dst=/var/cache/rpm-ostree \
     mkdir -p /var/tmp && \
     chmod -R 1777 /var/tmp
 
-FROM ghcr.io/${SOURCE_ORG}/akmods-nvidia:${KERNEL_FLAVOR}-${FEDORA_MAJOR_VERSION} AS akmods_nvidia
+FROM ghcr.io/${SOURCE_ORG}/akmods-nvidia:${KERNEL_FLAVOR}-${FEDORA_MAJOR_VERSION}-20240806 AS akmods_nvidia
 
 FROM main AS nvidia
 
