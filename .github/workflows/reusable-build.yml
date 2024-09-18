@@ -37,15 +37,11 @@ jobs:
           - onyx
           - base
           - lazurite
-          - mate
           - vauxite
         image_target:
           - main
           - nvidia
         exclude:
-          # There is currently no Fedora 40 version of mate
-          - image_name: mate
-            fedora_version: 40
           # Don't build/push "main" since it would be a duplicate of the "base" `*-main` images
           - kernel_flavor: main
             image_target: main
