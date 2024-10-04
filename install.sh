@@ -9,6 +9,9 @@ if [ "${KERNEL_FLAVOR}" = "main" ]; then
     exit 0
 fi
 
+# disable any remaining rpmfusion repos
+sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/rpmfusion*.repo
+
 # do HWE specific things
 if [ "${KERNEL_FLAVOR}" = "asus" ]; then
     echo "install.sh: steps for KERNEL_FLAVOR: ${KERNEL_FLAVOR}"
