@@ -9,19 +9,8 @@ if [ "${KERNEL_FLAVOR}" = "main" ]; then
     exit 0
 fi
 
-# after F41 launches, bump to 42
-if [[ "${FEDORA_MAJOR_VERSION}" -ge 41 ]]; then
-    # note: this is done before single mirror hack to ensure this persists in image and is not reset
-    # pre-release rpmfusion is in a different location
-    sed -i "s%free/fedora/releases%free/fedora/development%" /etc/yum.repos.d/rpmfusion-*.repo
-fi
-
-if [ -n "${RPMFUSION_MIRROR}" ]; then
-    # force use of single rpmfusion mirror
-    echo "Using single rpmfusion mirror: ${RPMFUSION_MIRROR}"
-    sed -i.bak "s%^metalink=%#metalink=%" /etc/yum.repos.d/rpmfusion-*.repo
-    sed -i "s%^#baseurl=http://download1.rpmfusion.org%baseurl=${RPMFUSION_MIRROR}%" /etc/yum.repos.d/rpmfusion-*.repo
-fi
+# disable any remaining rpmfusion repos
+sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/rpmfusion*.repo
 
 # do HWE specific things
 if [ "${KERNEL_FLAVOR}" = "asus" ]; then
@@ -97,12 +86,6 @@ elif [ "${KERNEL_FLAVOR}" = "surface" ]; then
     systemctl enable surface-hardware-setup
 else
     echo "install.sh: post-install for unexpected KERNEL_FLAVOR: ${KERNEL_FLAVOR}"
-fi
-
-if [ -n "${RPMFUSION_MIRROR}" ]; then
-    # reset forced use of single rpmfusion mirror
-    echo "Revert from single rpmfusion mirror: ${RPMFUSION_MIRROR}"
-    rename -v .repo.bak .repo /etc/yum.repos.d/rpmfusion-*repo.bak
 fi
 
 /ctx/build-initramfs.sh

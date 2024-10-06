@@ -223,7 +223,6 @@ jobs:
             FEDORA_MAJOR_VERSION=${{ matrix.fedora_version }}
             KERNEL_FLAVOR=${{ matrix.kernel_flavor }}
             KERNEL_VERSION=${{ env.KERNEL_VERSION }}
-            RPMFUSION_MIRROR=${{ vars.RPMFUSION_MIRROR }}
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
           extra-args: |
