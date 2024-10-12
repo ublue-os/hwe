@@ -49,8 +49,12 @@ rpm-ostree install \
 sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/{eyecantcu-supergfxctl,negativo17-fedora-nvidia,nvidia-container-toolkit}.repo
 
 # ensure kernel.conf matches NVIDIA_FLAVOR (which must be nvidia or nvidia-open)
-# kmod-nvidia-common defaults the value to 'nvidia-open' but this will force to $NVIDIA_FLAVOR
-sed -i "s/^NVIDIA_FLAVOR=.*/NVIDIA_FLAVOR=$KERNEL_MODULE_TYPE/" /etc/nvidia/kernel.conf
+# kmod-nvidia-common defaults the value to 'nvidia-open' but this will match on $NVIDIA_FLAVOR
+KERNEL_MODULE_TYPE="kernel"
+if [[ "${NVIDIA_FLAVOR}" == "nvidia-open" ]]; then
+  KERNEL_MODULE_TYPE="kernel-open"
+fi
+sed -i "s/^MODULE_VARIANT=.*/MODULE_VARIANT=$KERNEL_MODULE_TYPE/" /etc/nvidia/kernel.conf
 
 systemctl enable nvidia-persistenced.service
 
