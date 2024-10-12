@@ -48,6 +48,10 @@ rpm-ostree install \
 # disables nvidia repos provided by ublue-os-nvidia-addons
 sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/{eyecantcu-supergfxctl,negativo17-fedora-nvidia,nvidia-container-toolkit}.repo
 
+# ensure kernel.conf matches NVIDIA_FLAVOR (which must be nvidia or nvidia-open)
+# kmod-nvidia-common defaults the value to 'nvidia-open' but this will force to $NVIDIA_FLAVOR
+sed -i "s/^NVIDIA_FLAVOR=.*/NVIDIA_FLAVOR=$KERNEL_MODULE_TYPE/" /etc/nvidia/kernel.conf
+
 systemctl enable nvidia-persistenced.service
 
 systemctl enable ublue-nvctk-cdi.service

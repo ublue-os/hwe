@@ -46,7 +46,7 @@ RUN --mount=type=cache,dst=/var/cache/rpm-ostree \
     --mount=type=bind,from=akmods_nvidia,src=/rpms,dst=/tmp/akmods-rpms \
     mkdir -p /var/lib/alternatives && \
     IMAGE_FLAVOR=nvidia /ctx/image-info.sh && \
-    /ctx/nvidia-install.sh && \
+    NVIDIA_FLAVOR=nvidia /ctx/nvidia-install.sh && \
     /ctx/build-initramfs.sh && \
     mv /var/lib/alternatives /staged-alternatives && \
     /ctx/cleanup.sh && \
