@@ -1,0 +1,15 @@
+name: ublue hwe 41
+on:
+  pull_request:
+  merge_group:
+  schedule:
+    - cron: '0 4 * * *'  # 4:00-ish UTC everyday
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: build
+    uses: ./.github/workflows/reusable-build.yml
+    secrets: inherit
+    with:
+      fedora_version: 41
