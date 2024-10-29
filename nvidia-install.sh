@@ -37,8 +37,6 @@ rpm-ostree install \
     nvidia-driver-cuda \
     nvidia-driver-cuda-libs.i686 \
     nvidia-driver-libs.i686 \
-    nvidia-modprobe \
-    nvidia-persistenced \
     nvidia-settings \
     nvidia-container-toolkit ${VARIANT_PKGS} \
     /tmp/akmods-rpms/kmods/kmod-nvidia-${KERNEL_VERSION}-${NVIDIA_AKMOD_VERSION}.fc${RELEASE}.rpm
@@ -52,21 +50,15 @@ sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/{eyecantcu-supergfxctl,negativ
 # kmod-nvidia-common defaults to 'nvidia-open' but this will match our akmod image
 sed -i "s/^MODULE_VARIANT=.*/MODULE_VARIANT=$KERNEL_MODULE_TYPE/" /etc/nvidia/kernel.conf
 
-systemctl enable nvidia-persistenced.service
-
 systemctl enable ublue-nvctk-cdi.service
 semodule --verbose --install /usr/share/selinux/packages/nvidia-container.pp
 
 # Universal Blue specific Initramfs fixes
-echo "options nvidia NVreg_TemporaryFilePath=/var/tmp" >> /usr/lib/modprobe.d/nvidia-atomic.conf
 cp /etc/modprobe.d/nvidia-modeset.conf /usr/lib/modprobe.d/nvidia-modeset.conf
 # we must force driver load to fix black screen on boot for nvidia desktops
 sed -i 's@omit_drivers@force_drivers@g' /usr/lib/dracut/dracut.conf.d/99-nvidia.conf
 # as we need forced load, also mustpre-load intel/amd iGPU else chromium web browsers fail to use hardware acceleration
 sed -i 's@ nvidia @ i915 amdgpu nvidia @g' /usr/lib/dracut/dracut.conf.d/99-nvidia.conf
-
-# delete forced power managemant to instead allow driver default (fixes ampere+ optimus D3cold state)
-sed '/^.*NVreg_DynamicPowerManagement.*/d' /usr/lib/modprobe.d/nvidia.conf
 
 if [[ "${IMAGE_NAME}" == "sericea" ]]; then
     mv /etc/sway/environment{,.orig}
