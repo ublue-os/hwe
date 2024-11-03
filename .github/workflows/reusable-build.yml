@@ -48,8 +48,6 @@ jobs:
           # There is no more asus on Fedora -1
           - kernel_flavor: asus
             fedora_version: 39
-          - kernel_flavor: surface
-            fedora_version: 41
 
     steps:
       # Checkout push-to-registry action GitHub repository
