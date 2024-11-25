@@ -12,11 +12,16 @@ sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-cisco-openh264.repo
 ## nvidia install steps
 rpm-ostree install /tmp/akmods-rpms/ublue-os/ublue-os-nvidia-addons-*.rpm
 
-# enables nvidia repos provided by ublue-os-nvidia-addons
-sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/eyecantcu-supergfxctl.repo
+# enable repo provided by ublue-os-nvidia-addons
 sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/nvidia-container-toolkit.repo
-#NOTE: nvidia drivers are already provided by negativo17-fedora-multimedia.repo, no need to enable
-#sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/negativo17-fedora-nvidia.repo
+
+# Enable staging for supergfxctl if repo file exists
+if [[ -f /etc/yum.repos.d/_copr_ublue-os-staging.repo ]]; then
+  sed -i 's@enabled=0@enabled=1@g' /etc/yum.repos.d/_copr_ublue-os-staging.repo
+else
+  # Otherwise, retrieve the repo file for staging
+  curl -Lo /etc/yum.repos.d/_copr_ublue-os-staging.repo https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-"${RELEASE}"/ublue-os-staging-fedora-"${RELEASE}".repo
+fi
 
 source /tmp/akmods-rpms/kmods/nvidia-vars
 
@@ -43,8 +48,11 @@ rpm-ostree install \
 
 
 ## nvidia post-install steps
-# disables nvidia repos provided by ublue-os-nvidia-addons
-sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/{eyecantcu-supergfxctl,negativo17-fedora-nvidia,nvidia-container-toolkit}.repo
+# disable repo provided by ublue-os-nvidia-addons
+sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/nvidia-container-toolkit.repo
+
+# Disable staging
+sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/_copr_ublue-os-staging.repo
 
 # ensure kernel.conf matches NVIDIA_FLAVOR (which must be nvidia or nvidia-open)
 # kmod-nvidia-common defaults to 'nvidia-open' but this will match our akmod image
