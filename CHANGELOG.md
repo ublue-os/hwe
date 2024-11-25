@@ -1,5 +1,31 @@
 # Changelog
 
+## [1.2.0](https://github.com/ublue-os/hwe/compare/v1.1.0...v1.2.0) (2024-11-25)
+
+
+### Features
+
+* **asus:** add supergfctl ([#251](https://github.com/ublue-os/hwe/issues/251)) ([2fe54d1](https://github.com/ublue-os/hwe/commit/2fe54d1f3cde3758495872415d8fea4820563bd9))
+* build initramfs for surface, asus and nvidia ([#258](https://github.com/ublue-os/hwe/issues/258)) ([1b2c042](https://github.com/ublue-os/hwe/commit/1b2c042ed3e70fdf5ca4886c408a54d82c9d5c4e))
+* **ci:** enable Fedora 41 builds ([#289](https://github.com/ublue-os/hwe/issues/289)) ([47e360b](https://github.com/ublue-os/hwe/commit/47e360b7ff005764becb2b696aea043d2233e34d))
+* swap to negativo17 as nvidia driver source ([#234](https://github.com/ublue-os/hwe/issues/234)) ([98b6f7f](https://github.com/ublue-os/hwe/commit/98b6f7f2b40e9440279a04a4af872f82f6470e51))
+* Update Tags for F41 Release ([#293](https://github.com/ublue-os/hwe/issues/293)) ([3726dc0](https://github.com/ublue-os/hwe/commit/3726dc0e8193dd54cb220b1b827a0294d188dc32))
+* Use cached kernel ([#265](https://github.com/ublue-os/hwe/issues/265)) ([2f63b20](https://github.com/ublue-os/hwe/commit/2f63b20163734a45c9491727d41affb1e6a08269))
+* use negativo17 in lieu of rpmfusion ([#282](https://github.com/ublue-os/hwe/issues/282)) ([82fbc21](https://github.com/ublue-os/hwe/commit/82fbc211ff51ff204fb69e8f22efcd3528bbea39))
+
+
+### Bug Fixes
+
+* [#290](https://github.com/ublue-os/hwe/issues/290) ([3a56e7a](https://github.com/ublue-os/hwe/commit/3a56e7a2466c5e96321855ec49ef84e76e75ffe8))
+* 257 - Surface Camera support ([#270](https://github.com/ublue-os/hwe/issues/270)) ([5be0d8d](https://github.com/ublue-os/hwe/commit/5be0d8d432b89fb7fd9acb7fe3bca2326b113739))
+* adjust build schedule based on adjustments to main (https://github.com/ublue-os/main/pull/589) ([#254](https://github.com/ublue-os/hwe/issues/254)) ([cf77151](https://github.com/ublue-os/hwe/commit/cf7715106b10587f741c6e4bd3391f608906e8b0))
+* change nvidia package names to match negativo17 updates ([#264](https://github.com/ublue-os/hwe/issues/264)) ([f050686](https://github.com/ublue-os/hwe/commit/f050686e82c0d0ab4730ccc483a795dd1c85e290))
+* Disable Asus for Fedora -1 ([#256](https://github.com/ublue-os/hwe/issues/256)) ([7b601f1](https://github.com/ublue-os/hwe/commit/7b601f1a1f4db4ffd8adb4c8987d8cb14089b2f3))
+* nvidia fixes ([#292](https://github.com/ublue-os/hwe/issues/292)) ([3a56e7a](https://github.com/ublue-os/hwe/commit/3a56e7a2466c5e96321855ec49ef84e76e75ffe8)), closes [#290](https://github.com/ublue-os/hwe/issues/290)
+* nvidia kernel.conf reflects reality ([#286](https://github.com/ublue-os/hwe/issues/286)) ([527e668](https://github.com/ublue-os/hwe/commit/527e668dc443c5c725f83ad4d5e69284ece48e99)), closes [#284](https://github.com/ublue-os/hwe/issues/284)
+* **nvidia:** Enable persistenced service, add extra option to use /var/tmp as the storage for temporary files. ([#263](https://github.com/ublue-os/hwe/issues/263)) ([4fe7c33](https://github.com/ublue-os/hwe/commit/4fe7c3370ab7361e60b73567591b333852fc9d7b))
+* **nvidia:** pin Nvidia drivers to 555 ([#273](https://github.com/ublue-os/hwe/issues/273)) ([c0ffe44](https://github.com/ublue-os/hwe/commit/c0ffe44db571aa6cc8965136dc115fb1b2f0a6f6))
+
 ## [1.1.0](https://github.com/ublue-os/hwe/compare/v1.0.0...v1.1.0) (2024-04-27)
 
 
