@@ -26,9 +26,6 @@ if [ "${KERNEL_FLAVOR}" = "asus" ]; then
         /tmp/kernel-rpms/kernel-modules-"${KERNEL_VERSION}".rpm \
         /tmp/kernel-rpms/kernel-modules-core-"${KERNEL_VERSION}".rpm \
         /tmp/kernel-rpms/kernel-modules-extra-"${KERNEL_VERSION}".rpm
-    git clone https://gitlab.com/asus-linux/firmware.git --depth 1 /tmp/asus-firmware
-    cp -rf /tmp/asus-firmware/* /usr/lib/firmware/
-    rm -rf /tmp/asus-firmware
 elif [ "${KERNEL_FLAVOR}" = "surface" ]; then
     echo "install.sh: steps for KERNEL_FLAVOR: ${KERNEL_FLAVOR}"
     curl -Lo /etc/yum.repos.d/linux-surface.repo \
