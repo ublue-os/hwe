@@ -15,7 +15,7 @@ sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/rpmfusion*.repo
 sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-cisco-openh264.repo
 
 ## nvidia install steps
-"${INSTALL}" /tmp/akmods-rpms/ublue-os/ublue-os-nvidia-addons-*.rpm
+${INSTALL} /tmp/akmods-rpms/ublue-os/ublue-os-nvidia-addons-*.rpm
 
 # enable repos provided by ublue-os-nvidia-addons
 sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/negativo17-fedora-nvidia.repo
@@ -47,7 +47,7 @@ else
     VARIANT_PKGS=""
 fi
 
-"${INSTALL}" \
+${INSTALL} \
     libnvidia-fbc \
     libnvidia-ml.i686 \
     libva-nvidia-driver \
