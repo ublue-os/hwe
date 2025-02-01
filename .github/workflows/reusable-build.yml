@@ -28,8 +28,8 @@ jobs:
           - ${{ inputs.fedora_version }}
         kernel_flavor:
           - main
-          - asus
-          - surface
+          - asus # Remove when F42 releases
+          - surface # Remove when F42 releases
         image_name:
           - silverblue
           - kinoite
