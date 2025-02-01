@@ -2,13 +2,6 @@
 
 set -oux pipefail
 
-RELEASE="$(rpm -E %fedora)"
-
-# disable any remaining rpmfusion repos
-sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/rpmfusion*.repo
-
-sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-cisco-openh264.repo
-
 # disable negativo17-mutlimedia only if enabled; restore state later
 NEGATIVO17_MULT_PREV_ENABLED=N
 if [[ -n $(grep enabled=1 /etc/yum.repos.d/negativo17-fedora-multimedia.repo ) ]]; then
@@ -18,6 +11,13 @@ if [[ -n $(grep enabled=1 /etc/yum.repos.d/negativo17-fedora-multimedia.repo ) ]
 fi
 
 set -e
+
+RELEASE="$(rpm -E %fedora)"
+
+# disable any remaining rpmfusion repos
+sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/rpmfusion*.repo
+
+sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-cisco-openh264.repo
 
 ## nvidia install steps
 rpm-ostree install /tmp/akmods-rpms/ublue-os/ublue-os-nvidia-addons-*.rpm
