@@ -1,16 +1,6 @@
 #!/bin/bash
 
-set -oux pipefail
-
-# disable negativo17-mutlimedia only if enabled; restore state later
-NEGATIVO17_MULT_PREV_ENABLED=N
-if [[ -n $(grep enabled=1 /etc/yum.repos.d/negativo17-fedora-multimedia.repo ) ]]; then
-    NEGATIVO17_MULT_PREV_ENABLED=Y
-    echo "disabling negativo17-fedora-multimedia to ensure negativo17-fedora-nvidia is used"
-    sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/negativo17-fedora-multimedia.repo
-fi
-
-set -e
+set -ouex pipefail
 
 RELEASE="$(rpm -E %fedora)"
 
@@ -23,7 +13,8 @@ sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-cisco-openh264.repo
 rpm-ostree install /tmp/akmods-rpms/ublue-os/ublue-os-nvidia-addons-*.rpm
 
 # enable repos provided by ublue-os-nvidia-addons
-sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/negativo17-fedora-nvidia.repo
+# we set negativo17-fedora-multimedia to priority 90 in main image, so 89 will prioritize nvidia repo
+sed -i '0,/enabled=1/{s/enabled=1/enabled=1\npriority=89/}' /etc/yum.repos.d/negativo17-fedora-nvidia.repo
 sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/nvidia-container-toolkit.repo
 
 # Enable staging for supergfxctl if repo file exists
@@ -83,9 +74,4 @@ sed -i 's@ nvidia @ i915 amdgpu nvidia @g' /usr/lib/dracut/dracut.conf.d/99-nvid
 if [[ "${IMAGE_NAME}" == "sericea" ]]; then
     mv /etc/sway/environment{,.orig}
     install -Dm644 /usr/share/ublue-os/etc/sway/environment /etc/sway/environment
-fi
-
-# re-enable negativo17-mutlimedia since we disabled it
-if [[ "${NEGATIVO17_MULT_PREV_ENABLED}" = "Y" ]]; then
-    sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/negativo17-fedora-multimedia.repo
 fi
