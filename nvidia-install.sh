@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ouex pipefail
+set -oux pipefail
 
 RELEASE="$(rpm -E %fedora)"
 
@@ -9,18 +9,29 @@ sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/rpmfusion*.repo
 
 sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-cisco-openh264.repo
 
+# disable negativo17-mutlimedia only if enabled; restore state later
+NEGATIVO17_MULT_PREV_ENABLED=N
+if [[ -n $(grep enabled=1 /etc/yum.repos.d/negativo17-fedora-multimedia.repo ) ]]; then
+    NEGATIVO17_MULT_PREV_ENABLED=Y
+    echo "disabling negativo17-fedora-multimedia to ensure negativo17-fedora-nvidia is used"
+    sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/negativo17-fedora-multimedia.repo
+fi
+
+set -e
+
 ## nvidia install steps
 rpm-ostree install /tmp/akmods-rpms/ublue-os/ublue-os-nvidia-addons-*.rpm
 
-# enable repo provided by ublue-os-nvidia-addons
+# enable repos provided by ublue-os-nvidia-addons
+sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/negativo17-fedora-nvidia.repo
 sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/nvidia-container-toolkit.repo
 
 # Enable staging for supergfxctl if repo file exists
 if [[ -f /etc/yum.repos.d/_copr_ublue-os-staging.repo ]]; then
-  sed -i 's@enabled=0@enabled=1@g' /etc/yum.repos.d/_copr_ublue-os-staging.repo
+    sed -i 's@enabled=0@enabled=1@g' /etc/yum.repos.d/_copr_ublue-os-staging.repo
 else
-  # Otherwise, retrieve the repo file for staging
-  curl -Lo /etc/yum.repos.d/_copr_ublue-os-staging.repo https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-"${RELEASE}"/ublue-os-staging-fedora-"${RELEASE}".repo
+    # Otherwise, retrieve the repo file for staging
+    curl -Lo /etc/yum.repos.d/_copr_ublue-os-staging.repo https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-"${RELEASE}"/ublue-os-staging-fedora-"${RELEASE}".repo
 fi
 
 source /tmp/akmods-rpms/kmods/nvidia-vars
@@ -48,7 +59,8 @@ rpm-ostree install \
 
 
 ## nvidia post-install steps
-# disable repo provided by ublue-os-nvidia-addons
+# disable repos provided by ublue-os-nvidia-addons
+sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/negativo17-fedora-nvidia.repo
 sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/nvidia-container-toolkit.repo
 
 # Disable staging
@@ -71,4 +83,9 @@ sed -i 's@ nvidia @ i915 amdgpu nvidia @g' /usr/lib/dracut/dracut.conf.d/99-nvid
 if [[ "${IMAGE_NAME}" == "sericea" ]]; then
     mv /etc/sway/environment{,.orig}
     install -Dm644 /usr/share/ublue-os/etc/sway/environment /etc/sway/environment
+fi
+
+# re-enable negativo17-mutlimedia since we disabled it
+if [[ "${NEGATIVO17_MULT_PREV_ENABLED}" = "Y" ]]; then
+    sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/negativo17-fedora-multimedia.repo
 fi
