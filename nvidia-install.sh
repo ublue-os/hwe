@@ -4,18 +4,30 @@ set -ouex pipefail
 
 RELEASE="$(rpm -E %fedora)"
 
+INSTALL="dnf5 install -y"
+if [[ ! $(command -v dnf5) ]]; then
+    INSTALL="rpm-ostree install"
+fi
+
 # disable any remaining rpmfusion repos
 sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/rpmfusion*.repo
 
 sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-cisco-openh264.repo
 
 ## nvidia install steps
-rpm-ostree install /tmp/akmods-rpms/ublue-os/ublue-os-nvidia-addons-*.rpm
+"${INSTALL}" /tmp/akmods-rpms/ublue-os/ublue-os-nvidia-addons-*.rpm
 
 # enable repos provided by ublue-os-nvidia-addons
-# we set negativo17-fedora-multimedia to priority 90 in main image, so 89 will prioritize nvidia repo
-sed -i '0,/enabled=1/{s/enabled=1/enabled=1\npriority=89/}' /etc/yum.repos.d/negativo17-fedora-nvidia.repo
+sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/negativo17-fedora-nvidia.repo
 sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/nvidia-container-toolkit.repo
+
+# Disable Multimedia
+NEGATIVO17_MULT_PREV_ENABLED=N
+if [[ -f /etc/yum.repos.d/negativo17-fedora-multimedia.repo &&  -n $(grep enabled=1 /etc/yum.repos.d/negativo17-fedora-multimedia.repo) ]]; then
+    NEGATIVO17_MULT_PREV_ENABLED=Y
+    echo "disabling negativo17-fedora-multimedia to ensure negativo17-fedora-nvidia is used"
+    sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/negativo17-fedora-multimedia.repo
+fi
 
 # Enable staging for supergfxctl if repo file exists
 if [[ -f /etc/yum.repos.d/_copr_ublue-os-staging.repo ]]; then
@@ -35,7 +47,7 @@ else
     VARIANT_PKGS=""
 fi
 
-rpm-ostree install \
+"${INSTALL}" \
     libnvidia-fbc \
     libnvidia-ml.i686 \
     libva-nvidia-driver \
@@ -74,4 +86,9 @@ sed -i 's@ nvidia @ i915 amdgpu nvidia @g' /usr/lib/dracut/dracut.conf.d/99-nvid
 if [[ "${IMAGE_NAME}" == "sericea" ]]; then
     mv /etc/sway/environment{,.orig}
     install -Dm644 /usr/share/ublue-os/etc/sway/environment /etc/sway/environment
+fi
+
+# re-enable negativo17-mutlimedia since we disabled it
+if [[ "${NEGATIVO17_MULT_PREV_ENABLED}" = "Y" ]]; then
+    sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/negativo17-fedora-multimedia.repo
 fi
