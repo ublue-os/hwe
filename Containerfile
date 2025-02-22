@@ -6,7 +6,8 @@ ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-40}"
 ARG KERNEL_FLAVOR="${KERNEL_FLAVOR:-main}"
 ARG KERNEL_VERSION="${KERNEL_VERSION:-6.9.7-200.fc40.x86_64}"
 
-FROM ghcr.io/${SOURCE_ORG}/${KERNEL_FLAVOR}-kernel:${KERNEL_VERSION} AS kernel
+FROM ghcr.io/${SOURCE_ORG}/akmods-nvidia:${KERNEL_FLAVOR}-${FEDORA_MAJOR_VERSION} AS akmods_nvidia
+
 FROM scratch AS ctx
 COPY / /
 
@@ -20,7 +21,7 @@ ARG KERNEL_VERSION="${KERNEL_VERSION:-6.9.7-200.fc40.x86_64}"
 
 RUN --mount=type=cache,dst=/var/cache/rpm-ostree \
     --mount=type=bind,from=ctx,src=/,dst=/ctx \
-    --mount=type=bind,from=kernel,src=/tmp/rpms,dst=/tmp/kernel-rpms \
+    --mount=type=bind,from=akmods_nvidia,src=/kernel-rpms,dst=/tmp/kernel-rpms \
     mkdir -p /var/lib/alternatives && \
     IMAGE_FLAVOR=main /ctx/image-info.sh && \
     /ctx/install.sh && \
@@ -30,8 +31,6 @@ RUN --mount=type=cache,dst=/var/cache/rpm-ostree \
     mkdir -p /var/lib && mv /staged-alternatives /var/lib/alternatives && \
     mkdir -p /var/tmp && \
     chmod -R 1777 /var/tmp
-
-FROM ghcr.io/${SOURCE_ORG}/akmods-nvidia:${KERNEL_FLAVOR}-${FEDORA_MAJOR_VERSION} AS akmods_nvidia
 
 FROM main AS nvidia
 
