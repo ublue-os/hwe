@@ -18,7 +18,6 @@ if [ "${KERNEL_FLAVOR}" = "asus" ]; then
     # Install Asus kernel
     curl -Lo /etc/yum.repos.d/_copr_lukenukem-asus-linux.repo \
         https://copr.fedorainfracloud.org/coprs/lukenukem/asus-linux/repo/fedora-"${RELEASE}"/lukenukem-asus-linux-fedora-"${RELEASE}".repo
-    rpm-ostree cliwrap install-to-root /
     rpm-ostree override replace \
         --experimental \
         /tmp/kernel-rpms/kernel-"${KERNEL_VERSION}".rpm \
@@ -33,7 +32,6 @@ elif [ "${KERNEL_FLAVOR}" = "surface" ]; then
     # curl -Lo /tmp/surface-kernel.rpm \
     #     https://github.com/linux-surface/linux-surface/releases/download/silverblue-20201215-1/kernel-20201215-1.x86_64.rpm
     # Install Surface kernel
-    rpm-ostree cliwrap install-to-root /
     rpm-ostree override replace \
         --experimental \
         --remove kernel \
@@ -76,13 +74,24 @@ if [ "${KERNEL_FLAVOR}" = "asus" ]; then
     echo "install.sh: post-install for: ${KERNEL_FLAVOR}"
 elif [ "${KERNEL_FLAVOR}" = "surface" ]; then
     echo "install.sh: post-install for: ${KERNEL_FLAVOR}"
-    if grep -q "silverblue" <<< "${IMAGE_NAME}"; then
-      systemctl enable dconf-update
+    if grep -q "silverblue" <<<"${IMAGE_NAME}"; then
+        systemctl enable dconf-update
     fi
     systemctl enable fprintd
     systemctl enable surface-hardware-setup
 else
     echo "install.sh: post-install for unexpected KERNEL_FLAVOR: ${KERNEL_FLAVOR}"
+fi
+
+# Kernel Lock
+if [[ ! -x /usr/bin/dnf5 ]]; then
+    rpm-ostree install --idempotent dnf5 dnf5-plugins
+fi
+if [[ "${FULL_IMAGE_NAME}" =~ nvidia ]]; then
+    dnf5 versionlock add kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra
+fi
+if [[ "${FULL_IMAGE_NAME}" =~ surface-nvidia ]]; then
+    dnf5 versionlock add kernel-surface kernel-surface-core kernel-surface-modules kernel-surface-modules-core kernel-surface-modules-extra
 fi
 
 /ctx/build-initramfs.sh
