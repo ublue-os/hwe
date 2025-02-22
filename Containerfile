@@ -45,6 +45,9 @@ RUN --mount=type=cache,dst=/var/cache/rpm-ostree \
     --mount=type=bind,from=ctx,src=/,dst=/ctx \
     --mount=type=bind,from=akmods_nvidia,src=/rpms,dst=/tmp/akmods-rpms \
     mkdir -p /var/lib/alternatives && \
+    if [ ! -x /usr/bin/dnf5 ]; then \
+    rpm-ostree install --idempotent dnf5 dnf5-plugins \
+    ; fi && \
     IMAGE_FLAVOR=nvidia /ctx/image-info.sh && \
     NVIDIA_FLAVOR=nvidia /ctx/nvidia-install.sh && \
     /ctx/build-initramfs.sh && \
