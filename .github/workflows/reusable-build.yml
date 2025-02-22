@@ -184,7 +184,7 @@ jobs:
               exit 1
             fi
             echo "SOURCE_IMAGE_VERSION=$ver" >> $GITHUB_ENV
-            skopeo inspect docker://${{ env.IMAGE_REGISTRY }}/${{ matrix.kernel_flavor }}-kernel:${{ matrix.fedora_version }} > kernel.json
+            skopeo inspect docker://${{ env.IMAGE_REGISTRY }}/akmods-nvidia:${{ matrix.kernel_flavor }}-${{ matrix.fedora_version }} > kernel.json
             linux=$(jq -r '.Labels["ostree.linux"]' kernel.json)
             if [ -z "$linux" ] || [ "null" = "$linux" ]; then
               echo "inspected image linux version must not be empty or null"
@@ -202,7 +202,6 @@ jobs:
             # we can retry on that unfortunately common failure case
             podman pull ${{ env.IMAGE_REGISTRY }}/${{ env.SOURCE_IMAGE }}:${{ matrix.fedora_version }}
             podman pull ${{ env.IMAGE_REGISTRY }}/akmods-nvidia:${{ matrix.kernel_flavor }}-${{ matrix.fedora_version }}
-            podman pull ${{ env.IMAGE_REGISTRY }}/${{ matrix.kernel_flavor}}-kernel:${{ env.KERNEL_VERSION }}
 
       # Build metadata
       - name: Image Metadata
@@ -230,6 +229,7 @@ jobs:
           tags: |
             ${{ steps.generate-tags.outputs.alias_tags }}
           build-args: |
+            FULL_IMAGE_NAME=${{ env.IMAGE_NAME }}
             IMAGE_NAME=${{ matrix.image_name }}
             SOURCE_IMAGE=${{ env.SOURCE_IMAGE }}
             FEDORA_MAJOR_VERSION=${{ matrix.fedora_version }}

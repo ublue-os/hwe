@@ -87,10 +87,10 @@ fi
 if [[ ! -x /usr/bin/dnf5 ]]; then
     rpm-ostree install --idempotent dnf5 dnf5-plugins
 fi
-if [[ "${IMAGE_NAME}" =~ nvidia ]]; then
+if [[ "${FULL_IMAGE_NAME}" =~ nvidia ]]; then
     dnf5 versionlock add kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra
 fi
-if [[ "${IMAGE_NAME}" =~ surface-nvidia ]]; then
+if [[ "${FULL_IMAGE_NAME}" =~ surface-nvidia ]]; then
     dnf5 versionlock add kernel-surface kernel-surface-core kernel-surface-modules kernel-surface-modules-core kernel-surface-modules-extra
 fi
 
