@@ -17,8 +17,26 @@ sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-cisco-openh264.repo
 ## nvidia install steps
 dnf5 install -y /tmp/akmods-rpms/ublue-os/ublue-os-nvidia-addons-*.rpm
 
-# Install mesa-vulkan-drivers.i686 if not already installed prior to disabling negativo17 fedora-multimedia
-dnf5 install -y mesa-vulkan-drivers.i686
+# Install MULTILIB packages from negativo17-multimedia prior to disabling repo
+
+MULTILIB=(
+    mesa-dri-drivers.i686
+    mesa-filesystem.i686
+    mesa-libEGL.i686
+    mesa-libGL.i686
+    mesa-libgbm.i686
+    mesa-va-drivers.i686
+    mesa-vulkan-drivers.i686
+)
+
+if [[ "$(rpm -E %fedora)" -lt 41 ]]; then
+    MULTILIB+=(
+        mesa-libglapi.i686
+        libvdpau.i686
+    )
+fi
+
+dnf5 install -y "${MULTILIB[@]}"
 
 # enable repos provided by ublue-os-nvidia-addons
 sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/negativo17-fedora-nvidia.repo
@@ -49,29 +67,6 @@ elif [[ "${IMAGE_NAME}" == "silverblue" ]]; then
 else
     VARIANT_PKGS=""
 fi
-
-# VERSIONLOCK=(
-#     libheif
-#     libva
-#     libva-intel-media-driver
-#     mesa-dri-drivers
-#     mesa-filesystem
-#     mesa-libEGL
-#     mesa-libGL
-#     mesa-libgbm
-#     mesa-libxatracker
-#     mesa-va-drivers
-#     mesa-vulkan-drivers
-# )
-
-# if [[ "$(rpm -E %fedora)" -lt 41 ]]; then
-#     VERSIONLOCK+=(
-#         mesa-libglapi
-#         libvdpau
-#     )
-# fi
-
-# dnf5 versionlock add "${VERSIONLOCK[@]}"
 
 dnf5 install -y \
     libnvidia-fbc \
@@ -111,9 +106,6 @@ if [[ "${IMAGE_NAME}" == "sericea" ]]; then
     mv /etc/sway/environment{,.orig}
     install -Dm644 /usr/share/ublue-os/etc/sway/environment /etc/sway/environment
 fi
-
-# Disable VersionLock
-# dnf5 versionlock delete "${VERSIONLOCK[@]}"
 
 # re-enable negativo17-mutlimedia since we disabled it
 if [[ "${NEGATIVO17_MULT_PREV_ENABLED}" = "Y" ]]; then
