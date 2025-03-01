@@ -71,7 +71,7 @@ if [[ "$(rpm -E %fedora)" -lt 41 ]]; then
     )
 fi
 
-dnf5 versionlock add "${VERSIONLOCK[*]}"
+dnf5 versionlock add "${VERSIONLOCK[@]}"
 
 dnf5 install -y \
     libnvidia-fbc \
@@ -82,7 +82,7 @@ dnf5 install -y \
     nvidia-driver-cuda-libs.i686 \
     nvidia-driver-libs.i686 \
     nvidia-settings \
-    nvidia-container-toolkit "${VARIANT_PKGS}" \
+    nvidia-container-toolkit ${VARIANT_PKGS} \
     /tmp/akmods-rpms/kmods/kmod-nvidia-"${KERNEL_VERSION}"-"${NVIDIA_AKMOD_VERSION}".fc"${RELEASE}".rpm
 
 ## nvidia post-install steps
@@ -113,7 +113,7 @@ if [[ "${IMAGE_NAME}" == "sericea" ]]; then
 fi
 
 # Disable VersionLock
-dnf5 versionlock delete "${VERSIONLOCK[*]}"
+dnf5 versionlock delete "${VERSIONLOCK[@]}"
 
 # re-enable negativo17-mutlimedia since we disabled it
 if [[ "${NEGATIVO17_MULT_PREV_ENABLED}" = "Y" ]]; then
