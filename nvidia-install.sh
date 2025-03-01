@@ -17,6 +17,9 @@ sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-cisco-openh264.repo
 ## nvidia install steps
 dnf5 install -y /tmp/akmods-rpms/ublue-os/ublue-os-nvidia-addons-*.rpm
 
+# Install mesa-vulkan-drivers.i686 if not already installed prior to disabling negativo17 fedora-multimedia
+dnf5 install -y mesa-vulkan-drivers.i686
+
 # enable repos provided by ublue-os-nvidia-addons
 sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/negativo17-fedora-nvidia.repo
 sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/nvidia-container-toolkit.repo
@@ -74,7 +77,6 @@ dnf5 install -y \
     libnvidia-fbc \
     libnvidia-ml.i686 \
     libva-nvidia-driver \
-    mesa-vulkan-drivers.i686 \
     nvidia-driver \
     nvidia-driver-cuda \
     nvidia-driver-cuda-libs.i686 \
