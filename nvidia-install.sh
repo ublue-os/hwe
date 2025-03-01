@@ -4,9 +4,9 @@ set -ouex pipefail
 
 RELEASE="$(rpm -E %fedora)"
 
-INSTALL="dnf5 install -y"
 if [[ ! $(command -v dnf5) ]]; then
-    INSTALL="rpm-ostree install"
+    echo "Requires dnf5... Exiting"
+    exit 1
 fi
 
 # disable any remaining rpmfusion repos
@@ -15,7 +15,28 @@ sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/rpmfusion*.repo
 sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-cisco-openh264.repo
 
 ## nvidia install steps
-${INSTALL} /tmp/akmods-rpms/ublue-os/ublue-os-nvidia-addons-*.rpm
+dnf5 install -y /tmp/akmods-rpms/ublue-os/ublue-os-nvidia-addons-*.rpm
+
+# Install MULTILIB packages from negativo17-multimedia prior to disabling repo
+
+MULTILIB=(
+    mesa-dri-drivers.i686
+    mesa-filesystem.i686
+    mesa-libEGL.i686
+    mesa-libGL.i686
+    mesa-libgbm.i686
+    mesa-va-drivers.i686
+    mesa-vulkan-drivers.i686
+)
+
+if [[ "$(rpm -E %fedora)" -lt 41 ]]; then
+    MULTILIB+=(
+        mesa-libglapi.i686
+        libvdpau.i686
+    )
+fi
+
+dnf5 install -y "${MULTILIB[@]}"
 
 # enable repos provided by ublue-os-nvidia-addons
 sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/negativo17-fedora-nvidia.repo
@@ -23,7 +44,7 @@ sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/nvidia-container
 
 # Disable Multimedia
 NEGATIVO17_MULT_PREV_ENABLED=N
-if [[ -f /etc/yum.repos.d/negativo17-fedora-multimedia.repo &&  -n $(grep enabled=1 /etc/yum.repos.d/negativo17-fedora-multimedia.repo) ]]; then
+if [[ -f /etc/yum.repos.d/negativo17-fedora-multimedia.repo ]] && grep -q "enabled=1" /etc/yum.repos.d/negativo17-fedora-multimedia.repo; then
     NEGATIVO17_MULT_PREV_ENABLED=Y
     echo "disabling negativo17-fedora-multimedia to ensure negativo17-fedora-nvidia is used"
     sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/negativo17-fedora-multimedia.repo
@@ -47,19 +68,17 @@ else
     VARIANT_PKGS=""
 fi
 
-${INSTALL} \
+dnf5 install -y \
     libnvidia-fbc \
     libnvidia-ml.i686 \
     libva-nvidia-driver \
-    mesa-vulkan-drivers.i686 \
     nvidia-driver \
     nvidia-driver-cuda \
     nvidia-driver-cuda-libs.i686 \
     nvidia-driver-libs.i686 \
     nvidia-settings \
     nvidia-container-toolkit ${VARIANT_PKGS} \
-    /tmp/akmods-rpms/kmods/kmod-nvidia-${KERNEL_VERSION}-${NVIDIA_AKMOD_VERSION}.fc${RELEASE}.rpm
-
+    /tmp/akmods-rpms/kmods/kmod-nvidia-"${KERNEL_VERSION}"-"${NVIDIA_AKMOD_VERSION}".fc"${RELEASE}".rpm
 
 ## nvidia post-install steps
 # disable repos provided by ublue-os-nvidia-addons
