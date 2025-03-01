@@ -61,7 +61,7 @@ VERSIONLOCK=(
     mesa-vulkan-drivers
 )
 
-if [[ "${RELEASE}" -lt 41 ]]; then
+if [[ "$(rpm -E %fedora)" -lt 41 ]]; then
     VERSIONLOCK+=(
         mesa-libglapi
         libvdpau
