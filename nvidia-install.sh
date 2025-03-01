@@ -50,28 +50,28 @@ else
     VARIANT_PKGS=""
 fi
 
-VERSIONLOCK=(
-    libheif
-    libva
-    libva-intel-media-driver
-    mesa-dri-drivers
-    mesa-filesystem
-    mesa-libEGL
-    mesa-libGL
-    mesa-libgbm
-    mesa-libxatracker
-    mesa-va-drivers
-    mesa-vulkan-drivers
-)
+# VERSIONLOCK=(
+#     libheif
+#     libva
+#     libva-intel-media-driver
+#     mesa-dri-drivers
+#     mesa-filesystem
+#     mesa-libEGL
+#     mesa-libGL
+#     mesa-libgbm
+#     mesa-libxatracker
+#     mesa-va-drivers
+#     mesa-vulkan-drivers
+# )
 
-if [[ "$(rpm -E %fedora)" -lt 41 ]]; then
-    VERSIONLOCK+=(
-        mesa-libglapi
-        libvdpau
-    )
-fi
+# if [[ "$(rpm -E %fedora)" -lt 41 ]]; then
+#     VERSIONLOCK+=(
+#         mesa-libglapi
+#         libvdpau
+#     )
+# fi
 
-dnf5 versionlock add "${VERSIONLOCK[@]}"
+# dnf5 versionlock add "${VERSIONLOCK[@]}"
 
 dnf5 install -y \
     libnvidia-fbc \
@@ -113,7 +113,7 @@ if [[ "${IMAGE_NAME}" == "sericea" ]]; then
 fi
 
 # Disable VersionLock
-dnf5 versionlock delete "${VERSIONLOCK[@]}"
+# dnf5 versionlock delete "${VERSIONLOCK[@]}"
 
 # re-enable negativo17-mutlimedia since we disabled it
 if [[ "${NEGATIVO17_MULT_PREV_ENABLED}" = "Y" ]]; then
