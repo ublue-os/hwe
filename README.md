@@ -7,6 +7,8 @@ The purpose of these images is to provide [community Fedora images](https://gith
 # Deprecation Notice
 Fedora 41 is the last version of Fedora with Asus and Surface Images being built. Surface images were never built for F41. Nvidia images will likely be moved to Main. Note, at this time we are not deprecating Surface or Asus kernel caching or akmods building.
 
+## If you'd like to work on this let us know and we will transfer this repo to you!
+
 # Documentation
 
 - [Main website](https://universal-blue.org)
