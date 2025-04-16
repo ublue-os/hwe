@@ -28,8 +28,6 @@ jobs:
           - ${{ inputs.fedora_version }}
         kernel_flavor:
           - main
-          - asus # Remove when F42 releases
-          - surface # Remove when F42 releases
         image_name:
           - silverblue
           - kinoite
@@ -50,8 +48,14 @@ jobs:
             fedora_version: 39
           - kernel_flavor: asus
             fedora_version: 40
+          - kernel_flavor: asus
+            fedora_version: 41
+          - kernel_flavor: asus
+            fedora_version: 42
           - kernel_flavor: surface
             fedora_version: 41
+          - kernel_flavor: surface
+            fedora_version: 42
 
     steps:
       # Checkout push-to-registry action GitHub repository
@@ -95,6 +99,11 @@ jobs:
             IS_GTS_VERSION=true
             IS_BETA_VERSION=false
           elif [[ "${{ matrix.fedora_version }}" -eq "41" ]]; then
+            IS_LATEST_VERSION=false
+            IS_STABLE_VERSION=true
+            IS_GTS_VERSION=false
+            IS_BETA_VERSION=false
+          elif [[ "${{ matrix.fedora_version }}" -eq "42" ]]; then
             IS_LATEST_VERSION=true
             IS_STABLE_VERSION=true
             IS_GTS_VERSION=false
