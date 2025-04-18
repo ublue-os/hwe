@@ -45,8 +45,6 @@ jobs:
             image_target: main
           # There is no more asus on Fedora -1
           - kernel_flavor: asus
-            fedora_version: 39
-          - kernel_flavor: asus
             fedora_version: 40
           - kernel_flavor: asus
             fedora_version: 41
@@ -55,6 +53,22 @@ jobs:
           - kernel_flavor: surface
             fedora_version: 41
           - kernel_flavor: surface
+            fedora_version: 42
+          # A new naming convention is used in F42+ for some images
+          # It's hacky, but it's a temporary solution until we move
+          # Nvidia builds into ublue-os/main
+          - image_name: sericea
+            fedora_version: 42
+          - image_name: onyx
+            fedora_version: 42
+          - image_name: lazurite
+            fedora_version: 42
+          - image_name: vauxite
+            fedora_version: 42
+        include:
+          - image_name: budgie-atomic
+            fedora_version: 42
+          - image_name: sway-atomic
             fedora_version: 42
 
     steps:
