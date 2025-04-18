@@ -68,8 +68,12 @@ jobs:
         include:
           - image_name: budgie-atomic
             fedora_version: 42
+            kernel_flavor: main
+            image_target: nvidia
           - image_name: sway-atomic
             fedora_version: 42
+            kernel_flavor: main
+            image_target: nvidia
 
     steps:
       # Checkout push-to-registry action GitHub repository
@@ -189,7 +193,7 @@ jobs:
       - name: Verify akmods-nvidia image
         uses: EyeCantCU/cosign-action/verify@v0.3.0
         with:
-          containers: akmods-nvidia:${{ matrix.kernel_flavor}}-${{ matrix.fedora_version }}
+          containers: akmods-nvidia:${{ matrix.kernel_flavor }}-${{ matrix.fedora_version }}
           registry: ${{ env.IMAGE_REGISTRY }}
 
       - name: Get current version
